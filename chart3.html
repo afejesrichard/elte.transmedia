@@ -41,7 +41,6 @@
         const years = [...yearsSet].sort((a, b) => a - b);
         const affiliations = [...affiliationsSet];
 
-        // Calculate percentages
         const percentageData = {};
         affiliations.forEach(aff => {
           percentageData[aff] = years.map(year => {
@@ -51,7 +50,6 @@
           });
         });
 
-        // Sort affiliations by total % across all years
         const totalPercents = {};
         affiliations.forEach(aff => {
           totalPercents[aff] = percentageData[aff].reduce((sum, val) => sum + val, 0);
@@ -72,7 +70,8 @@
           };
         });
 
-        new Chart(document.getElementById("percentageChart"), {
+        const ctx = document.getElementById("percentageChart");
+        const chart = new Chart(ctx, {
           type: "line",
           data: {
             labels: years,
@@ -84,6 +83,9 @@
               mode: "nearest",
               axis: "x",
               intersect: false
+            },
+            onClick: (e, elements, chart) => {
+              if (e.native?.detail === 2) chart.resetZoom();
             },
             plugins: {
               legend: {
@@ -107,9 +109,17 @@
                   mode: "x"
                 },
                 zoom: {
-                  wheel: { enabled: true },
-                  pinch: { enabled: true },
+                  wheel: {
+                    enabled: true
+                  },
+                  pinch: {
+                    enabled: true
+                  },
                   mode: "x"
+                },
+                limits: {
+                  x: { min: 'original', max: 'original' },
+                  y: { min: 0, max: 100 }
                 }
               }
             },
