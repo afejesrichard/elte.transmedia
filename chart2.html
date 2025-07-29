@@ -37,14 +37,26 @@
 
         const sortedYears = [...allYears].sort();
         const allAffiliations = new Set();
-
         Object.values(yearCounts).forEach(affData => {
           Object.keys(affData).forEach(aff => allAffiliations.add(aff));
         });
 
-        const datasets = [...allAffiliations].sort().map((affiliation, idx) => {
+        // Calculate total appearances per affiliation across all years
+        const affiliationTotals = {};
+        Object.entries(yearCounts).forEach(([year, affMap]) => {
+          Object.entries(affMap).forEach(([aff, count]) => {
+            affiliationTotals[aff] = (affiliationTotals[aff] || 0) + count;
+          });
+        });
+
+        // Sort affiliations by total count descending
+        const sortedAffiliations = [...allAffiliations].sort((a, b) => 
+          (affiliationTotals[b] || 0) - (affiliationTotals[a] || 0)
+        );
+
+        const datasets = sortedAffiliations.map((affiliation, idx) => {
           const values = sortedYears.map(year => yearCounts[year]?.[affiliation] || 0);
-          const color = `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`;
+          const color = `hsl(${idx * 360 / sortedAffiliations.length}, 70%, 50%)`;
           return {
             label: affiliation,
             data: values,
