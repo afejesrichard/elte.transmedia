@@ -17,7 +17,7 @@
 <canvas id="channelChart"></canvas>
 
 <script>
-  const vocabMap = {
+  const channelMap = {
     EMAIL: "E-mail", FD: "Filedropper", GD: "Google Docs", INT: "Internet", IRC: "IRC",
     MC: "Minecraft", MF: "Mediafire", RL: "Real Life", SA: "Something Awful Forum", TMB: "Tumblr",
     TP: "Twitpic", TW: "Twitter", UF: "Unfiction", UST: "Ustream", YT: "YouTube"
@@ -28,40 +28,38 @@
     .then(data => {
       const counts = {};
       const allYears = new Set();
-      const allChannels = new Set();
+      const allLabels = new Set();
 
       data.forEach(row => {
+        const raw = row.channel;
+        if (!raw || typeof raw !== "string") return;
+        const code = raw.trim().toUpperCase();
+        const label = channelMap[code] || "Other";
         const date = new Date(row.start_time);
         const year = date.getFullYear();
         if (isNaN(year)) return;
+
         allYears.add(year);
-
-        const raw = row.vocabulary;
-        if (typeof raw !== "string") return;
-
-        raw.split(",").map(s => s.trim().toUpperCase()).forEach(code => {
-          const label = vocabMap[code] || "Other";
-          allChannels.add(label);
-          if (!counts[year]) counts[year] = {};
-          counts[year][label] = (counts[year][label] || 0) + 1;
-        });
+        allLabels.add(label);
+        if (!counts[year]) counts[year] = {};
+        counts[year][label] = (counts[year][label] || 0) + 1;
       });
 
       const years = [...allYears].sort();
-      const channels = [...allChannels];
+      const labels = [...allLabels];
 
-      const totalPerChannel = {};
-      channels.forEach(ch => {
-        totalPerChannel[ch] = years.reduce((sum, y) => sum + (counts[y]?.[ch] || 0), 0);
+      const totalPerLabel = {};
+      labels.forEach(label => {
+        totalPerLabel[label] = years.reduce((sum, y) => sum + (counts[y]?.[label] || 0), 0);
       });
 
-      const sortedChannels = channels.sort((a, b) => totalPerChannel[b] - totalPerChannel[a]);
+      const sortedLabels = labels.sort((a, b) => totalPerLabel[b] - totalPerLabel[a]);
 
-      const datasets = sortedChannels.map((ch, i) => {
-        const color = `hsl(${i * 360 / sortedChannels.length}, 70%, 45%)`;
+      const datasets = sortedLabels.map((label, i) => {
+        const color = `hsl(${i * 360 / sortedLabels.length}, 70%, 45%)`;
         return {
-          label: ch,
-          data: years.map(y => counts[y]?.[ch] || 0),
+          label: label,
+          data: years.map(y => counts[y]?.[label] || 0),
           borderColor: color,
           backgroundColor: color,
           borderDash: [4, 4],
@@ -72,7 +70,7 @@
       });
 
       const ctx = document.getElementById("channelChart");
-      const chart = new Chart(ctx, {
+      new Chart(ctx, {
         type: "line",
         data: {
           labels: years,
