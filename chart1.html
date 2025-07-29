@@ -17,92 +17,94 @@
   <canvas id="ownershipChart"></canvas>
 
   <script>
-document.addEventListener("DOMContentLoaded", () => {
-  fetch('emh_data.json')
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      const ownerCounts = {};
-      let total = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('emh_data.json')
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+          return res.json();
+        })
+        .then(data => {
+          const ownerCounts = {};
+          let total = 0;
 
-      data.forEach(row => {
-        const owner = row["owner"];
-        if (owner) {
-          ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
-          total++;
-        }
-      });
+          data.forEach(row => {
+            const owner = row["owner"];
+            if (owner) {
+              ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
+              total++;
+            }
+          });
 
-      const rawLabels = Object.keys(ownerCounts);
-      const rawData = rawLabels.map(label => ({
-        label,
-        count: ownerCounts[label],
-        percent: (ownerCounts[label] / total) * 100
-      }));
+          const rawLabels = Object.keys(ownerCounts);
+          const rawData = rawLabels.map(label => ({
+            label,
+            count: ownerCounts[label],
+            percent: (ownerCounts[label] / total) * 100
+          }));
 
-      const major = [], minor = [];
-      rawData.forEach(entry => (entry.percent >= 3 ? major : minor).push(entry));
+          const major = [], minor = [];
+          rawData.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
 
-      const labels = major.map(e => e.label);
-      const dataValues = major.map(e => e.percent.toFixed(2));
-      const colors = labels.map((_, i) =>
-        `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
-      );
+          const labels = major.map(e => e.label);
+          const dataValues = major.map(e => e.percent.toFixed(2));
+          const colors = labels.map((_, i) =>
+            `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
+          );
 
-      const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
-      const otherDetails = minor.map(e => `${e.label}: ${e.percent.toFixed(2)}%`).join('\n');
+          const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
+          const otherDetails = minor
+            .sort((a, b) => b.percent - a.percent)
+            .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
+            .join('\n');
 
-      if (otherTotal > 0) {
-        labels.push("Other");
-        dataValues.push(otherTotal.toFixed(2));
-        colors.push("gray");
-      }
+          if (otherTotal > 0) {
+            labels.push("Other");
+            dataValues.push(otherTotal.toFixed(2));
+            colors.push("gray");
+          }
 
-      new Chart(document.getElementById('ownershipChart'), {
-        type: 'pie',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: dataValues,
-            backgroundColor: colors,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: ctx => {
-                  if (ctx.label === "Other") {
-                    return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
+          new Chart(document.getElementById('ownershipChart'), {
+            type: 'pie',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: dataValues,
+                backgroundColor: colors,
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: ctx => {
+                      if (ctx.label === "Other") {
+                        return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
+                      }
+                      return `${ctx.label}: ${ctx.parsed}%`;
+                    }
                   }
-                  return `${ctx.label}: ${ctx.parsed}%`;
+                },
+                legend: {
+                  position: 'right'
+                },
+                title: {
+                  display: true,
+                  text: 'Figure 1: Percentages of Narrative Instance ownership'
                 }
               }
-            },
-            legend: {
-              position: 'right'
-            },
-            title: {
-              display: true,
-              text: 'Figure 1: Percentages of Narrative Instance ownership'
             }
-          }
-        }
-      });
-    })
-    .catch(err => {
-      console.error("Fetch or Chart error:", err);
-      const errorMsg = document.createElement("p");
-      errorMsg.textContent = "There was an error loading the chart. Check console for details.";
-      document.body.appendChild(errorMsg);
+          });
+        })
+        .catch(err => {
+          console.error("Fetch or Chart error:", err);
+          const errorMsg = document.createElement("p");
+          errorMsg.textContent = "There was an error loading the chart. Check console for details.";
+          document.body.appendChild(errorMsg);
+        });
     });
-});
-</script>
-
+  </script>
 
 </body>
 </html>
