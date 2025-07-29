@@ -2,110 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Figure 1: Percentages of Narrative Instance Affiliation</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Figure 1: Percentages of Narrative Instance Affiliation (Interactive)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 2em; max-width: 900px; margin: auto; }
     canvas { max-width: 100%; }
     h2 { text-align: center; }
+    #controls { text-align: center; margin-bottom: 1em; }
+    label, select { font-size: 1em; }
   </style>
 </head>
 <body>
 
   <h2>Figure 1: Percentages of Narrative Instance Affiliation</h2>
+  <div id="controls">
+    <label for="yearSelect">Filter by year:</label>
+    <select id="yearSelect">
+      <option value="all">All Years</option>
+    </select>
+  </div>
   <canvas id="ownershipChart"></canvas>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      fetch('emh_data.json')
-        .then(res => {
-          if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          const total = data.length;
-          const affiliationCounts = {};
+    let rawData = [];
+    let chart;
 
-          data.forEach(row => {
-            const affiliation = row["affiliation"]?.trim();
-            if (affiliation) {
-              affiliationCounts[affiliation] = (affiliationCounts[affiliation] || 0) + 1;
-            }
-          });
+    function extractYear(row) {
+      if (!row.start_time) return null;
+      const date = new Date(row.start_time);
+      const year = date.getFullYear();
+      return isNaN(year) ? null : year;
+    }
 
-          const rawData = Object.entries(affiliationCounts).map(([label, count]) => ({
-            label,
-            count,
-            percent: (count / total) * 100
-          }));
+    function calculateAffiliationPercentages(data) {
+      const total = data.length;
+      const counts = {};
 
-          // Sort entries by percentage (descending)
-          rawData.sort((a, b) => b.percent - a.percent);
+      data.forEach(row => {
+        const affiliation = row.affiliation?.trim();
+        if (affiliation) {
+          counts[affiliation] = (counts[affiliation] || 0) + 1;
+        }
+      });
 
-          // Split into major and minor based on threshold
-          const major = [], minor = [];
-          rawData.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
+      const dataset = Object.entries(counts).map(([label, count]) => ({
+        label,
+        count,
+        percent: (count / total) * 100
+      }));
 
-          const labels = major.map(e => e.label);
-          const dataValues = major.map(e => e.percent.toFixed(2));
-          const colors = labels.map((_, i) =>
-            `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
-          );
+      dataset.sort((a, b) => b.percent - a.percent);
 
-          const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
-          const otherDetails = minor
-            .sort((a, b) => b.percent - a.percent)
-            .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
-            .join('\n');
+      const major = [], minor = [];
+      dataset.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
 
-          if (otherTotal > 0) {
-            labels.push("Other");
-            dataValues.push(otherTotal.toFixed(2));
-            colors.push("gray");
-          }
+      const labels = major.map(e => e.label);
+      const values = major.map(e => e.percent.toFixed(2));
+      const colors = labels.map((_, i) =>
+        `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
+      );
 
-          new Chart(document.getElementById('ownershipChart'), {
-            type: 'pie',
-            data: {
-              labels: labels,
-              datasets: [{
-                data: dataValues,
-                backgroundColor: colors,
-                borderWidth: 1
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    label: ctx => {
-                      if (ctx.label === "Other") {
-                        return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
-                      }
-                      return `${ctx.label}: ${ctx.parsed}%`;
-                    }
+      const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
+      const otherDetails = minor
+        .sort((a, b) => b.percent - a.percent)
+        .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
+        .join('\n');
+
+      if (otherTotal > 0) {
+        labels.push("Other");
+        values.push(otherTotal.toFixed(2));
+        colors.push("gray");
+      }
+
+      return { labels, values, colors, otherDetails };
+    }
+
+    function updateChart(year = "all") {
+      const filteredData = (year === "all")
+        ? rawData
+        : rawData.filter(r => extractYear(r) === parseInt(year));
+
+      const { labels, values, colors, otherDetails } = calculateAffiliationPercentages(filteredData);
+
+      const config = {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  if (ctx.label === "Other") {
+                    return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
                   }
-                },
-                legend: {
-                  position: 'right'
-                },
-                title: {
-                  display: true,
-                  text: 'Figure 1: Percentages of Narrative Instance Affiliation'
+                  return `${ctx.label}: ${ctx.parsed}%`;
                 }
               }
+            },
+            legend: {
+              position: 'right'
+            },
+            title: {
+              display: true,
+              text: year === "all"
+                ? "Figure 1: Percentages of Narrative Instance Affiliation (All Years)"
+                : `Figure 1: Percentages of Narrative Instance Affiliation (${year})`
             }
-          });
-        })
-        .catch(err => {
-          console.error("Fetch or Chart error:", err);
-          const errorMsg = document.createElement("p");
-          errorMsg.textContent = "There was an error loading the chart. Check console for details.";
-          document.body.appendChild(errorMsg);
+          }
+        }
+      };
+
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById('ownershipChart'), config);
+    }
+
+    fetch('emh_data.json')
+      .then(res => res.json())
+      .then(data => {
+        rawData = data;
+
+        // Extract unique years
+        const years = [...new Set(
+          data.map(extractYear).filter(y => y && y >= 2010 && y <= 2018)
+        )].sort();
+
+        const select = document.getElementById('yearSelect');
+        years.forEach(y => {
+          const opt = document.createElement("option");
+          opt.value = y;
+          opt.textContent = y;
+          select.appendChild(opt);
         });
-    });
+
+        select.addEventListener("change", () => updateChart(select.value));
+
+        updateChart("all"); // Initial render
+      })
+      .catch(err => {
+        console.error("Data load error:", err);
+        const p = document.createElement("p");
+        p.textContent = "Error loading data.";
+        document.body.appendChild(p);
+      });
   </script>
 
 </body>
