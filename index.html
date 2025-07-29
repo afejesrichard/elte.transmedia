@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transmedia Data Appendix</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" 
+        href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script 
+    src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    table { width: 100%; margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <h1>Transmedia Dissertation Appendix</h1>
+  <p>This is an interactive version of the data appendix. You can search, sort, and explore the dataset.</p>
+
+  <input type="file" id="upload" />
+  <table id="dataTable" class="display"></table>
+
+  <script>
+    function renderTableFromXLSX(workbook) {
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const headers = json[0];
+      const rows = json.slice(1);
+
+      const table = $('#dataTable');
+      table.empty();
+
+      // Create header
+      const thead = $('<thead><tr></tr></thead>');
+      headers.forEach(h => thead.find('tr').append(`<th>${h}</th>`));
+      table.append(thead);
+
+      // Create body
+      const tbody = $('<tbody></tbody>');
+      rows.forEach(row => {
+        const tr = $('<tr></tr>');
+        headers.forEach((_, i) => tr.append(`<td>${row[i] ?? ''}</td>`));
+        tbody.append(tr);
+      });
+      table.append(tbody);
+
+      table.DataTable();
+    }
+
+    // Load the Excel file on startup
+    fetch('EMH_cleaned_nodes_2025.xlsx')
+      .then(res => res.arrayBuffer())
+      .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        renderTableFromXLSX(workbook);
+      });
+
+    // Optional: support for drag-and-drop or user upload
+    document.getElementById('upload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        const workbook = XLSX.read(e.target.result, { type: 'binary' });
+        renderTableFromXLSX(workbook);
+      };
+      reader.readAsBinaryString(file);
+    });
+  </script>
+</body>
+</html>
