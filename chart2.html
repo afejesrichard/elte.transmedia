@@ -35,7 +35,8 @@
         data.forEach(row => {
           const rawOwner = row.owner?.trim() || "Unattributed";
           const owner = ownerMap[rawOwner] || rawOwner;
-          const year = row.start_time?.slice(0, 4);
+          const date = new Date(row.start_time);
+          const year = isNaN(date) ? null : date.getFullYear();
           if (!year) return;
 
           if (!yearlyOwnerCounts[year]) yearlyOwnerCounts[year] = {};
