@@ -33,7 +33,13 @@
 
       // Create header
       const thead = $('<thead><tr></tr></thead>');
-      headers.forEach(h => thead.find('tr').append(`<th>${h}</th>`));
+      headers.forEach((_, i) => {
+        let cell = row[i];
+        if (cell instanceof Date) {
+            cell = cell.toISOString().split('T')[0]; // format as YYYY-MM-DD
+        }
+        tr.append(`<td>${cell ?? ''}</td>`);
+        });
       table.append(thead);
 
       // Create body
@@ -50,21 +56,10 @@
 
     // Load the Excel file on startup
     fetch('EMH_cleaned_nodes_2025.xlsx')
-      .then(res => res.arrayBuffer())
-      .then(buffer => {
-        const workbook = XLSX.read(buffer, { type: 'array' });
-        renderTableFromXLSX(workbook);
-      });
-
-    // Optional: support for drag-and-drop or user upload
-    document.getElementById('upload').addEventListener('change', e => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = e => {
-        const workbook = XLSX.read(e.target.result, { type: 'binary' });
-        renderTableFromXLSX(workbook);
-      };
-      reader.readAsBinaryString(file);
+        .then(res => res.arrayBuffer())
+        .then(buffer => {
+            const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+            renderTableFromXLSX(workbook);
     });
   </script>
 </body>
