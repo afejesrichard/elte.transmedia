@@ -24,23 +24,55 @@
           return res.json();
         })
         .then(data => {
+          const ownerMap = {
+            ALX: "Alex",
+            BBN: "bebravenow",
+            CDV: "CougarDraven",
+            DAM: "Damsel",
+            DDL: "Dedlok",
+            EMH: "EverymanHYBRID",
+            EVC: "evilcactus",
+            FRA: "FullRoundAction",
+            FWH: "FlyingWarhorse",
+            GRI: "grieck",
+            HAB: "HABIT",
+            LBY: "Lookbehindyou",
+            LDM: "ladymatsuya",
+            MLA: "MLAndersen0",
+            NM: "Nicole Marie",
+            OFW: "old_familar_way",
+            QUI: "Quiddler",
+            RG26: "RandomGuy26",
+            RHI: "Rhiannon",
+            RSK: "Riskman2982",
+            RYA: "Ryan",
+            SOT: "stormoftara",
+            TGF: "TheGreenFeathers",
+            TNC: "TheNightmareComplex",
+            TS0: "thesharp0ne",
+            TT: "TribeTwelve",
+            VL: "VastLexicon"
+          };
+
           const ownerCounts = {};
           let total = 0;
 
           data.forEach(row => {
-            const owner = row["owner"];
-            if (owner) {
-              ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
-              total++;
-            }
+            let owner = row["owner"];
+            if (!owner || owner.trim() === "N/A") owner = "Unattributed";
+            owner = ownerMap[owner] || owner;
+            ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
+            total++;
           });
 
-          const rawLabels = Object.keys(ownerCounts);
-          const rawData = rawLabels.map(label => ({
+          const rawData = Object.entries(ownerCounts).map(([label, count]) => ({
             label,
-            count: ownerCounts[label],
-            percent: (ownerCounts[label] / total) * 100
+            count,
+            percent: (count / total) * 100
           }));
+
+          // Sort entries by decreasing percentage
+          rawData.sort((a, b) => b.percent - a.percent);
 
           const major = [], minor = [];
           rawData.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
