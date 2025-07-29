@@ -27,7 +27,6 @@
     let rawData = [];
     let chart;
 
-    // Persistent color map for known affiliations
     const colorMap = {
       Damsel: '#e67e22',
       Jeff: '#27ae60',
@@ -44,7 +43,8 @@
       "Rhiannon": "#d35400",
       "Ryan": "#2ecc71",
       "thesharp0ne": "#e74c3c",
-      "TheGreenFeathers": "#16a085"
+      "TheGreenFeathers": "#16a085",
+      "N/A": "#95a5a6"
     };
 
     const fallbackColors = [
@@ -60,14 +60,18 @@
     }
 
     function calculateAffiliationPercentages(data) {
-      const total = data.length;
       const counts = {};
 
-      data.forEach(row => {
-        const affiliation = row.affiliation?.trim();
-        if (affiliation) {
-          counts[affiliation] = (counts[affiliation] || 0) + 1;
-        }
+      const filtered = data.map(row => {
+        const aff = row.affiliation?.trim() || "N/A";
+        return { ...row, affiliation: aff };
+      });
+
+      const total = filtered.length;
+
+      filtered.forEach(row => {
+        const affiliation = row.affiliation;
+        counts[affiliation] = (counts[affiliation] || 0) + 1;
       });
 
       const dataset = Object.entries(counts).map(([label, count]) => ({
