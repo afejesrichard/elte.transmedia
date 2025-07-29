@@ -31,10 +31,11 @@
       const allLabels = new Set();
 
       data.forEach(row => {
-        const raw = row.channel;
+        const raw = row.platform;
         if (!raw || typeof raw !== "string") return;
         const code = raw.trim().toUpperCase();
         const label = channelMap[code] || "Other";
+
         const date = new Date(row.start_time);
         const year = date.getFullYear();
         if (isNaN(year)) return;
