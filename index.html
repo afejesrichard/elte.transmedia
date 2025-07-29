@@ -18,7 +18,6 @@
   <h1>Transmedia Dissertation Appendix</h1>
   <p>This is an interactive version of the data appendix. You can search, sort, and explore the dataset.</p>
 
-  <input type="file" id="upload" />
   <table id="dataTable" class="display"></table>
 
   <script>
@@ -33,20 +32,20 @@
 
       // Create header
       const thead = $('<thead><tr></tr></thead>');
-      headers.forEach((_, i) => {
-        let cell = row[i];
-        if (cell instanceof Date) {
-            cell = cell.toISOString().split('T')[0]; // format as YYYY-MM-DD
-        }
-        tr.append(`<td>${cell ?? ''}</td>`);
-        });
+      headers.forEach(h => thead.find('tr').append(`<th>${h}</th>`));
       table.append(thead);
 
       // Create body
       const tbody = $('<tbody></tbody>');
       rows.forEach(row => {
         const tr = $('<tr></tr>');
-        headers.forEach((_, i) => tr.append(`<td>${row[i] ?? ''}</td>`));
+        headers.forEach((_, i) => {
+          let cell = row[i];
+          if (cell instanceof Date) {
+            cell = cell.toISOString().split('T')[0]; // format as YYYY-MM-DD
+          }
+          tr.append(`<td>${cell ?? ''}</td>`);
+        });
         tbody.append(tr);
       });
       table.append(tbody);
@@ -56,11 +55,11 @@
 
     // Load the Excel file on startup
     fetch('EMH_cleaned_nodes_2025.xlsx')
-        .then(res => res.arrayBuffer())
-        .then(buffer => {
-            const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
-            renderTableFromXLSX(workbook);
-    });
+      .then(res => res.arrayBuffer())
+      .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+        renderTableFromXLSX(workbook);
+      });
   </script>
 </body>
 </html>
