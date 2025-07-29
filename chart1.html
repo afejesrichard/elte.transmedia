@@ -17,8 +17,12 @@
   <canvas id="ownershipChart"></canvas>
 
   <script>
+document.addEventListener("DOMContentLoaded", () => {
   fetch('emh_data.json')
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       const ownerCounts = {};
       let total = 0;
@@ -38,16 +42,8 @@
         percent: (ownerCounts[label] / total) * 100
       }));
 
-      const major = [];
-      const minor = [];
-
-      rawData.forEach(entry => {
-        if (entry.percent >= 3) {
-          major.push(entry);
-        } else {
-          minor.push(entry);
-        }
-      });
+      const major = [], minor = [];
+      rawData.forEach(entry => (entry.percent >= 3 ? major : minor).push(entry));
 
       const labels = major.map(e => e.label);
       const dataValues = major.map(e => e.percent.toFixed(2));
@@ -56,15 +52,13 @@
       );
 
       const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
+      const otherDetails = minor.map(e => `${e.label}: ${e.percent.toFixed(2)}%`).join('\n');
+
       if (otherTotal > 0) {
         labels.push("Other");
         dataValues.push(otherTotal.toFixed(2));
         colors.push("gray");
       }
-
-      const otherDetails = minor
-        .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
-        .join("\n");
 
       new Chart(document.getElementById('ownershipChart'), {
         type: 'pie',
@@ -99,8 +93,16 @@
           }
         }
       });
+    })
+    .catch(err => {
+      console.error("Fetch or Chart error:", err);
+      const errorMsg = document.createElement("p");
+      errorMsg.textContent = "There was an error loading the chart. Check console for details.";
+      document.body.appendChild(errorMsg);
     });
+});
 </script>
+
 
 </body>
 </html>
