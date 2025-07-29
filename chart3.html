@@ -19,26 +19,50 @@
   <script>
     fetch("emh_data.json")
       .then(res => res.json())
-      .then(dataset => {
-        const years = dataset.years;
-        const rawData = dataset.data;
+      .then(data => {
+        const counts = {};
+        const yearTotals = {};
+        const yearsSet = new Set();
+        const affiliationsSet = new Set();
 
-        // Calculate total dominance to sort the legend
-        const totalPerAffiliation = Object.fromEntries(
-          Object.entries(rawData).map(([aff, arr]) => [
-            aff,
-            arr.reduce((sum, v) => sum + v, 0)
-          ])
-        );
+        data.forEach(row => {
+          const aff = row.affiliation?.trim() || "N/A";
+          const date = new Date(row.start_time);
+          const year = date.getFullYear();
+          if (!isNaN(year)) {
+            yearsSet.add(year);
+            affiliationsSet.add(aff);
+            if (!counts[year]) counts[year] = {};
+            counts[year][aff] = (counts[year][aff] || 0) + 1;
+            yearTotals[year] = (yearTotals[year] || 0) + 1;
+          }
+        });
 
-        const sortedAffiliations = Object.keys(totalPerAffiliation)
-          .sort((a, b) => totalPerAffiliation[b] - totalPerAffiliation[a]);
+        const years = [...yearsSet].sort((a, b) => a - b);
+        const affiliations = [...affiliationsSet];
 
-        const datasets = sortedAffiliations.map((aff, idx) => {
-          const color = `hsl(${idx * 360 / sortedAffiliations.length}, 70%, 45%)`;
+        // Calculate percentages
+        const percentageData = {};
+        affiliations.forEach(aff => {
+          percentageData[aff] = years.map(year => {
+            const count = counts[year]?.[aff] || 0;
+            const total = yearTotals[year] || 1;
+            return parseFloat(((count / total) * 100).toFixed(2));
+          });
+        });
+
+        // Sort affiliations by total % across all years
+        const totalPercents = {};
+        affiliations.forEach(aff => {
+          totalPercents[aff] = percentageData[aff].reduce((sum, val) => sum + val, 0);
+        });
+        const sortedAffiliations = affiliations.sort((a, b) => totalPercents[b] - totalPercents[a]);
+
+        const datasets = sortedAffiliations.map((aff, i) => {
+          const color = `hsl(${i * 360 / affiliations.length}, 70%, 45%)`;
           return {
             label: aff,
-            data: rawData[aff],
+            data: percentageData[aff],
             borderColor: color,
             backgroundColor: color,
             borderDash: [6, 4],
@@ -83,12 +107,8 @@
                   mode: "x"
                 },
                 zoom: {
-                  wheel: {
-                    enabled: true
-                  },
-                  pinch: {
-                    enabled: true
-                  },
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
                   mode: "x"
                 }
               }
