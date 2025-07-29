@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Figure 2: Fluctuation of Dominating Voices</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
@@ -9,77 +9,92 @@
     body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
     canvas { max-width: 100%; height: 600px; }
     h2 { text-align: center; }
+    #controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .checkbox-item { font-size: 0.9em; }
   </style>
 </head>
 <body>
 
-  <h2>Figure 2: Fluctuation of Dominating Voices (Separately Counted)</h2>
+  <h2>Figure 2: Fluctuation of Dominating Voices (Affiliation-based)</h2>
+  <div id="controls"></div>
   <canvas id="timelineChart"></canvas>
 
   <script>
-    const ownerMap = {
-      ALX: "Alex", BBN: "bebravenow", CDV: "CougarDraven", DAM: "Damsel", DDL: "Dedlok",
-      EMH: "EverymanHYBRID", EVC: "evilcactus", FRA: "FullRoundAction", FWH: "FlyingWarhorse",
-      GRI: "grieck", HAB: "HABIT", LBY: "Lookbehindyou", LDM: "ladymatsuya", MLA: "MLAndersen0",
-      NM: "Nicole Marie", OFW: "old_familar_way", QUI: "Quiddler", RG26: "RandomGuy26",
-      RHI: "Rhiannon", RSK: "Riskman2982", RYA: "Ryan", SOT: "stormoftara",
-      TGF: "TheGreenFeathers", TNC: "TheNightmareComplex", TS0: "thesharp0ne",
-      TT: "TribeTwelve", VL: "VastLexicon"
-    };
+    let chart;
+    let chartData;
+    let allAffiliations = [];
+
+    function createCheckboxes(datasets) {
+      const container = document.getElementById("controls");
+      container.innerHTML = ""; // clear previous
+
+      datasets.forEach((ds, index) => {
+        const wrapper = document.createElement("label");
+        wrapper.className = "checkbox-item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = true;
+        checkbox.dataset.index = index;
+
+        checkbox.addEventListener("change", () => {
+          chart.setDatasetVisibility(index, checkbox.checked);
+          chart.update();
+        });
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(document.createTextNode(" " + ds.label));
+        container.appendChild(wrapper);
+      });
+    }
 
     fetch("emh_data.json")
       .then(res => res.json())
       .then(data => {
-        const yearlyOwnerCounts = {};
+        const yearCounts = {};
+        const allYears = new Set();
 
         data.forEach(row => {
-          const rawOwner = row.owner?.trim() || "Unattributed";
-          const owner = ownerMap[rawOwner] || rawOwner;
+          const affiliation = row.affiliation?.trim() || "N/A";
           const date = new Date(row.start_time);
-          const year = isNaN(date) ? null : date.getFullYear();
-          if (!year) return;
-
-          if (!yearlyOwnerCounts[year]) yearlyOwnerCounts[year] = {};
-          if (!yearlyOwnerCounts[year][owner]) yearlyOwnerCounts[year][owner] = 0;
-
-          yearlyOwnerCounts[year][owner]++;
+          const year = date.getFullYear();
+          if (!isNaN(year)) {
+            allYears.add(year);
+            if (!yearCounts[year]) yearCounts[year] = {};
+            if (!yearCounts[year][affiliation]) yearCounts[year][affiliation] = 0;
+            yearCounts[year][affiliation]++;
+          }
         });
 
-        const allYears = Object.keys(yearlyOwnerCounts).sort();
-        const allOwners = new Set();
-        allYears.forEach(y => Object.keys(yearlyOwnerCounts[y]).forEach(o => allOwners.add(o)));
-        const sortedOwners = Array.from(allOwners).sort();
+        const sortedYears = [...allYears].sort();
+        allAffiliations = new Set();
 
-        const colors = [
-          "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78",
-          "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#c7c7c7",
-          "#dbdb8d", "#9edae5", "#444444", "#888888", "#5555aa", "#aa5555"
-        ];
+        Object.values(yearCounts).forEach(affData => {
+          Object.keys(affData).forEach(aff => allAffiliations.add(aff));
+        });
 
-        const datasets = sortedOwners.map((owner, i) => {
-          const dataPoints = allYears.map(year =>
-            yearlyOwnerCounts[year][owner] || 0
-          );
+        const datasets = [...allAffiliations].sort().map((affiliation, idx) => {
+          const values = sortedYears.map(year => yearCounts[year]?.[affiliation] || 0);
           return {
-            label: owner,
-            data: dataPoints,
-            borderColor: colors[i % colors.length],
-            backgroundColor: colors[i % colors.length],
-            tension: 0.3,
-            pointRadius: 4,
-            fill: false
+            label: affiliation,
+            data: values,
+            borderColor: `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`,
+            backgroundColor: `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`,
+            borderDash: [6, 6],
+            pointRadius: 3,
+            fill: false,
+            tension: 0.2
           };
         });
 
-        const ctx = document.getElementById("timelineChart").getContext("2d");
+        chartData = {
+          labels: sortedYears,
+          datasets: datasets
+        };
 
-        new Chart(ctx, {
+        chart = new Chart(document.getElementById("timelineChart"), {
           type: "line",
-          data: {
-            labels: allYears,
-            datasets: datasets
-          },
+          data: chartData,
           options: {
             responsive: true,
             interaction: {
@@ -89,12 +104,16 @@
             },
             plugins: {
               legend: {
-                position: "top",
-                labels: { boxWidth: 15 }
+                display: false
               },
               title: {
                 display: true,
-                text: "Figure 2: Fluctuation of Dominating Voices (Separately Counted)"
+                text: "Figure 2: Fluctuation of Dominating Voices (Affiliation-based)"
+              },
+              tooltip: {
+                mode: "dataset",
+                intersect: false,
+                filter: ctx => ctx.raw !== 0
               },
               zoom: {
                 pan: {
@@ -102,18 +121,26 @@
                   mode: "x"
                 },
                 zoom: {
-                  wheel: { enabled: true },
-                  pinch: { enabled: true },
+                  wheel: {
+                    enabled: true
+                  },
+                  pinch: {
+                    enabled: true
+                  },
                   mode: "x"
                 }
               }
+            },
+            hover: {
+              mode: "dataset",
+              intersect: false
             },
             scales: {
               y: {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: "Number of owned narrative instances"
+                  text: "Number of narrative instances"
                 }
               },
               x: {
@@ -125,6 +152,14 @@
             }
           }
         });
+
+        createCheckboxes(datasets);
+      })
+      .catch(err => {
+        console.error("Data load error:", err);
+        const p = document.createElement("p");
+        p.textContent = "Error loading data.";
+        document.body.appendChild(p);
       });
   </script>
 
