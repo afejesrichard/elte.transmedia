@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Figure 1: Narrative Instance Affiliation</title>
+  <title>Figure 1: Percentages of Narrative Instance Affiliation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -24,14 +24,13 @@
           return res.json();
         })
         .then(data => {
+          const total = data.length;
           const affiliationCounts = {};
-          let total = 0;
 
           data.forEach(row => {
             const affiliation = row["affiliation"]?.trim();
             if (affiliation) {
               affiliationCounts[affiliation] = (affiliationCounts[affiliation] || 0) + 1;
-              total++;
             }
           });
 
@@ -41,9 +40,10 @@
             percent: (count / total) * 100
           }));
 
-          // Sort all data by percentage descending
+          // Sort entries by percentage (descending)
           rawData.sort((a, b) => b.percent - a.percent);
 
+          // Split into major and minor based on threshold
           const major = [], minor = [];
           rawData.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
 
