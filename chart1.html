@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Figure 1: Narrative Instance Ownership</title>
+  <title>Figure 1: Narrative Instance ownership</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -13,7 +13,7 @@
 </head>
 <body>
 
-  <h2>Figure 1: Percentages of Narrative Instance Ownership</h2>
+  <h2>Figure 1: Percentages of Narrative Instance ownership</h2>
   <canvas id="ownershipChart"></canvas>
 
   <script>
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let total = 0;
 
       data.forEach(row => {
-        const owner = row["Owner"];
+        const owner = row["owner"];
         if (owner) {
           ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
           total++;
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             title: {
               display: true,
-              text: 'Figure 1: Percentages of Narrative Instance Ownership'
+              text: 'Figure 1: Percentages of Narrative Instance ownership'
             }
           }
         }
