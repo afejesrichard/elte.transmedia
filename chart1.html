@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Figure 1: Narrative Instance ownership</title>
+  <title>Figure 1: Narrative Instance Affiliation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -13,7 +13,7 @@
 </head>
 <body>
 
-  <h2>Figure 1: Percentages of Narrative Instance ownership</h2>
+  <h2>Figure 1: Percentages of Narrative Instance Affiliation</h2>
   <canvas id="ownershipChart"></canvas>
 
   <script>
@@ -24,54 +24,24 @@
           return res.json();
         })
         .then(data => {
-          const ownerMap = {
-            ALX: "Alex",
-            BBN: "bebravenow",
-            CDV: "CougarDraven",
-            DAM: "Damsel",
-            DDL: "Dedlok",
-            EMH: "EverymanHYBRID",
-            EVC: "evilcactus",
-            FRA: "FullRoundAction",
-            FWH: "FlyingWarhorse",
-            GRI: "grieck",
-            HAB: "HABIT",
-            LBY: "Lookbehindyou",
-            LDM: "ladymatsuya",
-            MLA: "MLAndersen0",
-            NM: "Nicole Marie",
-            OFW: "old_familar_way",
-            QUI: "Quiddler",
-            RG26: "RandomGuy26",
-            RHI: "Rhiannon",
-            RSK: "Riskman2982",
-            RYA: "Ryan",
-            SOT: "stormoftara",
-            TGF: "TheGreenFeathers",
-            TNC: "TheNightmareComplex",
-            TS0: "thesharp0ne",
-            TT: "TribeTwelve",
-            VL: "VastLexicon"
-          };
-
-          const ownerCounts = {};
+          const affiliationCounts = {};
           let total = 0;
 
           data.forEach(row => {
-            let owner = row["owner"];
-            if (!owner || owner.trim() === "N/A") owner = "Unattributed";
-            owner = ownerMap[owner] || owner;
-            ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
-            total++;
+            const affiliation = row["affiliation"]?.trim();
+            if (affiliation) {
+              affiliationCounts[affiliation] = (affiliationCounts[affiliation] || 0) + 1;
+              total++;
+            }
           });
 
-          const rawData = Object.entries(ownerCounts).map(([label, count]) => ({
+          const rawData = Object.entries(affiliationCounts).map(([label, count]) => ({
             label,
             count,
             percent: (count / total) * 100
           }));
 
-          // Sort entries by decreasing percentage
+          // Sort all data by percentage descending
           rawData.sort((a, b) => b.percent - a.percent);
 
           const major = [], minor = [];
@@ -123,7 +93,7 @@
                 },
                 title: {
                   display: true,
-                  text: 'Figure 1: Percentages of Narrative Instance ownership'
+                  text: 'Figure 1: Percentages of Narrative Instance Affiliation'
                 }
               }
             }
