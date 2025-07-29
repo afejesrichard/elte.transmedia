@@ -27,6 +27,31 @@
     let rawData = [];
     let chart;
 
+    // Persistent color map for known affiliations
+    const colorMap = {
+      Damsel: '#e67e22',
+      Jeff: '#27ae60',
+      HABIT: '#9b59b6',
+      EMH: '#1e8449',
+      Vince: '#154360',
+      Evan: '#17a589',
+      Alex: '#2980b9',
+      "Lookbehindyou": "#f39c12",
+      "TribeTwelve": "#8e44ad",
+      "Nicole Marie": "#c0392b",
+      "CougarDraven": "#2c3e50",
+      "RandomGuy26": "#7f8c8d",
+      "Rhiannon": "#d35400",
+      "Ryan": "#2ecc71",
+      "thesharp0ne": "#e74c3c",
+      "TheGreenFeathers": "#16a085"
+    };
+
+    const fallbackColors = [
+      "#3498db", "#f1c40f", "#e74c3c", "#1abc9c", "#9b59b6",
+      "#34495e", "#7f8c8d", "#2ecc71", "#c0392b", "#d35400"
+    ];
+
     function extractYear(row) {
       if (!row.start_time) return null;
       const date = new Date(row.start_time);
@@ -53,13 +78,15 @@
 
       dataset.sort((a, b) => b.percent - a.percent);
 
+      const threshold = total >= 200 ? 0.5 : 0;
+
       const major = [], minor = [];
-      dataset.forEach(entry => (entry.percent > 0.5 ? major : minor).push(entry));
+      dataset.forEach(entry => (entry.percent > threshold ? major : minor).push(entry));
 
       const labels = major.map(e => e.label);
       const values = major.map(e => e.percent.toFixed(2));
-      const colors = labels.map((_, i) =>
-        `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
+      const colors = labels.map((label, i) =>
+        colorMap[label] || fallbackColors[i % fallbackColors.length]
       );
 
       const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
@@ -129,7 +156,6 @@
       .then(data => {
         rawData = data;
 
-        // Extract unique years
         const years = [...new Set(
           data.map(extractYear).filter(y => y && y >= 2010 && y <= 2018)
         )].sort();
@@ -144,7 +170,7 @@
 
         select.addEventListener("change", () => updateChart(select.value));
 
-        updateChart("all"); // Initial render
+        updateChart("all");
       })
       .catch(err => {
         console.error("Data load error:", err);
