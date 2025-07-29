@@ -9,45 +9,14 @@
     body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
     canvas { max-width: 100%; height: 600px; }
     h2 { text-align: center; }
-    #controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-    .checkbox-item { font-size: 0.9em; }
   </style>
 </head>
 <body>
 
   <h2>Figure 2: Fluctuation of Dominating Voices (Affiliation-based)</h2>
-  <div id="controls"></div>
   <canvas id="timelineChart"></canvas>
 
   <script>
-    let chart;
-    let chartData;
-    let allAffiliations = [];
-
-    function createCheckboxes(datasets) {
-      const container = document.getElementById("controls");
-      container.innerHTML = ""; // clear previous
-
-      datasets.forEach((ds, index) => {
-        const wrapper = document.createElement("label");
-        wrapper.className = "checkbox-item";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = true;
-        checkbox.dataset.index = index;
-
-        checkbox.addEventListener("change", () => {
-          chart.setDatasetVisibility(index, checkbox.checked);
-          chart.update();
-        });
-
-        wrapper.appendChild(checkbox);
-        wrapper.appendChild(document.createTextNode(" " + ds.label));
-        container.appendChild(wrapper);
-      });
-    }
-
     fetch("emh_data.json")
       .then(res => res.json())
       .then(data => {
@@ -67,7 +36,7 @@
         });
 
         const sortedYears = [...allYears].sort();
-        allAffiliations = new Set();
+        const allAffiliations = new Set();
 
         Object.values(yearCounts).forEach(affData => {
           Object.keys(affData).forEach(aff => allAffiliations.add(aff));
@@ -75,26 +44,25 @@
 
         const datasets = [...allAffiliations].sort().map((affiliation, idx) => {
           const values = sortedYears.map(year => yearCounts[year]?.[affiliation] || 0);
+          const color = `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`;
           return {
             label: affiliation,
             data: values,
-            borderColor: `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`,
-            backgroundColor: `hsl(${idx * 360 / allAffiliations.size}, 70%, 50%)`,
-            borderDash: [6, 6],
+            borderColor: color,
+            backgroundColor: color,
+            borderDash: [6, 4],
+            tension: 0,
             pointRadius: 3,
-            fill: false,
-            tension: 0.2
+            fill: false
           };
         });
 
-        chartData = {
-          labels: sortedYears,
-          datasets: datasets
-        };
-
-        chart = new Chart(document.getElementById("timelineChart"), {
+        new Chart(document.getElementById("timelineChart"), {
           type: "line",
-          data: chartData,
+          data: {
+            labels: sortedYears,
+            datasets: datasets
+          },
           options: {
             responsive: true,
             interaction: {
@@ -104,16 +72,19 @@
             },
             plugins: {
               legend: {
-                display: false
+                position: "top"
               },
               title: {
                 display: true,
                 text: "Figure 2: Fluctuation of Dominating Voices (Affiliation-based)"
               },
               tooltip: {
-                mode: "dataset",
-                intersect: false,
-                filter: ctx => ctx.raw !== 0
+                callbacks: {
+                  label: function(context) {
+                    const value = context.raw;
+                    return value === 0 ? null : `${context.dataset.label}: ${value}`;
+                  }
+                }
               },
               zoom: {
                 pan: {
@@ -130,10 +101,6 @@
                   mode: "x"
                 }
               }
-            },
-            hover: {
-              mode: "dataset",
-              intersect: false
             },
             scales: {
               y: {
@@ -152,8 +119,6 @@
             }
           }
         });
-
-        createCheckboxes(datasets);
       })
       .catch(err => {
         console.error("Data load error:", err);
