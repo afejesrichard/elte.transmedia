@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Figure 1: Narrative Instance Ownership</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 900px; margin: auto; }
+    canvas { max-width: 100%; }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h2>Figure 1: Percentages of Narrative Instance Ownership</h2>
+  <canvas id="ownershipChart"></canvas>
+
+  <script>
+    fetch('EMH_cleaned_nodes_2025.xlsx')
+      .then(res => res.arrayBuffer())
+      .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(sheet);
+
+        const ownerCounts = {};
+        let total = 0;
+
+        data.forEach(row => {
+          const owner = row["Owner"];
+          if (owner) {
+            ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
+            total++;
+          }
+        });
+
+        const rawLabels = Object.keys(ownerCounts);
+        const rawData = rawLabels.map(label => ({
+          label,
+          count: ownerCounts[label],
+          percent: (ownerCounts[label] / total) * 100
+        }));
+
+        const major = [];
+        const minor = [];
+
+        rawData.forEach(entry => {
+          if (entry.percent >= 3) {
+            major.push(entry);
+          } else {
+            minor.push(entry);
+          }
+        });
+
+        const labels = major.map(e => e.label);
+        const dataValues = major.map(e => e.percent.toFixed(2));
+        const colors = labels.map((_, i) =>
+          `hsl(${i * 360 / (labels.length + 1)}, 65%, 55%)`
+        );
+
+        // Group "Other"
+        const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
+        if (otherTotal > 0) {
+          labels.push("Other");
+          dataValues.push(otherTotal.toFixed(2));
+          colors.push("gray");
+        }
+
+        // Tooltip details for "Other"
+        const otherDetails = minor
+          .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
+          .join("\n");
+
+        new Chart(document.getElementById('ownershipChart'), {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: dataValues,
+              backgroundColor: colors,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: ctx => {
+                    if (ctx.label === "Other") {
+                      return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
+                    }
+                    return `${ctx.label}: ${ctx.parsed}%`;
+                  }
+                }
+              },
+              legend: {
+                position: 'right'
+              },
+              title: {
+                display: true,
+                text: 'Figure 1: Percentages of Narrative Instance Ownership'
+              }
+            }
+          }
+        });
+      });
+  </script>
+
+</body>
+</html>
