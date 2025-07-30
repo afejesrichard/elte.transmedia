@@ -2,208 +2,165 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Transmedia Map</title>
-  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape-hull@1.2.0/cytoscape-hull.min.js"></script>
+  <title>The Beast Map with Popper</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: sans-serif;
+    body { font-family: Arial; margin: 0; }
+    #cy { width: 100%; height: 95vh; display: block; }
+    #controls {
+      padding: 10px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #ccc;
     }
-    #cy {
-      width: 100%;
-      height: calc(100vh - 60px);
-      display: block;
+    .legend, .btn {
+      margin-right: 10px;
     }
-    #legend-wrapper {
-      height: 60px;
-      background: #f4f4f4;
-      border-top: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1em;
-      box-sizing: border-box;
-    }
-    #legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      margin-right: 6px;
-      border: 1px solid #000;
-    }
-    .legend-item.hidden {
-      opacity: 0.4;
-    }
-    #recenter-btn {
-      padding: 6px 12px;
-      background: #0074D9;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #recenter-btn:hover {
-      background: #005fa3;
+    .popper-box {
+      background: rgba(255, 255, 150, 0.3);
+      border: 1px dashed #999;
+      border-radius: 10px;
+      padding: 2px 5px;
+      font-size: 14px;
+      pointer-events: none;
     }
   </style>
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-popper/cytoscape-popper.js"></script>
 </head>
 <body>
+  <div id="controls">
+    <button class="btn" onclick="cy.fit()">Recenter View</button>
+    <span class="legend" id="legend"></span>
+  </div>
+  <div id="cy"></div>
 
-<div id="cy"></div>
+  <script>
+    const colors = {
+      "Email": "#FF00FF",
+      "Event": "#FF0000",
+      "Object": "#999999",
+      "Photo": "#FF6666",
+      "Post": "#FFFF00",
+      "Puzzle": "#FF6600",
+      "Sound": "#00FFCC",
+      "Video": "#00FF00",
+      "Webpage": "#3333FF",
+      "Other": "#CCCCCC"
+    };
 
-<div id="legend-wrapper">
-  <div id="legend"></div>
-  <button id="recenter-btn" onclick="cy.fit()">Recenter View</button>
-</div>
+    const sizeScale = (val, min = 50, max = 500) => {
+      const clamped = Math.min(1, Math.max(0, val / 1000));
+      return min + clamped * (max - min);
+    };
 
-<script>
-const typeColorMap = {
-  "Email": "#FF00FF",
-  "Event": "#FF0000",
-  "Object": "#999999",
-  "Photo": "#FF6666",
-  "Post": "#FFFF00",
-  "Puzzle": "#FF6600",
-  "Sound": "#00FFCC",
-  "Video": "#00FF00",
-  "Webpage": "#3333FF"
-};
+    const fontScale = (val, min = 30, max = 60) => {
+      const clamped = Math.min(1, Math.max(0, val / 1000));
+      return min + clamped * (max - min);
+    };
 
-const groupLabelMap = {
-  "group1": ["Postcard", "Map", "Strange Voicemail", "Rabbit Hole Email", "Floating Points", "Sentient Map"],
-  "group2": ["Floating Point PDF", "Navik Veil", "The Thin Thread", "Manifesto Image", "Newspaper Clip", "Hatch Drawing", "Catherine Email"],
-  "group3": ["Lucy's Drawing", "Lucy's First Email", "Lucy's Second Email", "Lucy's Audio Clip"],
-  "group4": ["Radio Tower PDF", "KMDC Files", "Jemison Email", "Jemison Second Email", "Sister Video", "Sister’s Reply"],
-  "group5": ["The Box", "KMDC Warning", "Tether Image", "Silo Interior"],
-  "group6": ["FloatingPoint Chat", "FloatingPoint Internal", "FloatingPoint Shutdown", "FloatingPoint Reboot", "FloatingPoint Final Message"]
-};
+    fetch('The_Beast_transmedia_map.cyjs')
+      .then(res => res.json())
+      .then(data => {
+        const elements = {
+          nodes: data.elements.nodes
+            .filter(n => n.data.owner !== "FAN")
+            .map(n => ({
+              data: {
+                id: n.data.id,
+                label: n.data.Label || n.data.id,
+                type: n.data.type || "Other",
+                centrality: n.data.BetweennessCentrality || 0
+              },
+              position: n.position
+            })),
+          edges: data.elements.edges.filter(e =>
+            data.elements.nodes.some(n => n.data.id === e.data.source) &&
+            data.elements.nodes.some(n => n.data.id === e.data.target)
+          )
+        };
 
-let cy;
-
-fetch("The_Beast_transmedia_map.cyjs")
-  .then(res => res.json())
-  .then(data => {
-    const elements = data.elements;
-
-    const filteredNodes = elements.nodes.filter(n =>
-      !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
-    );
-
-    const nodeIds = new Set(filteredNodes.map(n => n.data.id));
-    const filteredEdges = elements.edges.filter(e =>
-      nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
-    );
-
-    const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
-    const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
-
-    cy = cytoscape({
-      container: document.getElementById('cy'),
-      elements: {
-        nodes: filteredNodes,
-        edges: filteredEdges
-      },
-      layout: { name: 'preset' },
-      style: [
-        {
-          selector: 'node',
-          style: {
-            'label': 'data(Label)',
-            'background-color': ele => typeColorMap[ele.data('type')] || '#0074D9',
-            'color': '#000000',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            'font-size': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 30, 60)`,
-            'width': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
-            'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
-            'border-width': 3,
-            'border-color': '#000000'
-          }
-        },
-        {
-          selector: 'edge',
-          style: {
-            'width': 2,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
-            'target-arrow-shape': 'triangle'
-          }
-        }
-      ]
-    });
-
-    cy.ready(() => {
-      const hulls = cy.hull();
-      Object.entries(groupLabelMap).forEach(([groupId, labelList]) => {
-        const groupNodes = cy.nodes().filter(n => labelList.includes(n.data('Label')));
-        if (groupNodes.length > 2) {
-          hulls.addHull(groupNodes, {
-            name: groupId,
-            style: {
-              fill: 'rgba(255, 255, 150, 0.2)',
-              stroke: '#999',
-              'stroke-width': 2,
-              label: groupId.replace('group', 'Group '),
-              'font-size': 16,
-              color: '#000'
+        const cy = cytoscape({
+          container: document.getElementById('cy'),
+          elements,
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'background-color': ele => colors[ele.data('type')] || colors["Other"],
+                'width': ele => sizeScale(ele.data('centrality')),
+                'height': ele => sizeScale(ele.data('centrality')),
+                'label': 'data(label)',
+                'color': '#000',
+                'font-size': ele => fontScale(ele.data('centrality')),
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'border-color': '#000',
+                'border-width': 3
+              }
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 1,
+                'line-color': '#ccc',
+                'curve-style': 'straight'
+              }
             }
-          });
-        }
-      });
-    });
-
-    createLegend();
-  })
-  .catch(err => {
-    console.error("Error loading CYJS file:", err);
-    document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
-  });
-
-function createLegend() {
-  const legend = document.getElementById("legend");
-
-  Object.entries(typeColorMap).forEach(([type, color]) => {
-    const item = document.createElement("div");
-    item.className = "legend-item";
-    item.dataset.type = type;
-
-    const colorBox = document.createElement("div");
-    colorBox.className = "legend-color";
-    colorBox.style.backgroundColor = color;
-
-    const label = document.createElement("span");
-    label.textContent = type;
-
-    item.appendChild(colorBox);
-    item.appendChild(label);
-    legend.appendChild(item);
-
-    item.addEventListener("click", () => {
-      const isHidden = item.classList.toggle("hidden");
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          if (node.data('type') === type) {
-            node.style('display', isHidden ? 'none' : 'element');
-          }
+          ],
+          layout: { name: 'preset' }
         });
-      });
-    });
-  });
-}
-</script>
 
+        // Interactive Legend
+        const legend = document.getElementById('legend');
+        Object.keys(colors).forEach(type => {
+          const label = document.createElement('label');
+          label.style.marginRight = '10px';
+          label.innerHTML = `<input type="checkbox" checked data-type="${type}"> <span style="color:${colors[type]}">${type}</span>`;
+          legend.appendChild(label);
+        });
+
+        legend.querySelectorAll('input').forEach(checkbox => {
+          checkbox.addEventListener('change', () => {
+            const type = checkbox.getAttribute('data-type');
+            const visible = checkbox.checked;
+            cy.nodes().filter(n => n.data('type') === type).forEach(n => {
+              n.style('display', visible ? 'element' : 'none');
+            });
+          });
+        });
+
+        // Popper Annotations for Groups
+        const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
+        groupFiles.forEach((file, idx) => {
+          fetch(file)
+            .then(res => res.text())
+            .then(text => {
+              const ids = text.trim().split(/\s+/);
+              ids.forEach(id => {
+                const node = cy.getElementById(id);
+                if (node.nonempty()) {
+                  const ref = node.popperRef();
+                  const tooltip = document.createElement('div');
+                  tooltip.classList.add('popper-box');
+                  tooltip.innerText = `Group ${idx + 1}`;
+                  document.body.appendChild(tooltip);
+                  Popper.createPopper(ref, tooltip, {
+                    placement: 'top',
+                    modifiers: [
+                      { name: 'offset', options: { offset: [0, 8] } }
+                    ]
+                  });
+                }
+              });
+            });
+        });
+
+        window.cy = cy; // expose for debugging
+      })
+      .catch(err => {
+        document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
+        console.error(err);
+      });
+  </script>
 </body>
 </html>
