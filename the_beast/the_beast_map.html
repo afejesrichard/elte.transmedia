@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>The Beast Transmedia Map</title>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-hull@1.2.0/cytoscape-hull.min.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -81,14 +82,14 @@ const typeColorMap = {
   "Webpage": "#3333FF"
 };
 
-const annotationGroups = [
-  { id: 'group1', label: 'Group 1', x: -66157.76, y: -38145.26, width: 15132.73, height: 12478.68 },
-  { id: 'group2', label: 'Group 2', x: -61295.72, y: -38185.67, width: 12553.40, height: 8986.16 },
-  { id: 'group3', label: 'Group 3', x: -66135.44, y: -28176.58, width: 8238.95, height: 6999.66 },
-  { id: 'group4', label: 'Group 4', x: -57513.31, y: -24778.14, width: 8780.42, height: 18070.30 },
-  { id: 'group5', label: 'Group 5', x: -50891.01, y: -39007.34, width: 7858.34, height: 9694.49 },
-  { id: 'group6', label: 'Group 6', x: -56995.33, y: -31738.38, width: 9351.68, height: 7912.68 }
-];
+const groupLabelMap = {
+  "group1": ["Postcard", "Map", "Strange Voicemail", "Rabbit Hole Email", "Floating Points", "Sentient Map"],
+  "group2": ["Floating Point PDF", "Navik Veil", "The Thin Thread", "Manifesto Image", "Newspaper Clip", "Hatch Drawing", "Catherine Email"],
+  "group3": ["Lucy's Drawing", "Lucy's First Email", "Lucy's Second Email", "Lucy's Audio Clip"],
+  "group4": ["Radio Tower PDF", "KMDC Files", "Jemison Email", "Jemison Second Email", "Sister Video", "Sister’s Reply"],
+  "group5": ["The Box", "KMDC Warning", "Tether Image", "Silo Interior"],
+  "group6": ["FloatingPoint Chat", "FloatingPoint Internal", "FloatingPoint Shutdown", "FloatingPoint Reboot", "FloatingPoint Final Message"]
+};
 
 let cy;
 
@@ -109,22 +110,10 @@ fetch("The_Beast_transmedia_map.cyjs")
     const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
     const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
 
-    const annotationNodes = annotationGroups.map(g => ({
-      data: {
-        id: g.id,
-        label: g.label
-      },
-      position: { x: g.x, y: g.y },
-      selectable: false,
-      grabbable: false,
-      classes: 'annotation',
-      locked: true
-    }));
-
     cy = cytoscape({
       container: document.getElementById('cy'),
       elements: {
-        nodes: [...filteredNodes, ...annotationNodes],
+        nodes: filteredNodes,
         edges: filteredEdges
       },
       layout: { name: 'preset' },
@@ -152,29 +141,28 @@ fetch("The_Beast_transmedia_map.cyjs")
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle'
           }
-        },
-        {
-          selector: '.annotation',
-          style: {
-            'shape': 'roundrectangle',
-            'background-color': 'rgba(255,255,150,0.2)',
-            'border-width': 2,
-            'border-color': '#999',
-            'width': 'data(width)',
-            'height': 'data(height)',
-            'label': 'data(label)',
-            'text-valign': 'top',
-            'text-halign': 'center',
-            'z-index': 0
-          }
         }
       ]
     });
 
-    annotationGroups.forEach(group => {
-      const node = cy.getElementById(group.id);
-      node.data('width', group.width);
-      node.data('height', group.height);
+    cy.ready(() => {
+      const hulls = cy.hull();
+      Object.entries(groupLabelMap).forEach(([groupId, labelList]) => {
+        const groupNodes = cy.nodes().filter(n => labelList.includes(n.data('Label')));
+        if (groupNodes.length > 2) {
+          hulls.addHull(groupNodes, {
+            name: groupId,
+            style: {
+              fill: 'rgba(255, 255, 150, 0.2)',
+              stroke: '#999',
+              'stroke-width': 2,
+              label: groupId.replace('group', 'Group '),
+              'font-size': 16,
+              color: '#000'
+            }
+          });
+        }
+      });
     });
 
     createLegend();
