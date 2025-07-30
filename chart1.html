@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Figure 1: Percentages of Narrative Instance Affiliation (Interactive)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 2em; max-width: 900px; margin: auto; }
     canvas { max-width: 100%; }
-    h2 { text-align: center; }
+    h2, h3 { text-align: center; }
     #controls { text-align: center; margin-bottom: 1em; }
     label, select { font-size: 1em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 2em; font-size: 0.9em; }
+    th, td { padding: 6px 12px; border: 1px solid #ccc; text-align: center; }
+    th { background-color: #f0f0f0; }
+    tr:hover { background-color: #fafafa; }
   </style>
 </head>
 <body>
@@ -23,27 +27,23 @@
   </div>
   <canvas id="ownershipChart"></canvas>
 
+  <h3>Data Table: Affiliation Breakdown</h3>
+  <div style="overflow-x:auto">
+    <table id="dataTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
   <script>
     let rawData = [];
     let chart;
 
     const colorMap = {
-      Damsel: '#e67e22',
-      Jeff: '#27ae60',
-      HABIT: '#9b59b6',
-      EMH: '#1e8449',
-      Vince: '#154360',
-      Evan: '#17a589',
-      Alex: '#2980b9',
-      "Lookbehindyou": "#f39c12",
-      "TribeTwelve": "#8e44ad",
-      "Nicole Marie": "#c0392b",
-      "CougarDraven": "#2c3e50",
-      "RandomGuy26": "#7f8c8d",
-      "Rhiannon": "#d35400",
-      "Ryan": "#2ecc71",
-      "thesharp0ne": "#e74c3c",
-      "TheGreenFeathers": "#16a085",
+      Damsel: '#e67e22', Jeff: '#27ae60', HABIT: '#9b59b6', EMH: '#1e8449', Vince: '#154360',
+      Evan: '#17a589', Alex: '#2980b9', "Lookbehindyou": "#f39c12", "TribeTwelve": "#8e44ad",
+      "Nicole Marie": "#c0392b", "CougarDraven": "#2c3e50", "RandomGuy26": "#7f8c8d",
+      "Rhiannon": "#d35400", "Ryan": "#2ecc71", "thesharp0ne": "#e74c3c", "TheGreenFeathers": "#16a085",
       "N/A": "#95a5a6"
     };
 
@@ -105,7 +105,38 @@
         colors.push("gray");
       }
 
-      return { labels, values, colors, otherDetails };
+      return { labels, values, colors, otherDetails, dataset };
+    }
+
+    function updateTable(dataset, threshold = 0.5) {
+      const thead = document.querySelector("#dataTable thead");
+      const tbody = document.querySelector("#dataTable tbody");
+
+      const shown = dataset.filter(d => d.percent > threshold);
+      const hidden = dataset.filter(d => d.percent <= threshold);
+
+      thead.innerHTML = `
+        <tr>
+          <th>Affiliation</th>
+          <th>Count</th>
+          <th>Percentage</th>
+        </tr>`;
+
+      tbody.innerHTML = "";
+
+      shown.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${row.label}</td><td>${row.count}</td><td>${row.percent.toFixed(2)}%</td>`;
+        tbody.appendChild(tr);
+      });
+
+      if (hidden.length > 0) {
+        const otherCount = hidden.reduce((sum, r) => sum + r.count, 0);
+        const otherPercent = hidden.reduce((sum, r) => sum + r.percent, 0).toFixed(2);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>Other</td><td>${otherCount}</td><td>${otherPercent}%</td>`;
+        tbody.appendChild(tr);
+      }
     }
 
     function updateChart(year = "all") {
@@ -113,7 +144,7 @@
         ? rawData
         : rawData.filter(r => extractYear(r) === parseInt(year));
 
-      const { labels, values, colors, otherDetails } = calculateAffiliationPercentages(filteredData);
+      const { labels, values, colors, otherDetails, dataset } = calculateAffiliationPercentages(filteredData);
 
       const config = {
         type: 'pie',
@@ -153,6 +184,8 @@
 
       if (chart) chart.destroy();
       chart = new Chart(document.getElementById('ownershipChart'), config);
+
+      updateTable(dataset);
     }
 
     fetch('emh_data.json')
@@ -173,7 +206,6 @@
         });
 
         select.addEventListener("change", () => updateChart(select.value));
-
         updateChart("all");
       })
       .catch(err => {
