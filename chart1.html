@@ -18,203 +18,199 @@
 </head>
 <body>
 
-  <h2>Figure 1: Percentages of Narrative Instance Affiliation</h2>
-  <div id="controls">
-    <label for="yearSelect">Filter by year:</label>
-    <select id="yearSelect">
-      <option value="all">All Years</option>
-    </select>
-  </div>
-  <canvas id="ownershipChart"></canvas>
+<h2>Figure 1: Percentages of Narrative Instance Affiliation</h2>
 
-  <h3>Data Table: Affiliation Breakdown</h3>
-  <div style="overflow-x:auto">
-    <table id="dataTable">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+<div id="controls">
+  <label for="yearSelect">Filter by year:</label>
+  <select id="yearSelect">
+    <option value="all">All Years</option>
+  </select>
+</div>
 
-  <script>
-    let rawData = [];
-    let chart;
+<canvas id="ownershipChart"></canvas>
 
-    const colorMap = {
-      Damsel: '#e67e22', Jeff: '#27ae60', HABIT: '#9b59b6', EMH: '#1e8449', Vince: '#154360',
-      Evan: '#17a589', Alex: '#2980b9', "Lookbehindyou": "#f39c12", "TribeTwelve": "#8e44ad",
-      "Nicole Marie": "#c0392b", "CougarDraven": "#2c3e50", "RandomGuy26": "#7f8c8d",
-      "Rhiannon": "#d35400", "Ryan": "#2ecc71", "thesharp0ne": "#e74c3c", "TheGreenFeathers": "#16a085",
-      "N/A": "#95a5a6"
-    };
+<h3>Data Table: Affiliation Breakdown</h3>
+<div style="overflow-x:auto">
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
 
-    const fallbackColors = [
-      "#3498db", "#f1c40f", "#e74c3c", "#1abc9c", "#9b59b6",
-      "#34495e", "#7f8c8d", "#2ecc71", "#c0392b", "#d35400"
-    ];
+<script>
+let rawData = [];
+let chart;
 
-    function extractYear(row) {
-      if (!row.start_time) return null;
-      const date = new Date(row.start_time);
-      const year = date.getFullYear();
-      return isNaN(year) ? null : year;
-    }
+const colorMap = {
+  Damsel: '#e67e22', Jeff: '#27ae60', HABIT: '#9b59b6', EMH: '#1e8449', Vince: '#154360',
+  Evan: '#17a589', Alex: '#2980b9', "Lookbehindyou": "#f39c12", "TribeTwelve": "#8e44ad",
+  "Nicole Marie": "#c0392b", "CougarDraven": "#2c3e50", "RandomGuy26": "#7f8c8d",
+  "Rhiannon": "#d35400", "Ryan": "#2ecc71", "thesharp0ne": "#e74c3c", "TheGreenFeathers": "#16a085",
+  "N/A": "#95a5a6"
+};
 
-    function calculateAffiliationPercentages(data) {
-      const counts = {};
+const fallbackColors = [
+  "#3498db", "#f1c40f", "#e74c3c", "#1abc9c", "#9b59b6",
+  "#34495e", "#7f8c8d", "#2ecc71", "#c0392b", "#d35400"
+];
 
-      const filtered = data.map(row => {
-        const aff = row.affiliation?.trim() || "N/A";
-        return { ...row, affiliation: aff };
-      });
+function extractYear(row) {
+  if (!row.start_time) return null;
+  const date = new Date(row.start_time);
+  const year = date.getFullYear();
+  return isNaN(year) ? null : year;
+}
 
-      const total = filtered.length;
+function calculateAffiliationPercentages(data) {
+  const counts = {};
+  const filtered = data.map(row => {
+    const aff = row.affiliation?.trim() || "N/A";
+    return { ...row, affiliation: aff };
+  });
+  const total = filtered.length;
 
-      filtered.forEach(row => {
-        const affiliation = row.affiliation;
-        counts[affiliation] = (counts[affiliation] || 0) + 1;
-      });
+  filtered.forEach(row => {
+    const affiliation = row.affiliation;
+    counts[affiliation] = (counts[affiliation] || 0) + 1;
+  });
 
-      const dataset = Object.entries(counts).map(([label, count]) => ({
-        label,
-        count,
-        percent: (count / total) * 100
-      }));
+  const dataset = Object.entries(counts).map(([label, count]) => ({
+    label,
+    count,
+    percent: (count / total) * 100
+  }));
 
-      dataset.sort((a, b) => b.percent - a.percent);
+  dataset.sort((a, b) => b.percent - a.percent);
 
-      const threshold = total >= 200 ? 0.5 : 0;
+  const threshold = total >= 200 ? 0.5 : 0;
+  const major = [], minor = [];
+  dataset.forEach(entry => (entry.percent > threshold ? major : minor).push(entry));
 
-      const major = [], minor = [];
-      dataset.forEach(entry => (entry.percent > threshold ? major : minor).push(entry));
+  const labels = major.map(e => e.label);
+  const values = major.map(e => e.percent.toFixed(2));
+  const colors = labels.map((label, i) =>
+    colorMap[label] || fallbackColors[i % fallbackColors.length]
+  );
 
-      const labels = major.map(e => e.label);
-      const values = major.map(e => e.percent.toFixed(2));
-      const colors = labels.map((label, i) =>
-        colorMap[label] || fallbackColors[i % fallbackColors.length]
-      );
+  const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
+  const otherDetails = minor
+    .sort((a, b) => b.percent - a.percent)
+    .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
+    .join('\n');
 
-      const otherTotal = minor.reduce((sum, e) => sum + e.percent, 0);
-      const otherDetails = minor
-        .sort((a, b) => b.percent - a.percent)
-        .map(e => `${e.label}: ${e.percent.toFixed(2)}%`)
-        .join('\n');
+  if (otherTotal > 0) {
+    labels.push("Other");
+    values.push(otherTotal.toFixed(2));
+    colors.push("gray");
+  }
 
-      if (otherTotal > 0) {
-        labels.push("Other");
-        values.push(otherTotal.toFixed(2));
-        colors.push("gray");
-      }
+  return { labels, values, colors, otherDetails, dataset };
+}
 
-      return { labels, values, colors, otherDetails, dataset };
-    }
+function updateTable(dataset, threshold = 0.5) {
+  const thead = document.querySelector("#dataTable thead");
+  const tbody = document.querySelector("#dataTable tbody");
 
-    function updateTable(dataset, threshold = 0.5) {
-      const thead = document.querySelector("#dataTable thead");
-      const tbody = document.querySelector("#dataTable tbody");
+  const shown = dataset.filter(d => d.percent > threshold);
+  const hidden = dataset.filter(d => d.percent <= threshold);
 
-      const shown = dataset.filter(d => d.percent > threshold);
-      const hidden = dataset.filter(d => d.percent <= threshold);
+  thead.innerHTML = `
+    <tr>
+      <th>Affiliation</th>
+      <th>Count</th>
+      <th>Percentage</th>
+    </tr>`;
 
-      thead.innerHTML = `
-        <tr>
-          <th>Affiliation</th>
-          <th>Count</th>
-          <th>Percentage</th>
-        </tr>`;
+  tbody.innerHTML = "";
 
-      tbody.innerHTML = "";
+  shown.forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.label}</td><td>${row.count}</td><td>${row.percent.toFixed(2)}%</td>`;
+    tbody.appendChild(tr);
+  });
 
-      shown.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row.label}</td><td>${row.count}</td><td>${row.percent.toFixed(2)}%</td>`;
-        tbody.appendChild(tr);
-      });
+  if (hidden.length > 0) {
+    const otherCount = hidden.reduce((sum, r) => sum + r.count, 0);
+    const otherPercent = hidden.reduce((sum, r) => sum + r.percent, 0).toFixed(2);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>Other</td><td>${otherCount}</td><td>${otherPercent}%</td>`;
+    tbody.appendChild(tr);
+  }
+}
 
-      if (hidden.length > 0) {
-        const otherCount = hidden.reduce((sum, r) => sum + r.count, 0);
-        const otherPercent = hidden.reduce((sum, r) => sum + r.percent, 0).toFixed(2);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>Other</td><td>${otherCount}</td><td>${otherPercent}%</td>`;
-        tbody.appendChild(tr);
-      }
-    }
+function updateChart(year = "all") {
+  const filteredData = (year === "all")
+    ? rawData
+    : rawData.filter(r => extractYear(r) === parseInt(year));
 
-    function updateChart(year = "all") {
-      const filteredData = (year === "all")
-        ? rawData
-        : rawData.filter(r => extractYear(r) === parseInt(year));
+  const { labels, values, colors, otherDetails, dataset } = calculateAffiliationPercentages(filteredData);
 
-      const { labels, values, colors, otherDetails, dataset } = calculateAffiliationPercentages(filteredData);
-
-      const config = {
-        type: 'pie',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: colors,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: ctx => {
-                  if (ctx.label === "Other") {
-                    return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
-                  }
-                  return `${ctx.label}: ${ctx.parsed}%`;
-                }
+  const config = {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.label === "Other") {
+                return [`Other: ${ctx.parsed}%`, ...otherDetails.split('\n')];
               }
-            },
-            legend: {
-              position: 'right'
-            },
-            title: {
-              display: true,
-              text: year === "all"
-                ? "Figure 1: Percentages of Narrative Instance Affiliation (All Years)"
-                : `Figure 1: Percentages of Narrative Instance Affiliation (${year})`
+              return `${ctx.label}: ${ctx.parsed}%`;
             }
           }
+        },
+        legend: { position: 'right' },
+        title: {
+          display: true,
+          text: year === "all"
+            ? "Figure 1: Percentages of Narrative Instance Affiliation (All Years)"
+            : `Figure 1: Percentages of Narrative Instance Affiliation (${year})`
         }
-      };
-
-      if (chart) chart.destroy();
-      chart = new Chart(document.getElementById('ownershipChart'), config);
-
-      updateTable(dataset);
+      }
     }
+  };
 
-    fetch('emh_data.json')
-      .then(res => res.json())
-      .then(data => {
-        rawData = data;
+  if (chart) chart.destroy();
+  chart = new Chart(document.getElementById('ownershipChart'), config);
+  updateTable(dataset);
+}
 
-        const years = [...new Set(
-          data.map(extractYear).filter(y => y && y >= 2010 && y <= 2018)
-        )].sort();
+fetch('emh_data.json')
+  .then(res => res.json())
+  .then(data => {
+    rawData = data;
 
-        const select = document.getElementById('yearSelect');
-        years.forEach(y => {
-          const opt = document.createElement("option");
-          opt.value = y;
-          opt.textContent = y;
-          select.appendChild(opt);
-        });
+    const years = [...new Set(
+      data.map(extractYear).filter(y => y && y >= 2010 && y <= 2019)
+    )].sort();
 
-        select.addEventListener("change", () => updateChart(select.value));
-        updateChart("all");
-      })
-      .catch(err => {
-        console.error("Data load error:", err);
-        const p = document.createElement("p");
-        p.textContent = "Error loading data.";
-        document.body.appendChild(p);
-      });
-  </script>
+    const select = document.getElementById('yearSelect');
+    years.forEach(y => {
+      const opt = document.createElement("option");
+      opt.value = y;
+      opt.textContent = y;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener("change", () => updateChart(select.value));
+    updateChart("all");
+  })
+  .catch(err => {
+    console.error("Data load error:", err);
+    const p = document.createElement("p");
+    p.textContent = "Error loading data.";
+    document.body.appendChild(p);
+  });
+</script>
 
 </body>
 </html>
