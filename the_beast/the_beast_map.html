@@ -36,6 +36,7 @@
       display: flex;
       align-items: center;
       cursor: pointer;
+      margin-right: 10px;
     }
     .legend-color {
       width: 16px;
@@ -53,9 +54,20 @@
       color: white;
       border-radius: 4px;
       cursor: pointer;
+      margin-left: 16px;
     }
     #recenter-btn:hover {
       background: #005fa3;
+    }
+    #switch {
+      margin-left: 18px;
+      margin-right: 12px;
+    }
+    #mode-label {
+      font-weight: bold;
+      font-size: 15px;
+      margin-right: 10px;
+      color: #444;
     }
   </style>
 </head>
@@ -64,7 +76,14 @@
 <div id="cy"></div>
 
 <div id="legend-wrapper">
-  <div id="legend"></div>
+  <div style="display: flex; align-items: center;">
+    <span id="mode-label">Color: Type</span>
+    <label id="switch">
+      <input type="checkbox" id="colorSwitch" style="margin-right:5px;">
+      Group coloring
+    </label>
+    <div id="legend"></div>
+  </div>
   <button id="recenter-btn" onclick="cy.fit()">Recenter View</button>
 </div>
 
@@ -78,107 +97,159 @@ const typeColorMap = {
   "Puzzle": "#FF6600",
   "Sound": "#00FFCC",
   "Video": "#00FF00",
-  "Webpage": "#3333FF"
+  "Webpage": "#3333FF",
+  "Other": "#0074D9"
 };
 
+// Distinct colors for up to 6 groups (modify/add as needed)
+const groupColors = [
+  "#cc2a36", "#3366cc", "#f47c3c", "#2ecca3", "#ad0bcc", "#e6d72a", "#8085e9", "#ffb300"
+];
+
+const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
+
 let cy;
+let groupMembership = {}; // id -> group idx
+let colorMode = "type"; // or "group"
 
-fetch("The_Beast_transmedia_map.cyjs")
-  .then(res => res.json())
-  .then(data => {
-    const elements = data.elements;
-
-    // Filter out FAN nodes
-    const filteredNodes = elements.nodes.filter(n =>
-      !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
-    );
-
-    const nodeIds = new Set(filteredNodes.map(n => n.data.id));
-
-    // Filter out invalid edges
-    const filteredEdges = elements.edges.filter(e =>
-      nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
-    );
-
-    // Betweenness range
-    const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
-    const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
-
-    // Init Cytoscape
-    cy = cytoscape({
-      container: document.getElementById('cy'),
-      elements: {
-        nodes: filteredNodes,
-        edges: filteredEdges
-      },
-      layout: { name: 'preset' },
-      style: [
-        {
-          selector: 'node',
-          style: {
-            'label': 'data(Label)',
-            'background-color': ele => typeColorMap[ele.data('type')] || '#0074D9',
-            'color': '#000000',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            'font-size': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 30, 60)`,
-            'width': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
-            'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
-            'border-width': 3,
-            'border-color': '#000000'
-          }
-        },
-        {
-          selector: 'edge',
-          style: {
-            'width': 2,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
-            'target-arrow-shape': 'triangle'
-          }
-        }
-      ]
-    });
-
-    createLegend();
-  })
-  .catch(err => {
-    console.error("Error loading CYJS file:", err);
-    document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
+function setNodeColors(mode) {
+  cy.nodes().forEach(node => {
+    if (mode === "group") {
+      let groupIdx = groupMembership[node.id()];
+      node.style("background-color", typeof groupIdx === "number" ? groupColors[groupIdx] : "#bbb");
+    } else {
+      const t = node.data("type");
+      node.style("background-color", typeColorMap[t] || "#0074D9");
+    }
   });
-
-function createLegend() {
-  const legend = document.getElementById("legend");
-
-  Object.entries(typeColorMap).forEach(([type, color]) => {
-    const item = document.createElement("div");
-    item.className = "legend-item";
-    item.dataset.type = type;
-
-    const colorBox = document.createElement("div");
-    colorBox.className = "legend-color";
-    colorBox.style.backgroundColor = color;
-
-    const label = document.createElement("span");
-    label.textContent = type;
-
-    item.appendChild(colorBox);
-    item.appendChild(label);
-    legend.appendChild(item);
-
-    item.addEventListener("click", () => {
-      const isHidden = item.classList.toggle("hidden");
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          if (node.data('type') === type) {
-            node.style('display', isHidden ? 'none' : 'element');
-          }
-        });
-      });
-    });
-  });
+  updateLegend(mode);
 }
-</script>
 
+function updateLegend(mode) {
+  const legend = document.getElementById("legend");
+  legend.innerHTML = "";
+  if (mode === "type") {
+    Object.entries(typeColorMap).forEach(([type, color]) => {
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      item.dataset.type = type;
+      const colorBox = document.createElement("div");
+      colorBox.className = "legend-color";
+      colorBox.style.backgroundColor = color;
+      const label = document.createElement("span");
+      label.textContent = type;
+      item.appendChild(colorBox);
+      item.appendChild(label);
+      legend.appendChild(item);
+    });
+  } else {
+    // group mode
+    for (let i = 0; i < groupFiles.length; i++) {
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      item.dataset.group = i;
+      const colorBox = document.createElement("div");
+      colorBox.className = "legend-color";
+      colorBox.style.backgroundColor = groupColors[i % groupColors.length];
+      const label = document.createElement("span");
+      label.textContent = `Group ${i+1}`;
+      item.appendChild(colorBox);
+      item.appendChild(label);
+      legend.appendChild(item);
+    }
+  }
+}
+
+function assignGroupsToNodes(nodes, groupLists) {
+  const membership = {};
+  for (let g = 0; g < groupLists.length; g++) {
+    groupLists[g].forEach(id => {
+      membership[id] = g;
+    });
+  }
+  return membership;
+}
+
+// Load group lists
+Promise.all(groupFiles.map(f =>
+  fetch(f).then(res => res.text()).then(txt =>
+    txt.split('\n').map(x => x.trim().replace(/^"|"$/g, '')).filter(Boolean)
+  )
+)).then(groupLists => {
+  // Map from label to node id after the graph loads
+  fetch("The_Beast_transmedia_map.cyjs")
+    .then(res => res.json())
+    .then(data => {
+      const elements = data.elements;
+      // Filter out FAN nodes
+      const filteredNodes = elements.nodes.filter(n =>
+        !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
+      );
+      // Build label->id mapping for group assignment
+      const labelToId = {};
+      filteredNodes.forEach(n => { labelToId[n.data.Label] = n.data.id; });
+
+      // Map group membership using node ids
+      const groupIdLists = groupLists.map(list =>
+        list.map(lbl => labelToId[lbl]).filter(x => !!x)
+      );
+      groupMembership = assignGroupsToNodes(filteredNodes.map(n => n.data.id), groupIdLists);
+
+      const nodeIds = new Set(filteredNodes.map(n => n.data.id));
+      const filteredEdges = elements.edges.filter(e =>
+        nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
+      );
+      // Betweenness range
+      const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
+      const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
+      cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: {
+          nodes: filteredNodes,
+          edges: filteredEdges
+        },
+        layout: { name: 'preset' },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'label': 'data(Label)',
+              'background-color': ele => typeColorMap[ele.data('type')] || '#0074D9',
+              'color': '#000000',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'font-size': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 30, 60)`,
+              'width': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
+              'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
+              'border-width': 3,
+              'border-color': '#000000'
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 2,
+              'line-color': '#ccc',
+              'target-arrow-color': '#ccc',
+              'target-arrow-shape': 'triangle'
+            }
+          }
+        ]
+      });
+
+      // UI: handle color scheme switch
+      const switchEl = document.getElementById('colorSwitch');
+      const modeLabel = document.getElementById('mode-label');
+      switchEl.addEventListener('change', function() {
+        colorMode = switchEl.checked ? "group" : "type";
+        modeLabel.textContent = "Color: " + (colorMode === "type" ? "Type" : "Group");
+        setNodeColors(colorMode);
+      });
+
+      setNodeColors("type");
+      updateLegend("type");
+    });
+});
+</script>
 </body>
 </html>
