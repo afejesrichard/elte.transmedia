@@ -5,50 +5,73 @@
   <title>The Beast Transmedia Map</title>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
-    #cy { width: 100%; height: 100vh; display: block; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: sans-serif; }
+    #cy { width: 100%; height: 95vh; display: block; }
+    #legend {
+      height: 5vh;
+      padding: 8px 10px;
+      background: #f8f8f8;
+      border-top: 1px solid #ccc;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      border: 1px solid #000;
+    }
+    .hidden {
+      opacity: 0.4;
+    }
   </style>
 </head>
 <body>
 
 <div id="cy"></div>
+<div id="legend"></div>
 
 <script>
+const typeColorMap = {
+  "Email": "#FF00FF",
+  "Event": "#FF0000",
+  "Object": "#999999",
+  "Photo": "#FF6666",
+  "Post": "#FFFF00",
+  "Puzzle": "#FF6600",
+  "Sound": "#00FFCC",
+  "Video": "#00FF00",
+  "Webpage": "#3333FF"
+};
+
+let cy;
+
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
   .then(data => {
     const elements = data.elements;
 
-    // Filter out FAN nodes
     const filteredNodes = elements.nodes.filter(n =>
       !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
     );
 
     const remainingNodeIds = new Set(filteredNodes.map(n => n.data.id));
 
-    // Filter out edges with missing source or target
     const filteredEdges = elements.edges.filter(e =>
       remainingNodeIds.has(e.data.source) && remainingNodeIds.has(e.data.target)
     );
 
-    // BetweennessCentrality range
     const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
     const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
 
-    // Color map based on "type"
-    const typeColorMap = {
-      "Email": "#FF00FF",
-      "Event": "#FF0000",
-      "Object": "#999999",
-      "Photo": "#FF6666",
-      "Post": "#FFFF00",
-      "Puzzle": "#FF6600",
-      "Sound": "#00FFCC",
-      "Video": "#00FF00",
-      "Webpage": "#3333FF"
-    };
-
-    const cy = cytoscape({
+    cy = cytoscape({
       container: document.getElementById('cy'),
       elements: {
         nodes: filteredNodes,
@@ -82,11 +105,45 @@ fetch("The_Beast_transmedia_map.cyjs")
       ],
       layout: { name: 'preset' }
     });
+
+    createLegend();
   })
   .catch(err => {
     console.error("Error loading CYJS file:", err);
     document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
   });
+
+function createLegend() {
+  const legend = document.getElementById('legend');
+
+  Object.entries(typeColorMap).forEach(([type, color]) => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.dataset.type = type;
+
+    const colorBox = document.createElement('div');
+    colorBox.className = 'legend-color';
+    colorBox.style.backgroundColor = color;
+
+    const label = document.createElement('span');
+    label.textContent = type;
+
+    item.appendChild(colorBox);
+    item.appendChild(label);
+    legend.appendChild(item);
+
+    item.addEventListener('click', () => {
+      const hidden = item.classList.toggle('hidden');
+      cy.batch(() => {
+        cy.nodes().forEach(node => {
+          if (node.data('type') === type) {
+            node.style('display', hidden ? 'none' : 'element');
+          }
+        });
+      });
+    });
+  });
+}
 </script>
 
 </body>
