@@ -1,98 +1,55 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>The Beast – Transmedia Network Map</title>
-  <script src="https://unpkg.com/cytoscape@3.21.1/dist/cytoscape.min.js"></script>
+  <meta charset="utf-8">
+  <title>CYJS Graph Viewer</title>
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 1em;
-      background: #fff;
-    }
-    h1 {
-      text-align: center;
-    }
-    #cy {
-      width: 100%;
-      height: 90vh;
-      border: 1px solid #ccc;
-    }
-    #tooltip {
-      position: absolute;
-      background-color: #222;
-      color: white;
-      padding: 5px 10px;
-      font-size: 14px;
-      border-radius: 5px;
-      pointer-events: none;
-      visibility: hidden;
-    }
+    body { font-family: sans-serif; margin: 0; padding: 0; }
+    #cy { width: 100%; height: 100vh; display: block; }
   </style>
 </head>
 <body>
 
-<h1>The Beast – Transmedia Network Map</h1>
 <div id="cy"></div>
-<div id="tooltip"></div>
 
 <script>
-fetch('the_beast_cytoscape.json')
-  .then(response => response.json())
+fetch("The_Beast_transmedia_map.cyjs")
+  .then(res => res.json())
   .then(data => {
-    var cy = cytoscape({
+    cytoscape({
       container: document.getElementById('cy'),
-      elements: data,
-      layout: {
-        name: 'cose',
-        padding: 30
-      },
+      elements: data.elements,
       style: [
         {
           selector: 'node',
           style: {
-            'background-color': '#2980b9',
-            'label': 'data(label)',
-            'color': '#000',
+            'background-color': '#0074D9',
+            'label': 'data(name)',
+            'color': '#fff',
+            'font-size': 12,
             'text-valign': 'center',
-            'text-halign': 'center',
-            'font-size': 10,
-            'width': 20,
-            'height': 20
+            'text-halign': 'center'
           }
         },
         {
           selector: 'edge',
           style: {
-            'width': 1.5,
-            'line-color': '#aaa',
-            'curve-style': 'bezier',
-            'target-arrow-shape': 'triangle',
-            'target-arrow-color': '#aaa'
+            'width': 2,
+            'line-color': '#ccc',
+            'target-arrow-color': '#ccc',
+            'target-arrow-shape': 'triangle'
           }
         }
-      ]
+      ],
+      layout: { name: 'cose' } // or 'circle', 'grid', etc.
     });
-
-    const tooltip = document.getElementById('tooltip');
-
-    cy.on('mouseover', 'node', function(evt){
-      const node = evt.target;
-      tooltip.innerHTML = node.data('label');
-      tooltip.style.visibility = 'visible';
-    });
-
-    cy.on('mouseout', 'node', function(evt){
-      tooltip.style.visibility = 'hidden';
-    });
-
-    cy.on('mousemove', function(evt){
-      tooltip.style.left = evt.originalEvent.pageX + 10 + 'px';
-      tooltip.style.top = evt.originalEvent.pageY + 10 + 'px';
-    });
+  })
+  .catch(err => {
+    console.error("Error loading CYJS file:", err);
+    document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
   });
 </script>
+
 </body>
 </html>
