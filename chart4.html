@@ -9,15 +9,15 @@
     body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
     canvas { max-width: 100%; height: 600px; }
     h2 { text-align: center; }
-    select { margin-bottom: 1em; width: 100%; height: 100px; }
+    .year-checkboxes { display: flex; flex-wrap: wrap; gap: 1em; margin-bottom: 1em; }
+    .year-checkboxes label { display: flex; align-items: center; gap: 0.3em; }
   </style>
 </head>
 <body>
 
 <h2>Figure 4: Fluctuation of Channel Usage (Separately Counted)</h2>
 
-<label for="yearFilter">Filter by year (hold Ctrl/Cmd to multi-select):</label>
-<select id="yearFilter" multiple></select>
+<div class="year-checkboxes" id="yearCheckboxContainer"></div>
 
 <canvas id="channelChart"></canvas>
 
@@ -28,18 +28,13 @@
     TP: "Twitpic", TW: "Twitter", UF: "Unfiction", UST: "Ustream", YT: "YouTube"
   };
 
-  let allData = [];
   let chart;
-  let allYears = [];
-  let yearCounts = {};
-  let counts = {};
-  let labels = [];
+  const yearCheckboxContainer = document.getElementById("yearCheckboxContainer");
+  let yearCounts = {}, counts = {}, labels = [], allYears = [];
 
   fetch("emh_data.json")
     .then(res => res.json())
     .then(data => {
-      allData = data;
-
       data.forEach(row => {
         const raw = row.platform;
         if (!raw || typeof raw !== "string") return;
@@ -58,24 +53,30 @@
       allYears = Object.keys(yearCounts).map(Number).sort((a, b) => a - b);
       labels = [...new Set(Object.values(counts).flatMap(obj => Object.keys(obj)))];
 
-      populateYearFilter(allYears);
+      renderCheckboxes();
       renderChart(allYears);
     });
 
-  function populateYearFilter(years) {
-    const filter = document.getElementById("yearFilter");
-    years.forEach(y => {
-      const option = document.createElement("option");
-      option.value = y;
-      option.textContent = y;
-      option.selected = true;
-      filter.appendChild(option);
+  function renderCheckboxes() {
+    yearCheckboxContainer.innerHTML = '';
+    allYears.forEach(year => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = year;
+      input.checked = true;
+      input.addEventListener("change", updateFromCheckboxes);
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(year));
+      yearCheckboxContainer.appendChild(label);
     });
+  }
 
-    filter.addEventListener("change", () => {
-      const selected = Array.from(filter.selectedOptions).map(opt => Number(opt.value));
-      renderChart(selected);
-    });
+  function updateFromCheckboxes() {
+    const selectedYears = Array.from(
+      yearCheckboxContainer.querySelectorAll("input[type=checkbox]:checked")
+    ).map(cb => parseInt(cb.value));
+    renderChart(selectedYears);
   }
 
   function renderChart(filteredYears) {
@@ -101,7 +102,6 @@
     });
 
     if (chart) chart.destroy();
-
     const ctx = document.getElementById("channelChart");
     chart = new Chart(ctx, {
       type: "line",
@@ -120,9 +120,7 @@
           if (e.native?.detail === 2) chart.resetZoom();
         },
         plugins: {
-          legend: {
-            position: "top"
-          },
+          legend: { position: "top" },
           title: {
             display: true,
             text: "Figure 4: Fluctuation of Channel Usage (Separately Counted)"
