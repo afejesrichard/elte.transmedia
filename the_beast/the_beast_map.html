@@ -81,6 +81,15 @@ const typeColorMap = {
   "Webpage": "#3333FF"
 };
 
+const annotationGroups = [
+  { id: 'group1', label: 'Group 1', x: -66157.76, y: -38145.26, width: 15132.73, height: 12478.68 },
+  { id: 'group2', label: 'Group 2', x: -61295.72, y: -38185.67, width: 12553.40, height: 8986.16 },
+  { id: 'group3', label: 'Group 3', x: -66135.44, y: -28176.58, width: 8238.95, height: 6999.66 },
+  { id: 'group4', label: 'Group 4', x: -57513.31, y: -24778.14, width: 8780.42, height: 18070.30 },
+  { id: 'group5', label: 'Group 5', x: -50891.01, y: -39007.34, width: 7858.34, height: 9694.49 },
+  { id: 'group6', label: 'Group 6', x: -56995.33, y: -31738.38, width: 9351.68, height: 7912.68 }
+];
+
 let cy;
 
 fetch("The_Beast_transmedia_map.cyjs")
@@ -88,27 +97,34 @@ fetch("The_Beast_transmedia_map.cyjs")
   .then(data => {
     const elements = data.elements;
 
-    // Filter out FAN nodes
     const filteredNodes = elements.nodes.filter(n =>
       !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
     );
 
     const nodeIds = new Set(filteredNodes.map(n => n.data.id));
-
-    // Filter out invalid edges
     const filteredEdges = elements.edges.filter(e =>
       nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
 
-    // Betweenness range
     const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
     const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
 
-    // Init Cytoscape
+    const annotationNodes = annotationGroups.map(g => ({
+      data: {
+        id: g.id,
+        label: g.label
+      },
+      position: { x: g.x, y: g.y },
+      selectable: false,
+      grabbable: false,
+      classes: 'annotation',
+      locked: true
+    }));
+
     cy = cytoscape({
       container: document.getElementById('cy'),
       elements: {
-        nodes: filteredNodes,
+        nodes: [...filteredNodes, ...annotationNodes],
         edges: filteredEdges
       },
       layout: { name: 'preset' },
@@ -136,8 +152,29 @@ fetch("The_Beast_transmedia_map.cyjs")
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle'
           }
+        },
+        {
+          selector: '.annotation',
+          style: {
+            'shape': 'roundrectangle',
+            'background-color': 'rgba(255,255,150,0.2)',
+            'border-width': 2,
+            'border-color': '#999',
+            'width': 'data(width)',
+            'height': 'data(height)',
+            'label': 'data(label)',
+            'text-valign': 'top',
+            'text-halign': 'center',
+            'z-index': 0
+          }
         }
       ]
+    });
+
+    annotationGroups.forEach(group => {
+      const node = cy.getElementById(group.id);
+      node.data('width', group.width);
+      node.data('height', group.height);
     });
 
     createLegend();
