@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map with Popper</title>
+  <title>The Beast Map</title>
   <style>
     body { font-family: Arial; margin: 0; }
     #cy { width: 100%; height: 95vh; display: block; }
@@ -10,15 +10,26 @@
       padding: 10px;
       background: #f8f8f8;
       border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .legend, .btn {
-      margin-right: 10px;
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 12px;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      border: 1px solid black;
     }
     .popper-box {
-      background: rgba(255, 255, 150, 0.3);
+      background: rgba(255, 255, 150, 0.2);
       border: 1px dashed #999;
       border-radius: 10px;
-      padding: 2px 5px;
+      padding: 2px 6px;
       font-size: 14px;
       pointer-events: none;
     }
@@ -29,13 +40,13 @@
 </head>
 <body>
   <div id="controls">
-    <button class="btn" onclick="cy.fit()">Recenter View</button>
-    <span class="legend" id="legend"></span>
+    <button onclick="cy.fit()">Recenter View</button>
+    <div id="legend"></div>
   </div>
   <div id="cy"></div>
 
   <script>
-    const colors = {
+    const typeColors = {
       "Email": "#FF00FF",
       "Event": "#FF0000",
       "Object": "#999999",
@@ -58,78 +69,84 @@
       return min + clamped * (max - min);
     };
 
-    fetch('The_Beast_transmedia_map.cyjs')
+    fetch("The_Beast_transmedia_map.cyjs")
       .then(res => res.json())
       .then(data => {
-        const elements = {
-          nodes: data.elements.nodes
-            .filter(n => n.data.owner !== "FAN")
-            .map(n => ({
-              data: {
-                id: n.data.id,
-                label: n.data.Label || n.data.id,
-                type: n.data.type || "Other",
-                centrality: n.data.BetweennessCentrality || 0
-              },
-              position: n.position
-            })),
-          edges: data.elements.edges.filter(e =>
-            data.elements.nodes.some(n => n.data.id === e.data.source) &&
-            data.elements.nodes.some(n => n.data.id === e.data.target)
-          )
-        };
+        const filteredNodes = data.elements.nodes
+          .filter(n => n.data.owner !== "FAN")
+          .map(n => ({
+            data: {
+              id: n.data.id,
+              label: n.data.Label || n.data.id,
+              type: n.data.type || "Other",
+              centrality: parseFloat(n.data.BetweennessCentrality || 0)
+            },
+            position: n.position
+          }));
+
+        const nodeIdSet = new Set(filteredNodes.map(n => n.data.id));
+        const filteredEdges = data.elements.edges.filter(e =>
+          nodeIdSet.has(e.data.source) && nodeIdSet.has(e.data.target)
+        );
 
         const cy = cytoscape({
           container: document.getElementById('cy'),
-          elements,
+          elements: {
+            nodes: filteredNodes,
+            edges: filteredEdges
+          },
+          layout: { name: 'preset' },
           style: [
             {
               selector: 'node',
               style: {
-                'background-color': ele => colors[ele.data('type')] || colors["Other"],
+                'label': 'data(label)',
+                'background-color': ele => typeColors[ele.data('type')] || typeColors["Other"],
                 'width': ele => sizeScale(ele.data('centrality')),
                 'height': ele => sizeScale(ele.data('centrality')),
-                'label': 'data(label)',
-                'color': '#000',
                 'font-size': ele => fontScale(ele.data('centrality')),
+                'color': '#000',
                 'text-valign': 'center',
                 'text-halign': 'center',
-                'border-color': '#000',
-                'border-width': 3
+                'border-width': 3,
+                'border-color': '#000'
               }
             },
             {
               selector: 'edge',
               style: {
-                'width': 1,
-                'line-color': '#ccc',
-                'curve-style': 'straight'
+                'width': 2,
+                'line-color': '#ccc'
               }
             }
-          ],
-          layout: { name: 'preset' }
+          ]
         });
 
-        // Interactive Legend
-        const legend = document.getElementById('legend');
-        Object.keys(colors).forEach(type => {
+        // Legend
+        const legendDiv = document.getElementById('legend');
+        Object.entries(typeColors).forEach(([type, color]) => {
           const label = document.createElement('label');
-          label.style.marginRight = '10px';
-          label.innerHTML = `<input type="checkbox" checked data-type="${type}"> <span style="color:${colors[type]}">${type}</span>`;
-          legend.appendChild(label);
+          label.className = 'legend-item';
+          label.innerHTML = `
+            <div class="legend-color" style="background:${color}"></div>
+            <input type="checkbox" checked data-type="${type}"> ${type}
+          `;
+          legendDiv.appendChild(label);
         });
 
-        legend.querySelectorAll('input').forEach(checkbox => {
-          checkbox.addEventListener('change', () => {
-            const type = checkbox.getAttribute('data-type');
-            const visible = checkbox.checked;
-            cy.nodes().filter(n => n.data('type') === type).forEach(n => {
-              n.style('display', visible ? 'element' : 'none');
+        legendDiv.querySelectorAll('input[type=checkbox]').forEach(cb => {
+          cb.addEventListener('change', () => {
+            const type = cb.dataset.type;
+            const visible = cb.checked;
+            cy.nodes().forEach(n => {
+              if (n.data('type') === type) {
+                n.style('display', visible ? 'element' : 'none');
+              }
             });
           });
         });
 
-        // Popper Annotations for Groups
+        // Popper group overlays
         const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
         groupFiles.forEach((file, idx) => {
           fetch(file)
@@ -138,27 +155,25 @@
               const ids = text.trim().split(/\s+/);
               ids.forEach(id => {
                 const node = cy.getElementById(id);
-                if (node.nonempty()) {
+                if (node && node.isNode()) {
                   const ref = node.popperRef();
                   const tooltip = document.createElement('div');
-                  tooltip.classList.add('popper-box');
-                  tooltip.innerText = `Group ${idx + 1}`;
+                  tooltip.className = 'popper-box';
+                  tooltip.textContent = `Group ${idx + 1}`;
                   document.body.appendChild(tooltip);
                   Popper.createPopper(ref, tooltip, {
                     placement: 'top',
-                    modifiers: [
-                      { name: 'offset', options: { offset: [0, 8] } }
-                    ]
+                    modifiers: [{ name: 'offset', options: { offset: [0, 8] } }]
                   });
                 }
               });
             });
         });
 
-        window.cy = cy; // expose for debugging
+        window.cy = cy;
       })
       .catch(err => {
-        document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
+        document.body.innerHTML = "<p style='color:red'>Error loading graph.</p>";
         console.error(err);
       });
   </script>
