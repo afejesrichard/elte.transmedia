@@ -2,40 +2,43 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map (Combined View)</title>
+  <title>The Beast Map (Final View)</title>
   <style>
     body { margin: 0; font-family: Arial, sans-serif; }
-    #cy { height: 94vh; width: 100vw; }
+    #cy { height: 94vh; width: 100vw; display: block; }
     #controls {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
       align-items: center;
+      padding: 8px 12px;
       background: #f4f4f4;
       border-bottom: 1px solid #ccc;
-      padding: 6px 12px;
     }
     .legend-item {
-      margin-right: 10px;
+      margin-right: 12px;
       display: inline-flex;
       align-items: center;
+      font-size: 14px;
     }
     .legend-color {
       width: 14px;
       height: 14px;
-      margin-right: 5px;
+      margin-right: 6px;
       border: 1px solid black;
     }
     .btn {
-      padding: 6px 12px;
+      padding: 6px 14px;
       background: #0074D9;
       color: white;
       border: none;
-      border-radius: 3px;
+      border-radius: 4px;
       cursor: pointer;
+      margin-right: 20px;
     }
   </style>
+  <!-- Cytoscape and Hull plugin -->
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/cytoscape-hull@1.4.2/cytoscape-hull.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-hull@1.4.2/cytoscape-hull.min.js"></script>
 </head>
 <body>
 
@@ -59,16 +62,17 @@ const typeColors = {
   "Other": "#CCCCCC"
 };
 
-// Group label mapping (same filenames as group1.txt, etc.)
-const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
+const groupFiles = [
+  "group1.txt", "group2.txt", "group3.txt", 
+  "group4.txt", "group5.txt", "group6.txt"
+];
 
 let cy;
 
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
   .then(async data => {
-    // Preprocess nodes
-    const filteredNodes = data.elements.nodes
+    const nodes = data.elements.nodes
       .filter(n => n.data.owner !== "FAN")
       .map(n => ({
         data: {
@@ -80,21 +84,18 @@ fetch("The_Beast_transmedia_map.cyjs")
         position: n.position
       }));
 
-    const nodeIdSet = new Set(filteredNodes.map(n => n.data.id));
-    const filteredEdges = data.elements.edges.filter(e =>
-      nodeIdSet.has(e.data.source) && nodeIdSet.has(e.data.target)
+    const nodeIds = new Set(nodes.map(n => n.data.id));
+    const edges = data.elements.edges.filter(e =>
+      nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
 
-    const centralities = filteredNodes.map(n => n.data.centrality);
+    const centralities = nodes.map(n => n.data.centrality);
     const minC = Math.min(...centralities);
     const maxC = Math.max(...centralities);
 
     cy = cytoscape({
       container: document.getElementById('cy'),
-      elements: {
-        nodes: filteredNodes,
-        edges: filteredEdges
-      },
+      elements: { nodes, edges },
       layout: { name: 'preset' },
       style: [
         {
@@ -115,7 +116,7 @@ fetch("The_Beast_transmedia_map.cyjs")
         {
           selector: 'edge',
           style: {
-            'width': 2,
+            'width': 1,
             'line-color': '#ccc',
             'curve-style': 'straight'
           }
@@ -123,7 +124,7 @@ fetch("The_Beast_transmedia_map.cyjs")
       ]
     });
 
-    // Legend
+    // Legend + Filter
     const legend = document.getElementById("legend");
     Object.entries(typeColors).forEach(([type, color]) => {
       const item = document.createElement("label");
@@ -138,30 +139,30 @@ fetch("The_Beast_transmedia_map.cyjs")
     legend.querySelectorAll('input').forEach(cb => {
       cb.addEventListener('change', () => {
         const type = cb.dataset.type;
-        const visible = cb.checked;
+        const show = cb.checked;
         cy.nodes().forEach(n => {
           if (n.data('type') === type) {
-            n.style('display', visible ? 'element' : 'none');
+            n.style('display', show ? 'element' : 'none');
           }
         });
       });
     });
 
-    // Wait for groups to be loaded and apply hulls
+    // Group overlays (hulls)
     const groupNodes = await Promise.all(groupFiles.map(f =>
-      fetch(f).then(res => res.text()).then(txt =>
-        txt.split(/\s+/).map(id => id.trim()).filter(Boolean)
+      fetch(f).then(r => r.text()).then(txt =>
+        txt.split(/\s+/).map(s => s.trim()).filter(Boolean)
       )
     ));
 
-    const hulls = cy.hull({
-      name: "group-hulls",
+    cy.hull({
+      name: 'group-hulls',
       members: groupNodes.map((ids, i) => ({
-        name: `group${i + 1}`,
+        name: `Group ${i + 1}`,
         nodes: ids,
         style: {
           fillColor: 'rgba(255,255,0,0.15)',
-          strokeColor: '#aaa',
+          strokeColor: '#999',
           lineWidth: 2,
           label: `Group ${i + 1}`
         }
