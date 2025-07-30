@@ -19,11 +19,19 @@ fetch("The_Beast_transmedia_map.cyjs")
   .then(data => {
     const elements = data.elements;
 
-    // Hide nodes with owner === 'FAN'
+    // Filter out FAN nodes
     const filteredNodes = elements.nodes.filter(n =>
       !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
     );
 
+    const remainingNodeIds = new Set(filteredNodes.map(n => n.data.id));
+
+    // Filter out edges with missing source or target
+    const filteredEdges = elements.edges.filter(e =>
+      remainingNodeIds.has(e.data.source) && remainingNodeIds.has(e.data.target)
+    );
+
+    // Calculate BetweennessCentrality range
     const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
     const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
 
@@ -31,7 +39,7 @@ fetch("The_Beast_transmedia_map.cyjs")
       container: document.getElementById('cy'),
       elements: {
         nodes: filteredNodes,
-        edges: elements.edges
+        edges: filteredEdges
       },
       style: [
         {
