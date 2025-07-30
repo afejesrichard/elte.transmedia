@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Figure 4b: Platform Usage as Percentage per Year</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
+    canvas { max-width: 100%; height: 600px; }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+
+<h2>Figure 4b: Platform Usage (Expressed as Percentage per Year)</h2>
+<canvas id="channelChart"></canvas>
+
+<script>
+  const channelMap = {
+    EMAIL: "E-mail", FD: "Filedropper", GD: "Google Docs", INT: "Internet", IRC: "IRC",
+    MC: "Minecraft", MF: "Mediafire", RL: "Real Life", SA: "Something Awful Forum", TMB: "Tumblr",
+    TP: "Twitpic", TW: "Twitter", UF: "Unfiction", UST: "Ustream", YT: "YouTube"
+  };
+
+  fetch("emh_data.json")
+    .then(res => res.json())
+    .then(data => {
+      const counts = {};
+      const totals = {};
+      const allYears = new Set();
+      const allLabels = new Set();
+
+      data.forEach(row => {
+        const raw = row.platform;
+        if (!raw || typeof raw !== "string") return;
+        const code = raw.trim().toUpperCase();
+        const label = channelMap[code] || "Other";
+
+        const date = new Date(row.start_time);
+        const year = date.getFullYear();
+        if (isNaN(year)) return;
+
+        allYears.add(year);
+        allLabels.add(label);
+
+        if (!counts[year]) counts[year] = {};
+        if (!totals[year]) totals[year] = 0;
+
+        counts[year][label] = (counts[year][label] || 0) + 1;
+        totals[year]++;
+      });
+
+      const years = [...allYears].sort();
+      const labels = [...allLabels];
+
+      const totalPerLabel = {};
+      labels.forEach(label => {
+        totalPerLabel[label] = years.reduce((sum, y) => sum + (counts[y]?.[label] || 0), 0);
+      });
+
+      const sortedLabels = labels.sort((a, b) => totalPerLabel[b] - totalPerLabel[a]);
+
+      const datasets = sortedLabels.map((label, i) => {
+        const color = `hsl(${i * 360 / sortedLabels.length}, 70%, 45%)`;
+        const dataPoints = years.map(y => {
+          const raw = counts[y]?.[label] || 0;
+          const total = totals[y] || 1;
+          return parseFloat(((raw / total) * 100).toFixed(2));
+        });
+
+        return {
+          label: label,
+          data: dataPoints,
+          borderColor: color,
+          backgroundColor: color,
+          borderDash: [4, 4],
+          tension: 0,
+          pointRadius: 3,
+          fill: false
+        };
+      });
+
+      const ctx = document.getElementById("channelChart");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: years,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: "nearest",
+            axis: "x",
+            intersect: false
+          },
+          onClick: (e, elements, chart) => {
+            if (e.native?.detail === 2) chart.resetZoom();
+          },
+          plugins: {
+            legend: {
+              position: "top"
+            },
+            title: {
+              display: true,
+              text: "Figure 4b: Platform Usage (Expressed as Percentage per Year)"
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw;
+                  return val === 0 ? null : `${context.dataset.label}: ${val.toFixed(2)}%`;
+                }
+              }
+            },
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: "x"
+              },
+              zoom: {
+                wheel: { enabled: true },
+                pinch: { enabled: true },
+                mode: "x"
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              title: {
+                display: true,
+                text: "Platform share per year (%)"
+              },
+              ticks: {
+                callback: val => `${val}%`
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: "Year"
+              }
+            }
+          }
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Error loading chart data:", err);
+      const p = document.createElement("p");
+      p.textContent = "Error loading data.";
+      document.body.appendChild(p);
+    });
+</script>
+
+</body>
+</html>
