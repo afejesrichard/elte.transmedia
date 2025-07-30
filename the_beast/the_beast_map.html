@@ -2,177 +2,375 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map (Final View)</title>
+  <title>The Beast Map with Overlays</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
-    #cy { height: 94vh; width: 100vw; display: block; }
-    #controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      padding: 8px 12px;
-      background: #f4f4f4;
-      border-bottom: 1px solid #ccc;
-    }
-    .legend-item {
-      margin-right: 12px;
-      display: inline-flex;
-      align-items: center;
-      font-size: 14px;
-    }
-    .legend-color {
-      width: 14px;
-      height: 14px;
-      margin-right: 6px;
-      border: 1px solid black;
-    }
-    .btn {
-      padding: 6px 14px;
-      background: #0074D9;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 20px;
-    }
+    body {{{{ margin: 0; font-family: Arial, sans-serif; }}}}
+    #wrapper {{{{ position: relative; width: 100vw; height: 100vh; overflow: hidden; }}}}
+    #overlay {{{{
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }}}}
+    #cy {{{{
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }}}}
+    text {{{{
+      font-family: Arial;
+      font-size: 18px;
+      fill: black;
+      text-anchor: middle;
+    }}}}
   </style>
-  <!-- Cytoscape and Hull plugin -->
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape-hull@1.4.2/cytoscape-hull.min.js"></script>
 </head>
 <body>
-
-<div id="controls">
-  <button class="btn" onclick="cy.fit()">Recenter View</button>
-  <div id="legend"></div>
+<div id="wrapper">
+  <svg id="overlay"></svg>
+  <div id="cy"></div>
 </div>
-<div id="cy"></div>
 
 <script>
-const typeColors = {
-  "Email": "#FF00FF",
-  "Event": "#FF0000",
-  "Object": "#999999",
-  "Photo": "#FF6666",
-  "Post": "#FFFF00",
-  "Puzzle": "#FF6600",
-  "Sound": "#00FFCC",
-  "Video": "#00FF00",
-  "Webpage": "#3333FF",
-  "Other": "#CCCCCC"
-};
-
-const groupFiles = [
-  "group1.txt", "group2.txt", "group3.txt", 
-  "group4.txt", "group5.txt", "group6.txt"
+const overlayData = [
+  {
+    "group": "Group 1",
+    "points": [
+      [
+        -73684.11972344715,
+        -40469.80047120512
+      ],
+      [
+        -62985.87492152158,
+        -44344.59636482023
+      ],
+      [
+        -62124.82180729957,
+        -42897.72132529202
+      ],
+      [
+        -58631.39086331654,
+        -34106.513522301655
+      ],
+      [
+        -62105.50251528382,
+        -32038.33953660712
+      ],
+      [
+        -64535.94260612357,
+        -31945.91546173286
+      ],
+      [
+        -68963.6735817115,
+        -32028.45584381916
+      ],
+      [
+        -70305.11265027292,
+        -33690.0088725042
+      ]
+    ]
+  },
+  {
+    "group": "Group 2",
+    "points": [
+      [
+        -67532.42055187888,
+        -33732.58764675804
+      ],
+      [
+        -61687.13134524546,
+        -42638.74871021867
+      ],
+      [
+        -58291.30830349162,
+        -41816.67660797745
+      ],
+      [
+        -57676.01848761871,
+        -41652.14071228061
+      ],
+      [
+        -57205.59564541228,
+        -41503.51663542245
+      ],
+      [
+        -55856.401190099714,
+        -40786.702611474175
+      ],
+      [
+        -55059.02296946145,
+        -38177.696192689094
+      ],
+      [
+        -55109.80522678971,
+        -35106.582804345926
+      ],
+      [
+        -55684.000933951174,
+        -34795.36919030812
+      ],
+      [
+        -57658.757532341915,
+        -34006.37674470052
+      ],
+      [
+        -59059.10957001842,
+        -33895.22466200762
+      ]
+    ]
+  },
+  {
+    "group": "Group 3",
+    "points": [
+      [
+        -65467.16672928394,
+        -24716.751336537156
+      ],
+      [
+        -66824.03788348615,
+        -25042.420050944056
+      ],
+      [
+        -67604.05277781237,
+        -25825.79930064254
+      ],
+      [
+        -70214.91562155962,
+        -29018.057545835007
+      ],
+      [
+        -68949.75758567035,
+        -30821.884444460127
+      ],
+      [
+        -66780.68599065907,
+        -31636.40776743446
+      ],
+      [
+        -63918.54979155719,
+        -31618.37234447975
+      ],
+      [
+        -62107.656958405336,
+        -31331.265935457166
+      ],
+      [
+        -62055.96401436016,
+        -30576.445261346962
+      ],
+      [
+        -62629.725448974816,
+        -26217.01375592951
+      ],
+      [
+        -63980.173654938524,
+        -25158.44771731351
+      ]
+    ]
+  },
+  {
+    "group": "Group 4",
+    "points": [
+      [
+        -53163.09864048235,
+        -28879.596233986173
+      ],
+      [
+        -58945.36343666393,
+        -15782.991647897143
+      ],
+      [
+        -61084.89956501633,
+        -25396.114918691892
+      ],
+      [
+        -61423.397857519274,
+        -27705.887594543252
+      ],
+      [
+        -61863.5232469574,
+        -30987.626518524106
+      ],
+      [
+        -61749.01402115304,
+        -33341.39725420516
+      ],
+      [
+        -60214.571200539765,
+        -33695.9545768144
+      ],
+      [
+        -58605.5325673506,
+        -33773.287661996525
+      ],
+      [
+        -57086.16932738706,
+        -33737.18182834968
+      ],
+      [
+        -56110.84698604264,
+        -33668.2324790824
+      ],
+      [
+        -54664.17255431641,
+        -33338.47252747495
+      ],
+      [
+        -53290.64211577963,
+        -30244.251954449195
+      ]
+    ]
+  },
+  {
+    "group": "Group 5",
+    "points": [
+      [
+        -50858.32935072895,
+        -34200.09380045146
+      ],
+      [
+        -53746.71085450746,
+        -34557.1764380353
+      ],
+      [
+        -54405.14208357822,
+        -38244.58474394478
+      ],
+      [
+        -54780.17844064331,
+        -42377.32162336037
+      ],
+      [
+        -51784.14109070267,
+        -43814.58371960823
+      ],
+      [
+        -49748.73928399797,
+        -43533.800550661836
+      ],
+      [
+        -47001.8388250586,
+        -43041.05635565412
+      ],
+      [
+        -49166.677040987124,
+        -34701.13942616325
+      ]
+    ]
+  },
+  {
+    "group": "Group 6",
+    "points": [
+      [
+        -61822.06608581863,
+        -47539.33334668804
+      ],
+      [
+        -59079.83918777242,
+        -51956.9443584884
+      ],
+      [
+        -59088.55210479762,
+        -49215.297869815346
+      ],
+      [
+        -59101.381682905776,
+        -47225.15167659972
+      ],
+      [
+        -59741.41101657733,
+        -46385.99780952916
+      ],
+      [
+        -60929.95943923056,
+        -45015.589992831316
+      ]
+    ]
+  }
 ];
 
-let cy;
+function polygonToPath(points) {{{{
+  if (points.length < 3) return "";
+  let d = `M ${{points[0][0]}} ${{points[0][1]}}`;
+  for (let j = 1; j < points.length; j++) {{{{
+    d += ` L ${{points[j][0]}} ${{points[j][1]}}`;
+  }}}}
+  d += " Z";
+  return d;
+}}}}
+
+const svg = document.getElementById("overlay");
+overlayData.forEach(group => {{{{
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", polygonToPath(group.points));
+  path.setAttribute("fill", "rgba(255,255,0,0.15)");
+  path.setAttribute("stroke", "#999");
+  path.setAttribute("stroke-width", "2");
+  svg.appendChild(path);
+
+  const centroid = group.points.reduce((acc, [x, y]) => [acc[0] + x, acc[1] + y], [0, 0])
+    .map(val => val / group.points.length);
+  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  label.setAttribute("x", centroid[0]);
+  label.setAttribute("y", centroid[1]);
+  label.textContent = group.group;
+  svg.appendChild(label);
+}}}});
 
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
-  .then(async data => {
+  .then(data => {{{{
     const nodes = data.elements.nodes
       .filter(n => n.data.owner !== "FAN")
-      .map(n => ({
-        data: {
+      .map(n => ({{
+        data: {{{{
           id: n.data.id,
           label: n.data.Label || n.data.id,
           type: n.data.type || "Other",
           centrality: parseFloat(n.data.BetweennessCentrality || 0)
-        },
+        }}}},
         position: n.position
-      }));
+      }}));
 
     const nodeIds = new Set(nodes.map(n => n.data.id));
     const edges = data.elements.edges.filter(e =>
       nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
 
-    const centralities = nodes.map(n => n.data.centrality);
-    const minC = Math.min(...centralities);
-    const maxC = Math.max(...centralities);
-
-    cy = cytoscape({
-      container: document.getElementById('cy'),
-      elements: { nodes, edges },
-      layout: { name: 'preset' },
+    cytoscape({{{{
+      container: document.getElementById("cy"),
+      elements: {{{{ nodes, edges }}}},
+      layout: {{{{ name: "preset" }}}},
       style: [
-        {
-          selector: 'node',
-          style: {
-            'label': 'data(label)',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            'color': '#000',
-            'background-color': ele => typeColors[ele.data('type')] || typeColors["Other"],
-            'border-color': '#000',
-            'border-width': 3,
-            'width': `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
-            'height': `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
-            'font-size': `mapData(centrality, ${minC}, ${maxC}, 30, 60)`
-          }
-        },
-        {
-          selector: 'edge',
-          style: {
-            'width': 1,
-            'line-color': '#ccc',
-            'curve-style': 'straight'
-          }
-        }
+        {{{{
+          selector: "node",
+          style: {{{{
+            "label": "data(label)",
+            "background-color": "#999",
+            "border-color": "#000",
+            "border-width": 2,
+            "width": 20,
+            "height": 20,
+            "font-size": 10,
+            "color": "#000",
+            "text-valign": "center",
+            "text-halign": "center"
+          }}}}
+        }}}},
+        {{{{
+          selector: "edge",
+          style: {{{{
+            "width": 1,
+            "line-color": "#ccc",
+            "curve-style": "straight"
+          }}}}
+        }}}}
       ]
-    });
-
-    // Legend + Filter
-    const legend = document.getElementById("legend");
-    Object.entries(typeColors).forEach(([type, color]) => {
-      const item = document.createElement("label");
-      item.className = "legend-item";
-      item.innerHTML = `
-        <div class="legend-color" style="background:${color}"></div>
-        <input type="checkbox" data-type="${type}" checked> ${type}
-      `;
-      legend.appendChild(item);
-    });
-
-    legend.querySelectorAll('input').forEach(cb => {
-      cb.addEventListener('change', () => {
-        const type = cb.dataset.type;
-        const show = cb.checked;
-        cy.nodes().forEach(n => {
-          if (n.data('type') === type) {
-            n.style('display', show ? 'element' : 'none');
-          }
-        });
-      });
-    });
-
-    // Group overlays (hulls)
-    const groupNodes = await Promise.all(groupFiles.map(f =>
-      fetch(f).then(r => r.text()).then(txt =>
-        txt.split(/\s+/).map(s => s.trim()).filter(Boolean)
-      )
-    ));
-
-    cy.hull({
-      name: 'group-hulls',
-      members: groupNodes.map((ids, i) => ({
-        name: `Group ${i + 1}`,
-        nodes: ids,
-        style: {
-          fillColor: 'rgba(255,255,0,0.15)',
-          strokeColor: '#999',
-          lineWidth: 2,
-          label: `Group ${i + 1}`
-        }
-      })),
-      includeLabel: true
-    });
-
-    window.cy = cy;
-  });
+    }}}});
+  }}}});
 </script>
-
 </body>
 </html>
