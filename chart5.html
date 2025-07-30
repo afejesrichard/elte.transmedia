@@ -2,19 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Figure 6: Platform Usage as Percentage per Year</title>
+  <title>Figure 5: Fluctuation of Channel Usage (Percentages)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
     canvas { max-width: 100%; height: 600px; }
-    h2 { text-align: center; }
+    h2, h3 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 2em; font-size: 0.9em; }
+    th, td { padding: 6px 12px; border: 1px solid #ccc; text-align: center; }
+    th { background-color: #f0f0f0; }
+    tr:hover { background-color: #fafafa; }
   </style>
 </head>
 <body>
 
-<h2>Figure 6: Platform Usage (Expressed as Percentage per Year)</h2>
+<h2>Figure 5: Fluctuation of Channel Usage (Expressed as Percentages)</h2>
 <canvas id="channelChart"></canvas>
+
+<h3>Underlying Percentage Data Table</h3>
+<div style="overflow-x:auto">
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
   const channelMap = {
@@ -26,10 +38,7 @@
   fetch("emh_data.json")
     .then(res => res.json())
     .then(data => {
-      const counts = {};
-      const totals = {};
-      const allYears = new Set();
-      const allLabels = new Set();
+      const counts = {}, totals = {}, allYears = new Set(), allLabels = new Set();
 
       data.forEach(row => {
         const raw = row.platform;
@@ -53,12 +62,10 @@
 
       const years = [...allYears].sort();
       const labels = [...allLabels];
-
       const totalPerLabel = {};
       labels.forEach(label => {
         totalPerLabel[label] = years.reduce((sum, y) => sum + (counts[y]?.[label] || 0), 0);
       });
-
       const sortedLabels = labels.sort((a, b) => totalPerLabel[b] - totalPerLabel[a]);
 
       const datasets = sortedLabels.map((label, i) => {
@@ -99,12 +106,10 @@
             if (e.native?.detail === 2) chart.resetZoom();
           },
           plugins: {
-            legend: {
-              position: "top"
-            },
+            legend: { position: "top" },
             title: {
               display: true,
-              text: "Figure 6: Platform Usage (Expressed as Percentage per Year)"
+              text: "Figure 5: Fluctuation of Channel Usage (Expressed in Percentages)"
             },
             tooltip: {
               callbacks: {
@@ -115,15 +120,8 @@
               }
             },
             zoom: {
-              pan: {
-                enabled: true,
-                mode: "x"
-              },
-              zoom: {
-                wheel: { enabled: true },
-                pinch: { enabled: true },
-                mode: "x"
-              }
+              pan: { enabled: true, mode: "x" },
+              zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: "x" }
             }
           },
           scales: {
@@ -146,6 +144,28 @@
             }
           }
         }
+      });
+
+      // Update Data Table
+      const thead = document.querySelector("#dataTable thead");
+      const tbody = document.querySelector("#dataTable tbody");
+
+      thead.innerHTML = "";
+      const headerRow = document.createElement("tr");
+      headerRow.innerHTML = `<th>Platform</th>` + years.map(y => `<th>${y}</th>`).join("");
+      thead.appendChild(headerRow);
+
+      tbody.innerHTML = "";
+      sortedLabels.forEach(label => {
+        const row = document.createElement("tr");
+        const cells = years.map(y => {
+          const raw = counts[y]?.[label] || 0;
+          const total = totals[y] || 1;
+          const percent = total ? ((raw / total) * 100).toFixed(2) : "0.00";
+          return `<td>${percent}%</td>`;
+        }).join("");
+        row.innerHTML = `<td>${label}</td>` + cells;
+        tbody.appendChild(row);
       });
     })
     .catch(err => {
