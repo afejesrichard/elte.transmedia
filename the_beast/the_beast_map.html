@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <title>The Beast Map with Overlays</title>
   <style>
-    body {{{{ margin: 0; font-family: Arial, sans-serif; }}}}
-    #wrapper {{{{ position: relative; width: 100vw; height: 100vh; overflow: hidden; }}}}
+    body {{{{ margin: 0; font-family: Arial, sans-serif; }}
+    #wrapper {{{{ position: relative; width: 100vw; height: 100vh; overflow: hidden; }}
     #overlay {{{{
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 0;
-    }}}}
+    }}
     #cy {{{{
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 1;
-    }}}}
+    }}
     text {{{{
       font-family: Arial;
       font-size: 18px;
       fill: black;
       text-anchor: middle;
-    }}}}
+    }}
   </style>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
 </head>
@@ -292,15 +292,15 @@ const overlayData = [
   }
 ];
 
-function polygonToPath(points) {{{{
+function polygonToPath(points) {{{
   if (points.length < 3) return "";
-  let d = `M ${{points[0][0]}} ${{points[0][1]}}`;
+  let d = `M ${{points[0][0]} ${{points[0][1]}`;
   for (let j = 1; j < points.length; j++) {{{{
-    d += ` L ${{points[j][0]}} ${{points[j][1]}}`;
-  }}}}
+    d += ` L ${{points[j][0]} ${{points[j][1]}`;
+  }}
   d += " Z";
   return d;
-}}}}
+}}
 
 const svg = document.getElementById("overlay");
 overlayData.forEach(group => {{{{
@@ -318,7 +318,7 @@ overlayData.forEach(group => {{{{
   label.setAttribute("y", centroid[1]);
   label.textContent = group.group;
   svg.appendChild(label);
-}}}});
+}});
 
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
@@ -331,9 +331,9 @@ fetch("The_Beast_transmedia_map.cyjs")
           label: n.data.Label || n.data.id,
           type: n.data.type || "Other",
           centrality: parseFloat(n.data.BetweennessCentrality || 0)
-        }}}},
+        }},
         position: n.position
-      }}));
+      }));
 
     const nodeIds = new Set(nodes.map(n => n.data.id));
     const edges = data.elements.edges.filter(e =>
@@ -342,8 +342,8 @@ fetch("The_Beast_transmedia_map.cyjs")
 
     cytoscape({{{{
       container: document.getElementById("cy"),
-      elements: {{{{ nodes, edges }}}},
-      layout: {{{{ name: "preset" }}}},
+      elements: {{{{ nodes, edges }},
+      layout: {{{{ name: "preset" }},
       style: [
         {{{{
           selector: "node",
@@ -358,19 +358,19 @@ fetch("The_Beast_transmedia_map.cyjs")
             "color": "#000",
             "text-valign": "center",
             "text-halign": "center"
-          }}}}
-        }}}},
+          }}
+        }},
         {{{{
           selector: "edge",
           style: {{{{
             "width": 1,
             "line-color": "#ccc",
             "curve-style": "straight"
-          }}}}
-        }}}}
+          }}
+        }}
       ]
-    }}}});
-  }}}});
+    }});
+  }});
 </script>
 </body>
 </html>
