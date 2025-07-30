@@ -2,160 +2,183 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map with Overlay Zones</title>
+  <title>The Beast Transmedia Map</title>
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
-    #wrapper { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-    #overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: sans-serif;
     }
     #cy {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 1;
+      width: 100%;
+      height: calc(100vh - 60px);
+      display: block;
     }
-    text {
-      font-family: Arial;
-      font-size: 18px;
-      fill: black;
-      text-anchor: middle;
-      pointer-events: none;
+    #legend-wrapper {
+      height: 60px;
+      background: #f4f4f4;
+      border-top: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1em;
+      box-sizing: border-box;
+    }
+    #legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      border: 1px solid #000;
+    }
+    .legend-item.hidden {
+      opacity: 0.4;
+    }
+    #recenter-btn {
+      padding: 6px 12px;
+      background: #0074D9;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #recenter-btn:hover {
+      background: #005fa3;
     }
   </style>
-  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
 </head>
 <body>
-<div id="wrapper">
-  <svg id="overlay"></svg>
-  <div id="cy"></div>
+
+<div id="cy"></div>
+
+<div id="legend-wrapper">
+  <div id="legend"></div>
+  <button id="recenter-btn" onclick="cy.fit()">Recenter View</button>
 </div>
 
 <script>
-// Load the overlay hulls FIRST (async)
-let hullOverlayDrawn = false;
-let hullOverlayData = null;
-function drawOverlayPolygons(bbox) {
-  if (!hullOverlayData || !bbox) return;
-  const svg = document.getElementById("overlay");
-  svg.innerHTML = ""; // Clear
-  svg.setAttribute("viewBox", `${bbox.x1} ${bbox.y1} ${bbox.w} ${bbox.h}`);
-  hullOverlayData.forEach(group => {
-    if (group.points.length < 3) return;
-    let d = `M ${group.points[0][0]} ${group.points[0][1]}`;
-    for (let j = 1; j < group.points.length; j++) {
-      d += ` L ${group.points[j][0]} ${group.points[j][1]}`;
-    }
-    d += " Z";
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", d);
-    path.setAttribute("fill", "rgba(255,255,0,0.13)");
-    path.setAttribute("stroke", "#999");
-    path.setAttribute("stroke-width", "2");
-    svg.appendChild(path);
-    // Label
-    const centroid = group.points.reduce((acc, [x, y]) => [acc[0]+x, acc[1]+y], [0,0]).map(z => z/group.points.length);
-    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", centroid[0]);
-    label.setAttribute("y", centroid[1]);
-    label.textContent = group.group;
-    svg.appendChild(label);
-  });
-}
+const typeColorMap = {
+  "Email": "#FF00FF",
+  "Event": "#FF0000",
+  "Object": "#999999",
+  "Photo": "#FF6666",
+  "Post": "#FFFF00",
+  "Puzzle": "#FF6600",
+  "Sound": "#00FFCC",
+  "Video": "#00FF00",
+  "Webpage": "#3333FF"
+};
 
-fetch('group_hulls.json')
-  .then(resp => resp.json())
-  .then(data => {
-    hullOverlayData = data;
-    // If bbox is already known (cy is ready), redraw overlay
-    if (window._cyBboxForOverlay) drawOverlayPolygons(window._cyBboxForOverlay);
-  });
+let cy;
 
-// Cytoscape graph
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
   .then(data => {
-    const typeColors = {
-      "Email": "#FF00FF",
-      "Event": "#FF0000",
-      "Object": "#999999",
-      "Photo": "#FF6666",
-      "Post": "#FFFF00",
-      "Puzzle": "#FF6600",
-      "Sound": "#00FFCC",
-      "Video": "#00FF00",
-      "Webpage": "#3333FF",
-      "Other": "#CCCCCC"
-    };
-    const nodes = data.elements.nodes
-      .filter(n => n.data.owner !== "FAN")
-      .map(n => ({
-        data: {
-          id: n.data.id,
-          label: n.data.Label || n.data.id,
-          type: n.data.type || "Other",
-          centrality: parseFloat(n.data.BetweennessCentrality || 0)
-        },
-        position: n.position
-      }));
-    const nodeIds = new Set(nodes.map(n => n.data.id));
-    const edges = data.elements.edges.filter(e =>
+    const elements = data.elements;
+
+    // Filter out FAN nodes
+    const filteredNodes = elements.nodes.filter(n =>
+      !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
+    );
+
+    const nodeIds = new Set(filteredNodes.map(n => n.data.id));
+
+    // Filter out invalid edges
+    const filteredEdges = elements.edges.filter(e =>
       nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
-    // Centrality min/max for scaling
-    const centralities = nodes.map(n => n.data.centrality);
-    const minC = Math.min(...centralities);
-    const maxC = Math.max(...centralities);
 
-    const cy = cytoscape({
-      container: document.getElementById("cy"),
-      elements: { nodes, edges },
-      layout: { name: "preset" },
+    // Betweenness range
+    const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
+    const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
+
+    // Init Cytoscape
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: {
+        nodes: filteredNodes,
+        edges: filteredEdges
+      },
+      layout: { name: 'preset' },
       style: [
         {
-          selector: "node",
+          selector: 'node',
           style: {
-            "label": "data(label)",
-            "background-color": ele => typeColors[ele.data('type')] || typeColors["Other"],
-            "border-color": "#000",
-            "border-width": 3,
-            "width": `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
-            "height": `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
-            "font-size": `mapData(centrality, ${minC}, ${maxC}, 30, 60)`,
-            "color": "#000",
-            "text-valign": "center",
-            "text-halign": "center"
+            'label': 'data(Label)',
+            'background-color': ele => typeColorMap[ele.data('type')] || '#0074D9',
+            'color': '#000000',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'font-size': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 30, 60)`,
+            'width': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
+            'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
+            'border-width': 3,
+            'border-color': '#000000'
           }
         },
         {
-          selector: "edge",
+          selector: 'edge',
           style: {
-            "width": 2,
-            "line-color": "#ccc",
-            "curve-style": "straight"
+            'width': 2,
+            'line-color': '#ccc',
+            'target-arrow-color': '#ccc',
+            'target-arrow-shape': 'triangle'
           }
         }
       ]
     });
-    // Fit the view and set overlay bbox
-    cy.ready(function() {
-      cy.fit();
-      const bbox = cy.elements().boundingBox();
-      window._cyBboxForOverlay = bbox;
-      drawOverlayPolygons(bbox);
-    });
-    // Redraw overlay when graph is panned/zoomed
-    cy.on('pan zoom', function() {
-      const bbox = cy.elements().boundingBox();
-      window._cyBboxForOverlay = bbox;
-      drawOverlayPolygons(bbox);
-    });
-    window.cy = cy;
+
+    createLegend();
+  })
+  .catch(err => {
+    console.error("Error loading CYJS file:", err);
+    document.body.innerHTML = "<p style='color:red'>Error loading graph data.</p>";
   });
+
+function createLegend() {
+  const legend = document.getElementById("legend");
+
+  Object.entries(typeColorMap).forEach(([type, color]) => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.dataset.type = type;
+
+    const colorBox = document.createElement("div");
+    colorBox.className = "legend-color";
+    colorBox.style.backgroundColor = color;
+
+    const label = document.createElement("span");
+    label.textContent = type;
+
+    item.appendChild(colorBox);
+    item.appendChild(label);
+    legend.appendChild(item);
+
+    item.addEventListener("click", () => {
+      const isHidden = item.classList.toggle("hidden");
+      cy.batch(() => {
+        cy.nodes().forEach(node => {
+          if (node.data('type') === type) {
+            node.style('display', isHidden ? 'none' : 'element');
+          }
+        });
+      });
+    });
+  });
+}
 </script>
+
 </body>
 </html>
