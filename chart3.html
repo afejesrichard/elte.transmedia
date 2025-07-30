@@ -8,150 +8,165 @@
   <style>
     body { font-family: sans-serif; padding: 2em; max-width: 1200px; margin: auto; }
     canvas { max-width: 100%; height: 600px; }
-    h2 { text-align: center; }
+    h2, h3 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 2em; font-size: 0.9em; }
+    th, td { padding: 6px 12px; border: 1px solid #ccc; text-align: center; }
+    th { background-color: #f0f0f0; }
+    tr:hover { background-color: #fafafa; }
   </style>
 </head>
 <body>
 
-  <h2>Figure 3: Fluctuation of Dominating Voices (Expressed in Percentages)</h2>
-  <canvas id="percentageChart"></canvas>
+<h2>Figure 3: Fluctuation of Dominating Voices (Expressed in Percentages)</h2>
+<canvas id="percentageChart"></canvas>
 
-  <script>
-    fetch("emh_data.json")
-      .then(res => res.json())
-      .then(data => {
-        const counts = {};
-        const yearTotals = {};
-        const yearsSet = new Set();
-        const affiliationsSet = new Set();
+<h3>Underlying Data Table</h3>
+<div style="overflow-x:auto">
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
 
-        data.forEach(row => {
-          const aff = row.affiliation?.trim() || "N/A";
-          const date = new Date(row.start_time);
-          const year = date.getFullYear();
-          if (!isNaN(year)) {
-            yearsSet.add(year);
-            affiliationsSet.add(aff);
-            if (!counts[year]) counts[year] = {};
-            counts[year][aff] = (counts[year][aff] || 0) + 1;
-            yearTotals[year] = (yearTotals[year] || 0) + 1;
-          }
-        });
+<script>
+fetch("emh_data.json")
+  .then(res => res.json())
+  .then(data => {
+    const counts = {}, yearTotals = {}, yearsSet = new Set(), affiliationsSet = new Set();
 
-        const years = [...yearsSet].sort((a, b) => a - b);
-        const affiliations = [...affiliationsSet];
+    data.forEach(row => {
+      const aff = row.affiliation?.trim() || "N/A";
+      const date = new Date(row.start_time);
+      const year = date.getFullYear();
+      if (!isNaN(year)) {
+        yearsSet.add(year);
+        affiliationsSet.add(aff);
+        if (!counts[year]) counts[year] = {};
+        counts[year][aff] = (counts[year][aff] || 0) + 1;
+        yearTotals[year] = (yearTotals[year] || 0) + 1;
+      }
+    });
 
-        const percentageData = {};
-        affiliations.forEach(aff => {
-          percentageData[aff] = years.map(year => {
-            const count = counts[year]?.[aff] || 0;
-            const total = yearTotals[year] || 1;
-            return parseFloat(((count / total) * 100).toFixed(2));
-          });
-        });
+    const years = [...yearsSet].sort((a, b) => a - b);
+    const affiliations = [...affiliationsSet];
 
-        const totalPercents = {};
-        affiliations.forEach(aff => {
-          totalPercents[aff] = percentageData[aff].reduce((sum, val) => sum + val, 0);
-        });
-        const sortedAffiliations = affiliations.sort((a, b) => totalPercents[b] - totalPercents[a]);
+    const percentageData = {};
+    affiliations.forEach(aff => {
+      percentageData[aff] = years.map(year => {
+        const count = counts[year]?.[aff] || 0;
+        const total = yearTotals[year] || 1;
+        return parseFloat(((count / total) * 100).toFixed(2));
+      });
+    });
 
-        const datasets = sortedAffiliations.map((aff, i) => {
-          const color = `hsl(${i * 360 / affiliations.length}, 70%, 45%)`;
-          return {
-            label: aff,
-            data: percentageData[aff],
-            borderColor: color,
-            backgroundColor: color,
-            borderDash: [6, 4],
-            tension: 0,
-            pointRadius: 3,
-            fill: false
-          };
-        });
+    const totalPercents = {};
+    affiliations.forEach(aff => {
+      totalPercents[aff] = percentageData[aff].reduce((sum, val) => sum + val, 0);
+    });
+    const sortedAffiliations = affiliations.sort((a, b) => totalPercents[b] - totalPercents[a]);
 
-        const ctx = document.getElementById("percentageChart");
-        const chart = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: years,
-            datasets: datasets
+    const datasets = sortedAffiliations.map((aff, i) => {
+      const color = `hsl(${i * 360 / affiliations.length}, 70%, 45%)`;
+      return {
+        label: aff,
+        data: percentageData[aff],
+        borderColor: color,
+        backgroundColor: color,
+        borderDash: [6, 4],
+        tension: 0,
+        pointRadius: 3,
+        fill: false
+      };
+    });
+
+    const ctx = document.getElementById("percentageChart");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: years,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          mode: "nearest",
+          axis: "x",
+          intersect: false
+        },
+        onClick: (e, elements, chart) => {
+          if (e.native?.detail === 2) chart.resetZoom();
+        },
+        plugins: {
+          legend: { position: "top" },
+          title: {
+            display: true,
+            text: "Figure 3: Fluctuation of Dominating Voices (Expressed in Percentages)"
           },
-          options: {
-            responsive: true,
-            interaction: {
-              mode: "nearest",
-              axis: "x",
-              intersect: false
-            },
-            onClick: (e, elements, chart) => {
-              if (e.native?.detail === 2) chart.resetZoom();
-            },
-            plugins: {
-              legend: {
-                position: "top"
-              },
-              title: {
-                display: true,
-                text: "Figure 3: Fluctuation of Dominating Voices (Expressed in Percentages)"
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const value = context.raw;
-                    return value === 0 ? null : `${context.dataset.label}: ${value.toFixed(2)}%`;
-                  }
-                }
-              },
-              zoom: {
-                pan: {
-                  enabled: true,
-                  mode: "x"
-                },
-                zoom: {
-                  wheel: {
-                    enabled: true
-                  },
-                  pinch: {
-                    enabled: true
-                  },
-                  mode: "x"
-                },
-                limits: {
-                  x: { min: 'original', max: 'original' },
-                  y: { min: 0, max: 100 }
-                }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 100,
-                title: {
-                  display: true,
-                  text: "Percentage of narratorial dominance per year"
-                },
-                ticks: {
-                  callback: val => `${val}%`
-                }
-              },
-              x: {
-                title: {
-                  display: true,
-                  text: "Year"
-                }
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.raw;
+                return value === 0 ? null : `${context.dataset.label}: ${value.toFixed(2)}%`;
               }
             }
+          },
+          zoom: {
+            pan: { enabled: true, mode: "x" },
+            zoom: {
+              wheel: { enabled: true },
+              pinch: { enabled: true },
+              mode: "x"
+            },
+            limits: {
+              x: { min: 'original', max: 'original' },
+              y: { min: 0, max: 100 }
+            }
           }
-        });
-      })
-      .catch(err => {
-        console.error("Error loading data:", err);
-        const p = document.createElement("p");
-        p.textContent = "Error loading chart data.";
-        document.body.appendChild(p);
-      });
-  </script>
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: {
+              display: true,
+              text: "Percentage of narratorial dominance per year"
+            },
+            ticks: {
+              callback: val => `${val}%`
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Year"
+            }
+          }
+        }
+      }
+    });
+
+    // ✅ DATA TABLE rendering
+    const thead = document.querySelector("#dataTable thead");
+    const tbody = document.querySelector("#dataTable tbody");
+    thead.innerHTML = "";
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = `<th>Affiliation</th>` + years.map(y => `<th>${y}</th>`).join("");
+    thead.appendChild(headerRow);
+    tbody.innerHTML = "";
+    sortedAffiliations.forEach(aff => {
+      const row = document.createElement("tr");
+      const cells = years.map((y, i) => `<td>${percentageData[aff][i].toFixed(2)}%</td>`).join("");
+      row.innerHTML = `<td>${aff}</td>` + cells;
+      tbody.appendChild(row);
+    });
+  })
+  .catch(err => {
+    console.error("Error loading data:", err);
+    const p = document.createElement("p");
+    p.textContent = "Error loading chart data.";
+    document.body.appendChild(p);
+  });
+</script>
 
 </body>
 </html>
