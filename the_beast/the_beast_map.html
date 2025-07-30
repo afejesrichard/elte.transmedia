@@ -31,11 +31,24 @@ fetch("The_Beast_transmedia_map.cyjs")
       remainingNodeIds.has(e.data.source) && remainingNodeIds.has(e.data.target)
     );
 
-    // Calculate BetweennessCentrality range
+    // BetweennessCentrality range
     const minBC = Math.min(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
     const maxBC = Math.max(...filteredNodes.map(n => parseFloat(n.data.BetweennessCentrality || 0)));
 
-    cytoscape({
+    // Color map based on "type"
+    const typeColorMap = {
+      "Email": "#FF00FF",
+      "Event": "#FF0000",
+      "Object": "#999999",
+      "Photo": "#FF6666",
+      "Post": "#FFFF00",
+      "Puzzle": "#FF6600",
+      "Sound": "#00FFCC",
+      "Video": "#00FF00",
+      "Webpage": "#3333FF"
+    };
+
+    const cy = cytoscape({
       container: document.getElementById('cy'),
       elements: {
         nodes: filteredNodes,
@@ -46,13 +59,15 @@ fetch("The_Beast_transmedia_map.cyjs")
           selector: 'node',
           style: {
             'label': 'data(Label)',
-            'background-color': '#0074D9',
-            'color': '#fff',
+            'background-color': ele => typeColorMap[ele.data('type')] || '#0074D9',
+            'color': '#000000',
             'text-valign': 'center',
             'text-halign': 'center',
-            'font-size': 12,
+            'font-size': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 30, 60)`,
             'width': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
-            'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`
+            'height': `mapData(BetweennessCentrality, ${minBC}, ${maxBC}, 50, 500)`,
+            'border-width': 3,
+            'border-color': '#000000'
           }
         },
         {
