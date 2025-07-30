@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <title>The Beast Map with Overlays</title>
   <style>
-    body {{{{ margin: 0; font-family: Arial, sans-serif; }}
-    #wrapper {{{{ position: relative; width: 100vw; height: 100vh; overflow: hidden; }}
-    #overlay {{{{
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #wrapper { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    #overlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 0;
-    }}
-    #cy {{{{
+    }
+    #cy {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 1;
-    }}
-    text {{{{
+    }
+    text {
       font-family: Arial;
       font-size: 18px;
       fill: black;
       text-anchor: middle;
-    }}
+    }
   </style>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
 </head>
@@ -33,321 +33,63 @@
   <svg id="overlay"></svg>
   <div id="cy"></div>
 </div>
-
 <script>
-const overlayData = [
-  {
-    "group": "Group 1",
-    "points": [
-      [
-        -73684.11972344715,
-        -40469.80047120512
-      ],
-      [
-        -62985.87492152158,
-        -44344.59636482023
-      ],
-      [
-        -62124.82180729957,
-        -42897.72132529202
-      ],
-      [
-        -58631.39086331654,
-        -34106.513522301655
-      ],
-      [
-        -62105.50251528382,
-        -32038.33953660712
-      ],
-      [
-        -64535.94260612357,
-        -31945.91546173286
-      ],
-      [
-        -68963.6735817115,
-        -32028.45584381916
-      ],
-      [
-        -70305.11265027292,
-        -33690.0088725042
-      ]
-    ]
-  },
-  {
-    "group": "Group 2",
-    "points": [
-      [
-        -67532.42055187888,
-        -33732.58764675804
-      ],
-      [
-        -61687.13134524546,
-        -42638.74871021867
-      ],
-      [
-        -58291.30830349162,
-        -41816.67660797745
-      ],
-      [
-        -57676.01848761871,
-        -41652.14071228061
-      ],
-      [
-        -57205.59564541228,
-        -41503.51663542245
-      ],
-      [
-        -55856.401190099714,
-        -40786.702611474175
-      ],
-      [
-        -55059.02296946145,
-        -38177.696192689094
-      ],
-      [
-        -55109.80522678971,
-        -35106.582804345926
-      ],
-      [
-        -55684.000933951174,
-        -34795.36919030812
-      ],
-      [
-        -57658.757532341915,
-        -34006.37674470052
-      ],
-      [
-        -59059.10957001842,
-        -33895.22466200762
-      ]
-    ]
-  },
-  {
-    "group": "Group 3",
-    "points": [
-      [
-        -65467.16672928394,
-        -24716.751336537156
-      ],
-      [
-        -66824.03788348615,
-        -25042.420050944056
-      ],
-      [
-        -67604.05277781237,
-        -25825.79930064254
-      ],
-      [
-        -70214.91562155962,
-        -29018.057545835007
-      ],
-      [
-        -68949.75758567035,
-        -30821.884444460127
-      ],
-      [
-        -66780.68599065907,
-        -31636.40776743446
-      ],
-      [
-        -63918.54979155719,
-        -31618.37234447975
-      ],
-      [
-        -62107.656958405336,
-        -31331.265935457166
-      ],
-      [
-        -62055.96401436016,
-        -30576.445261346962
-      ],
-      [
-        -62629.725448974816,
-        -26217.01375592951
-      ],
-      [
-        -63980.173654938524,
-        -25158.44771731351
-      ]
-    ]
-  },
-  {
-    "group": "Group 4",
-    "points": [
-      [
-        -53163.09864048235,
-        -28879.596233986173
-      ],
-      [
-        -58945.36343666393,
-        -15782.991647897143
-      ],
-      [
-        -61084.89956501633,
-        -25396.114918691892
-      ],
-      [
-        -61423.397857519274,
-        -27705.887594543252
-      ],
-      [
-        -61863.5232469574,
-        -30987.626518524106
-      ],
-      [
-        -61749.01402115304,
-        -33341.39725420516
-      ],
-      [
-        -60214.571200539765,
-        -33695.9545768144
-      ],
-      [
-        -58605.5325673506,
-        -33773.287661996525
-      ],
-      [
-        -57086.16932738706,
-        -33737.18182834968
-      ],
-      [
-        -56110.84698604264,
-        -33668.2324790824
-      ],
-      [
-        -54664.17255431641,
-        -33338.47252747495
-      ],
-      [
-        -53290.64211577963,
-        -30244.251954449195
-      ]
-    ]
-  },
-  {
-    "group": "Group 5",
-    "points": [
-      [
-        -50858.32935072895,
-        -34200.09380045146
-      ],
-      [
-        -53746.71085450746,
-        -34557.1764380353
-      ],
-      [
-        -54405.14208357822,
-        -38244.58474394478
-      ],
-      [
-        -54780.17844064331,
-        -42377.32162336037
-      ],
-      [
-        -51784.14109070267,
-        -43814.58371960823
-      ],
-      [
-        -49748.73928399797,
-        -43533.800550661836
-      ],
-      [
-        -47001.8388250586,
-        -43041.05635565412
-      ],
-      [
-        -49166.677040987124,
-        -34701.13942616325
-      ]
-    ]
-  },
-  {
-    "group": "Group 6",
-    "points": [
-      [
-        -61822.06608581863,
-        -47539.33334668804
-      ],
-      [
-        -59079.83918777242,
-        -51956.9443584884
-      ],
-      [
-        -59088.55210479762,
-        -49215.297869815346
-      ],
-      [
-        -59101.381682905776,
-        -47225.15167659972
-      ],
-      [
-        -59741.41101657733,
-        -46385.99780952916
-      ],
-      [
-        -60929.95943923056,
-        -45015.589992831316
-      ]
-    ]
-  }
-];
+// Load overlay data from JSON file
+fetch('group_hulls.json')
+  .then(resp => resp.json())
+  .then(overlayData => {
+    // Draw SVG polygons
+    const svg = document.getElementById("overlay");
+    overlayData.forEach(group => {
+      if (group.points.length < 3) return;
+      let d = `M ${group.points[0][0]} ${group.points[0][1]}`;
+      for (let j = 1; j < group.points.length; j++) {
+        d += ` L ${group.points[j][0]} ${group.points[j][1]}`;
+      }
+      d += " Z";
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", d);
+      path.setAttribute("fill", "rgba(255,255,0,0.13)");
+      path.setAttribute("stroke", "#999");
+      path.setAttribute("stroke-width", "2");
+      svg.appendChild(path);
+      // Center label
+      const centroid = group.points.reduce((acc, [x, y]) => [acc[0]+x, acc[1]+y], [0,0]).map(z => z/group.points.length);
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("x", centroid[0]);
+      label.setAttribute("y", centroid[1]);
+      label.textContent = group.group;
+      svg.appendChild(label);
+    });
+  });
 
-function polygonToPath(points) {{{
-  if (points.length < 3) return "";
-  let d = `M ${{points[0][0]} ${{points[0][1]}`;
-  for (let j = 1; j < points.length; j++) {{{{
-    d += ` L ${{points[j][0]} ${{points[j][1]}`;
-  }}
-  d += " Z";
-  return d;
-}}
-
-const svg = document.getElementById("overlay");
-overlayData.forEach(group => {{{{
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("d", polygonToPath(group.points));
-  path.setAttribute("fill", "rgba(255,255,0,0.15)");
-  path.setAttribute("stroke", "#999");
-  path.setAttribute("stroke-width", "2");
-  svg.appendChild(path);
-
-  const centroid = group.points.reduce((acc, [x, y]) => [acc[0] + x, acc[1] + y], [0, 0])
-    .map(val => val / group.points.length);
-  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  label.setAttribute("x", centroid[0]);
-  label.setAttribute("y", centroid[1]);
-  label.textContent = group.group;
-  svg.appendChild(label);
-}});
-
+// Cytoscape visualization
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
-  .then(data => {{{{
+  .then(data => {
     const nodes = data.elements.nodes
       .filter(n => n.data.owner !== "FAN")
-      .map(n => ({{
-        data: {{{{
+      .map(n => ({
+        data: {
           id: n.data.id,
           label: n.data.Label || n.data.id,
           type: n.data.type || "Other",
           centrality: parseFloat(n.data.BetweennessCentrality || 0)
-        }},
+        },
         position: n.position
       }));
-
     const nodeIds = new Set(nodes.map(n => n.data.id));
     const edges = data.elements.edges.filter(e =>
       nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
-
-    cytoscape({{{{
+    cytoscape({
       container: document.getElementById("cy"),
-      elements: {{{{ nodes, edges }},
-      layout: {{{{ name: "preset" }},
+      elements: { nodes, edges },
+      layout: { name: "preset" },
       style: [
-        {{{{
+        {
           selector: "node",
-          style: {{{{
+          style: {
             "label": "data(label)",
             "background-color": "#999",
             "border-color": "#000",
@@ -358,19 +100,19 @@ fetch("The_Beast_transmedia_map.cyjs")
             "color": "#000",
             "text-valign": "center",
             "text-halign": "center"
-          }}
-        }},
-        {{{{
+          }
+        },
+        {
           selector: "edge",
-          style: {{{{
+          style: {
             "width": 1,
             "line-color": "#ccc",
             "curve-style": "straight"
-          }}
-        }}
+          }
+        }
       ]
-    }});
-  }});
+    });
+  });
 </script>
 </body>
 </html>
