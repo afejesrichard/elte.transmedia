@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map with Overlays</title>
+  <title>The Beast Map with Overlay Zones</title>
   <style>
     body { margin: 0; font-family: Arial, sans-serif; }
     #wrapper { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
@@ -24,6 +24,7 @@
       font-size: 18px;
       fill: black;
       text-anchor: middle;
+      pointer-events: none;
     }
   </style>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
@@ -33,40 +34,63 @@
   <svg id="overlay"></svg>
   <div id="cy"></div>
 </div>
+
 <script>
-// Load overlay data from JSON file
+// Load the overlay hulls FIRST (async)
+let hullOverlayDrawn = false;
+let hullOverlayData = null;
+function drawOverlayPolygons(bbox) {
+  if (!hullOverlayData || !bbox) return;
+  const svg = document.getElementById("overlay");
+  svg.innerHTML = ""; // Clear
+  svg.setAttribute("viewBox", `${bbox.x1} ${bbox.y1} ${bbox.w} ${bbox.h}`);
+  hullOverlayData.forEach(group => {
+    if (group.points.length < 3) return;
+    let d = `M ${group.points[0][0]} ${group.points[0][1]}`;
+    for (let j = 1; j < group.points.length; j++) {
+      d += ` L ${group.points[j][0]} ${group.points[j][1]}`;
+    }
+    d += " Z";
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", d);
+    path.setAttribute("fill", "rgba(255,255,0,0.13)");
+    path.setAttribute("stroke", "#999");
+    path.setAttribute("stroke-width", "2");
+    svg.appendChild(path);
+    // Label
+    const centroid = group.points.reduce((acc, [x, y]) => [acc[0]+x, acc[1]+y], [0,0]).map(z => z/group.points.length);
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("x", centroid[0]);
+    label.setAttribute("y", centroid[1]);
+    label.textContent = group.group;
+    svg.appendChild(label);
+  });
+}
+
 fetch('group_hulls.json')
   .then(resp => resp.json())
-  .then(overlayData => {
-    // Draw SVG polygons
-    const svg = document.getElementById("overlay");
-    overlayData.forEach(group => {
-      if (group.points.length < 3) return;
-      let d = `M ${group.points[0][0]} ${group.points[0][1]}`;
-      for (let j = 1; j < group.points.length; j++) {
-        d += ` L ${group.points[j][0]} ${group.points[j][1]}`;
-      }
-      d += " Z";
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", d);
-      path.setAttribute("fill", "rgba(255,255,0,0.13)");
-      path.setAttribute("stroke", "#999");
-      path.setAttribute("stroke-width", "2");
-      svg.appendChild(path);
-      // Center label
-      const centroid = group.points.reduce((acc, [x, y]) => [acc[0]+x, acc[1]+y], [0,0]).map(z => z/group.points.length);
-      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      label.setAttribute("x", centroid[0]);
-      label.setAttribute("y", centroid[1]);
-      label.textContent = group.group;
-      svg.appendChild(label);
-    });
+  .then(data => {
+    hullOverlayData = data;
+    // If bbox is already known (cy is ready), redraw overlay
+    if (window._cyBboxForOverlay) drawOverlayPolygons(window._cyBboxForOverlay);
   });
 
-// Cytoscape visualization
+// Cytoscape graph
 fetch("The_Beast_transmedia_map.cyjs")
   .then(res => res.json())
   .then(data => {
+    const typeColors = {
+      "Email": "#FF00FF",
+      "Event": "#FF0000",
+      "Object": "#999999",
+      "Photo": "#FF6666",
+      "Post": "#FFFF00",
+      "Puzzle": "#FF6600",
+      "Sound": "#00FFCC",
+      "Video": "#00FF00",
+      "Webpage": "#3333FF",
+      "Other": "#CCCCCC"
+    };
     const nodes = data.elements.nodes
       .filter(n => n.data.owner !== "FAN")
       .map(n => ({
@@ -82,7 +106,12 @@ fetch("The_Beast_transmedia_map.cyjs")
     const edges = data.elements.edges.filter(e =>
       nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
     );
-    cytoscape({
+    // Centrality min/max for scaling
+    const centralities = nodes.map(n => n.data.centrality);
+    const minC = Math.min(...centralities);
+    const maxC = Math.max(...centralities);
+
+    const cy = cytoscape({
       container: document.getElementById("cy"),
       elements: { nodes, edges },
       layout: { name: "preset" },
@@ -91,12 +120,12 @@ fetch("The_Beast_transmedia_map.cyjs")
           selector: "node",
           style: {
             "label": "data(label)",
-            "background-color": "#999",
+            "background-color": ele => typeColors[ele.data('type')] || typeColors["Other"],
             "border-color": "#000",
-            "border-width": 2,
-            "width": 20,
-            "height": 20,
-            "font-size": 10,
+            "border-width": 3,
+            "width": `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
+            "height": `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
+            "font-size": `mapData(centrality, ${minC}, ${maxC}, 30, 60)`,
             "color": "#000",
             "text-valign": "center",
             "text-halign": "center"
@@ -105,13 +134,27 @@ fetch("The_Beast_transmedia_map.cyjs")
         {
           selector: "edge",
           style: {
-            "width": 1,
+            "width": 2,
             "line-color": "#ccc",
             "curve-style": "straight"
           }
         }
       ]
     });
+    // Fit the view and set overlay bbox
+    cy.ready(function() {
+      cy.fit();
+      const bbox = cy.elements().boundingBox();
+      window._cyBboxForOverlay = bbox;
+      drawOverlayPolygons(bbox);
+    });
+    // Redraw overlay when graph is panned/zoomed
+    cy.on('pan zoom', function() {
+      const bbox = cy.elements().boundingBox();
+      window._cyBboxForOverlay = bbox;
+      drawOverlayPolygons(bbox);
+    });
+    window.cy = cy;
   });
 </script>
 </body>
