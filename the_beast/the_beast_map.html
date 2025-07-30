@@ -2,180 +2,176 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Beast Map</title>
+  <title>The Beast Map (Combined View)</title>
   <style>
-    body { font-family: Arial; margin: 0; }
-    #cy { width: 100%; height: 95vh; display: block; }
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #cy { height: 94vh; width: 100vw; }
     #controls {
-      padding: 10px;
-      background: #f8f8f8;
-      border-bottom: 1px solid #ccc;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      background: #f4f4f4;
+      border-bottom: 1px solid #ccc;
+      padding: 6px 12px;
     }
     .legend-item {
+      margin-right: 10px;
       display: inline-flex;
       align-items: center;
-      margin-right: 12px;
     }
     .legend-color {
-      width: 16px;
-      height: 16px;
-      margin-right: 6px;
+      width: 14px;
+      height: 14px;
+      margin-right: 5px;
       border: 1px solid black;
     }
-    .popper-box {
-      background: rgba(255, 255, 150, 0.2);
-      border: 1px dashed #999;
-      border-radius: 10px;
-      padding: 2px 6px;
-      font-size: 14px;
-      pointer-events: none;
+    .btn {
+      padding: 6px 12px;
+      background: #0074D9;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
     }
   </style>
   <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-  <script src="https://unpkg.com/cytoscape-popper/cytoscape-popper.js"></script>
+  <script src="https://unpkg.com/cytoscape-hull@1.4.2/cytoscape-hull.js"></script>
 </head>
 <body>
-  <div id="controls">
-    <button onclick="cy.fit()">Recenter View</button>
-    <div id="legend"></div>
-  </div>
-  <div id="cy"></div>
 
-  <script>
-    const typeColors = {
-      "Email": "#FF00FF",
-      "Event": "#FF0000",
-      "Object": "#999999",
-      "Photo": "#FF6666",
-      "Post": "#FFFF00",
-      "Puzzle": "#FF6600",
-      "Sound": "#00FFCC",
-      "Video": "#00FF00",
-      "Webpage": "#3333FF",
-      "Other": "#CCCCCC"
-    };
+<div id="controls">
+  <button class="btn" onclick="cy.fit()">Recenter View</button>
+  <div id="legend"></div>
+</div>
+<div id="cy"></div>
 
-    const sizeScale = (val, min = 50, max = 500) => {
-      const clamped = Math.min(1, Math.max(0, val / 1000));
-      return min + clamped * (max - min);
-    };
+<script>
+const typeColors = {
+  "Email": "#FF00FF",
+  "Event": "#FF0000",
+  "Object": "#999999",
+  "Photo": "#FF6666",
+  "Post": "#FFFF00",
+  "Puzzle": "#FF6600",
+  "Sound": "#00FFCC",
+  "Video": "#00FF00",
+  "Webpage": "#3333FF",
+  "Other": "#CCCCCC"
+};
 
-    const fontScale = (val, min = 30, max = 60) => {
-      const clamped = Math.min(1, Math.max(0, val / 1000));
-      return min + clamped * (max - min);
-    };
+// Group label mapping (same filenames as group1.txt, etc.)
+const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
 
-    fetch("The_Beast_transmedia_map.cyjs")
-      .then(res => res.json())
-      .then(data => {
-        const filteredNodes = data.elements.nodes
-          .filter(n => n.data.owner !== "FAN")
-          .map(n => ({
-            data: {
-              id: n.data.id,
-              label: n.data.Label || n.data.id,
-              type: n.data.type || "Other",
-              centrality: parseFloat(n.data.BetweennessCentrality || 0)
-            },
-            position: n.position
-          }));
+let cy;
 
-        const nodeIdSet = new Set(filteredNodes.map(n => n.data.id));
-        const filteredEdges = data.elements.edges.filter(e =>
-          nodeIdSet.has(e.data.source) && nodeIdSet.has(e.data.target)
-        );
+fetch("The_Beast_transmedia_map.cyjs")
+  .then(res => res.json())
+  .then(async data => {
+    // Preprocess nodes
+    const filteredNodes = data.elements.nodes
+      .filter(n => n.data.owner !== "FAN")
+      .map(n => ({
+        data: {
+          id: n.data.id,
+          label: n.data.Label || n.data.id,
+          type: n.data.type || "Other",
+          centrality: parseFloat(n.data.BetweennessCentrality || 0)
+        },
+        position: n.position
+      }));
 
-        const cy = cytoscape({
-          container: document.getElementById('cy'),
-          elements: {
-            nodes: filteredNodes,
-            edges: filteredEdges
-          },
-          layout: { name: 'preset' },
-          style: [
-            {
-              selector: 'node',
-              style: {
-                'label': 'data(label)',
-                'background-color': ele => typeColors[ele.data('type')] || typeColors["Other"],
-                'width': ele => sizeScale(ele.data('centrality')),
-                'height': ele => sizeScale(ele.data('centrality')),
-                'font-size': ele => fontScale(ele.data('centrality')),
-                'color': '#000',
-                'text-valign': 'center',
-                'text-halign': 'center',
-                'border-width': 3,
-                'border-color': '#000'
-              }
-            },
-            {
-              selector: 'edge',
-              style: {
-                'width': 2,
-                'line-color': '#ccc'
-              }
-            }
-          ]
+    const nodeIdSet = new Set(filteredNodes.map(n => n.data.id));
+    const filteredEdges = data.elements.edges.filter(e =>
+      nodeIdSet.has(e.data.source) && nodeIdSet.has(e.data.target)
+    );
+
+    const centralities = filteredNodes.map(n => n.data.centrality);
+    const minC = Math.min(...centralities);
+    const maxC = Math.max(...centralities);
+
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: {
+        nodes: filteredNodes,
+        edges: filteredEdges
+      },
+      layout: { name: 'preset' },
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'label': 'data(label)',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'color': '#000',
+            'background-color': ele => typeColors[ele.data('type')] || typeColors["Other"],
+            'border-color': '#000',
+            'border-width': 3,
+            'width': `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
+            'height': `mapData(centrality, ${minC}, ${maxC}, 50, 500)`,
+            'font-size': `mapData(centrality, ${minC}, ${maxC}, 30, 60)`
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 2,
+            'line-color': '#ccc',
+            'curve-style': 'straight'
+          }
+        }
+      ]
+    });
+
+    // Legend
+    const legend = document.getElementById("legend");
+    Object.entries(typeColors).forEach(([type, color]) => {
+      const item = document.createElement("label");
+      item.className = "legend-item";
+      item.innerHTML = `
+        <div class="legend-color" style="background:${color}"></div>
+        <input type="checkbox" data-type="${type}" checked> ${type}
+      `;
+      legend.appendChild(item);
+    });
+
+    legend.querySelectorAll('input').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const type = cb.dataset.type;
+        const visible = cb.checked;
+        cy.nodes().forEach(n => {
+          if (n.data('type') === type) {
+            n.style('display', visible ? 'element' : 'none');
+          }
         });
-
-        // Legend
-        const legendDiv = document.getElementById('legend');
-        Object.entries(typeColors).forEach(([type, color]) => {
-          const label = document.createElement('label');
-          label.className = 'legend-item';
-          label.innerHTML = `
-            <div class="legend-color" style="background:${color}"></div>
-            <input type="checkbox" checked data-type="${type}"> ${type}
-          `;
-          legendDiv.appendChild(label);
-        });
-
-        legendDiv.querySelectorAll('input[type=checkbox]').forEach(cb => {
-          cb.addEventListener('change', () => {
-            const type = cb.dataset.type;
-            const visible = cb.checked;
-            cy.nodes().forEach(n => {
-              if (n.data('type') === type) {
-                n.style('display', visible ? 'element' : 'none');
-              }
-            });
-          });
-        });
-
-        // Popper group overlays
-        const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
-        groupFiles.forEach((file, idx) => {
-          fetch(file)
-            .then(res => res.text())
-            .then(text => {
-              const ids = text.trim().split(/\s+/);
-              ids.forEach(id => {
-                const node = cy.getElementById(id);
-                if (node && node.isNode()) {
-                  const ref = node.popperRef();
-                  const tooltip = document.createElement('div');
-                  tooltip.className = 'popper-box';
-                  tooltip.textContent = `Group ${idx + 1}`;
-                  document.body.appendChild(tooltip);
-                  Popper.createPopper(ref, tooltip, {
-                    placement: 'top',
-                    modifiers: [{ name: 'offset', options: { offset: [0, 8] } }]
-                  });
-                }
-              });
-            });
-        });
-
-        window.cy = cy;
-      })
-      .catch(err => {
-        document.body.innerHTML = "<p style='color:red'>Error loading graph.</p>";
-        console.error(err);
       });
-  </script>
+    });
+
+    // Wait for groups to be loaded and apply hulls
+    const groupNodes = await Promise.all(groupFiles.map(f =>
+      fetch(f).then(res => res.text()).then(txt =>
+        txt.split(/\s+/).map(id => id.trim()).filter(Boolean)
+      )
+    ));
+
+    const hulls = cy.hull({
+      name: "group-hulls",
+      members: groupNodes.map((ids, i) => ({
+        name: `group${i + 1}`,
+        nodes: ids,
+        style: {
+          fillColor: 'rgba(255,255,0,0.15)',
+          strokeColor: '#aaa',
+          lineWidth: 2,
+          label: `Group ${i + 1}`
+        }
+      })),
+      includeLabel: true
+    });
+
+    window.cy = cy;
+  });
+</script>
+
 </body>
 </html>
