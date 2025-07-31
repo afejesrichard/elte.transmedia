@@ -50,6 +50,11 @@ function renderTable(csvUrl, tableId) {
     const data = csvToArray(csv, ';');
     if (data.length === 0) return;
     const cols = Object.keys(data[0]).map(col => ({ title: col, data: col }));
+    // Destroy any existing table before re-initializing
+    if ($.fn.DataTable.isDataTable('#' + tableId)) {
+      $('#' + tableId).DataTable().destroy();
+      $('#' + tableId).empty();
+    }
     $('#' + tableId).DataTable({
       data: data,
       columns: cols,
@@ -65,7 +70,6 @@ function renderTable(csvUrl, tableId) {
 }
 
 $(function() {
-  // Show/hide logic
   $('#nodesBtn').click(function() {
     $(this).addClass('active'); $('#edgesBtn').removeClass('active');
     $('#nodesTable').show(); $('#edgesTable').hide();
@@ -74,8 +78,7 @@ $(function() {
     $(this).addClass('active'); $('#nodesBtn').removeClass('active');
     $('#edgesTable').show(); $('#nodesTable').hide();
   });
-
-  // Load and render both tables
+  // Load and render both tables independently!
   renderTable('nodes.csv', 'nodesTable');
   renderTable('edges.csv', 'edgesTable');
 });
