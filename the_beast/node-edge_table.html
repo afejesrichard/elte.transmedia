@@ -29,12 +29,11 @@
       <button id="edgesBtn">Edge Table</button>
     </div>
     <div id="table-area">
-      <table id="nodesTable" class="display" style="width:100%"></table>
-      <table id="edgesTable" class="display" style="width:100%; display:none"></table>
+      <table id="nodesTable" class="display" style="width:100%;"></table>
+      <table id="edgesTable" class="display" style="width:100%; display:none;"></table>
     </div>
   </div>
 <script>
-// Helper to load semicolon CSV to array of objects
 function csvToArray(str, delimiter = ';') {
   const rows = str.replace(/\r/g, '').split('\n').filter(Boolean);
   if (rows.length < 2) return [];
@@ -44,6 +43,9 @@ function csvToArray(str, delimiter = ';') {
     return headers.reduce((obj, header, i) => (obj[header] = values[i] || "", obj), {});
   });
 }
+
+let nodesTableInitialized = false;
+let edgesTableInitialized = false;
 
 function renderTable(csvUrl, tableId) {
   $.get(csvUrl, function(csv) {
@@ -66,21 +68,26 @@ function renderTable(csvUrl, tableId) {
       scrollX: true,
       responsive: true
     });
+    if (tableId === 'nodesTable') nodesTableInitialized = true;
+    if (tableId === 'edgesTable') edgesTableInitialized = true;
   });
 }
 
 $(function() {
+  // Only initialize the visible table at first
+  renderTable('nodes.csv', 'nodesTable');
+
   $('#nodesBtn').click(function() {
     $(this).addClass('active'); $('#edgesBtn').removeClass('active');
-    $('#nodesTable').show(); $('#edgesTable').hide();
+    $('#edgesTable').hide(); $('#nodesTable').show();
+    if (!nodesTableInitialized) renderTable('nodes.csv', 'nodesTable');
   });
+
   $('#edgesBtn').click(function() {
     $(this).addClass('active'); $('#nodesBtn').removeClass('active');
-    $('#edgesTable').show(); $('#nodesTable').hide();
+    $('#nodesTable').hide(); $('#edgesTable').show();
+    if (!edgesTableInitialized) renderTable('edges.csv', 'edgesTable');
   });
-  // Load and render both tables independently!
-  renderTable('nodes.csv', 'nodesTable');
-  renderTable('edges.csv', 'edgesTable');
 });
 </script>
 </body>
