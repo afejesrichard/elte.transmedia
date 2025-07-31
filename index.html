@@ -2,64 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Transmedia Data Appendix</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" 
-        href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <script 
-    src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <title>Narratologies of Transmedia Networks: Digital Appendix Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: sans-serif; padding: 2em; }
-    table { width: 100%; margin-top: 2em; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f7f8fa; }
+    h1 { text-align: center; margin-top: 2.1em; font-size: 2.05em; letter-spacing: 0.01em; }
+    h2 { text-align: center; margin: 0.25em auto 1.25em auto; color: #666; font-size: 1.1em; font-weight: normal; }
+    .meta { text-align: center; color: #888; font-size: 1em; margin-bottom: 1.1em; }
+    p { text-align: center; max-width: 680px; margin: 0.7em auto 2.1em auto; color: #333; }
+    .cards {
+      max-width: 1100px;
+      margin: 2em auto 3em auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 1.7em;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 18px #9992;
+      padding: 1.6em 1.3em 1.4em 1.3em;
+      transition: box-shadow 0.18s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 180px;
+    }
+    .card:hover {
+      box-shadow: 0 4px 28px #6663;
+      transform: translateY(-3px) scale(1.01);
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 1.17em;
+      margin-bottom: 0.65em;
+      color: #0074D9;
+    }
+    .card-desc {
+      color: #252525;
+      font-size: 1em;
+      flex: 1;
+      margin-bottom: 1em;
+    }
+    .card-link {
+      display: inline-block;
+      background: #0074D9;
+      color: #fff;
+      border-radius: 5px;
+      padding: 0.5em 1.4em;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      box-shadow: 0 2px 8px #0074d930;
+      transition: background 0.15s, box-shadow 0.15s;
+      margin-top: 0.5em;
+      text-align: center;
+    }
+    .card-link:hover {
+      background: #004e93;
+      box-shadow: 0 2px 16px #0074d980;
+    }
+    @media (max-width: 700px) {
+      h1 { font-size: 1.25em; }
+      .cards { grid-template-columns: 1fr; }
+      .card { min-height: 130px; }
+    }
   </style>
 </head>
 <body>
-  <h1>Transmedia Dissertation Appendix</h1>
-  <p>This is an interactive version of the data appendix. You can search, sort, and explore the dataset.</p>
-
-  <table id="dataTable" class="display"></table>
-
-  <script>
-    function renderTableFromXLSX(workbook) {
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      const headers = json[0];
-      const rows = json.slice(1);
-
-      const table = $('#dataTable');
-      table.empty();
-
-      // Create header
-      const thead = $('<thead><tr></tr></thead>');
-      headers.forEach(h => thead.find('tr').append(`<th>${h}</th>`));
-      table.append(thead);
-
-      // Create body
-      const tbody = $('<tbody></tbody>');
-      rows.forEach(row => {
-        const tr = $('<tr></tr>');
-        headers.forEach((_, i) => {
-          let cell = row[i];
-          if (cell instanceof Date) {
-            cell = cell.toISOString().split('T')[0]; // format as YYYY-MM-DD
-          }
-          tr.append(`<td>${cell ?? ''}</td>`);
-        });
-        tbody.append(tr);
-      });
-      table.append(tbody);
-
-      table.DataTable();
-    }
-
-    // Load the Excel file on startup
-    fetch('EMH_cleaned_nodes_2025.xlsx')
-      .then(res => res.arrayBuffer())
-      .then(buffer => {
-        const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
-        renderTableFromXLSX(workbook);
-      });
-  </script>
+  <h1>Narratologies of Transmedia Networks</h1>
+  <h2>Digital Appendix &middot; Eötvös Loránd University Doctoral School of Literary Studies</h2>
+  <div class="meta">
+    <b>Author:</b> Richárd Fejes &middot; <b>Supervisor:</b> Dr. Gábor Tamás Molnár<br>
+    <b>Head of Doctoral School:</b> Dr. Zoltán Kulcsár-Szabó &middot; <b>Submission:</b> 2025
+  </div>
+  <p>
+    Welcome to the digital appendix for the doctoral dissertation <i>Narratologies of Transmedia Networks</i>.<br>
+    Browse interactive charts, tables, and the full transmedia network map using the links below.
+  </p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-title">Figure 1: Percentages of Narrative Instance Affiliation</div>
+      <div class="card-desc">Interactive pie chart of narrative instance affiliations (per year and total). See who dominates, and access the underlying data.</div>
+      <a href="chart1.html" class="card-link">Open Figure 1</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Figure 2: Fluctuation of Dominating Voices (Absolute)</div>
+      <div class="card-desc">See the year-by-year line chart showing the rise and fall of different narrative voices, with a data table and filtering by year.</div>
+      <a href="chart2.html" class="card-link">Open Figure 2</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Figure 3: Fluctuation of Dominating Voices (Percentages)</div>
+      <div class="card-desc">The same voices, but now shown as a percentage of total narrative events per year. Compare proportional shifts across time.</div>
+      <a href="chart3.html" class="card-link">Open Figure 3</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Figure 4: Channel Usage Over Time (Sites & Platforms)</div>
+      <div class="card-desc">Line chart of channel/platform usage (e.g. YouTube, Tumblr, SA), with year-by-year filtering and an underlying data table.</div>
+      <a href="chart4.html" class="card-link">Open Figure 4</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Figure 5: Channel Usage Percentages</div>
+      <div class="card-desc">Like Figure 4, but showing the platform share per year as a percentage of all events.</div>
+      <a href="chart5.html" class="card-link">Open Figure 5</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Interactive Transmedia Network Map</div>
+      <div class="card-desc">Explore the full ARG network as an interactive, filterable map. Click any node for details. Switch colors by group or type.<br><br><b>Tip:</b> This is the recommended entry point for the transmedia structure.</div>
+      <a href="the_beast_map.html" class="card-link">Open Network Map</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Network Data Tables (Node/Edge)</div>
+      <div class="card-desc">Browse, search, and export the complete node and edge tables used for all charts and the network map.</div>
+      <a href="node-edge_table.html" class="card-link">Open Data Tables</a>
+    </div>
+  </div>
 </body>
 </html>
