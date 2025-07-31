@@ -29,8 +29,7 @@
       <button id="edgesBtn">Edge Table</button>
     </div>
     <div id="table-area">
-      <table id="nodesTable" class="display" style="width:100%;"></table>
-      <table id="edgesTable" class="display" style="width:100%; display:none;"></table>
+      <div id="table-holder"></div>
     </div>
   </div>
 <script>
@@ -44,19 +43,13 @@ function csvToArray(str, delimiter = ';') {
   });
 }
 
-let nodesTableInitialized = false;
-let edgesTableInitialized = false;
-
 function renderTable(csvUrl, tableId) {
+  // Remove any previous table
+  $("#table-holder").empty().append(`<table id="${tableId}" class="display" style="width:100%"></table>`);
   $.get(csvUrl, function(csv) {
     const data = csvToArray(csv, ';');
     if (data.length === 0) return;
     const cols = Object.keys(data[0]).map(col => ({ title: col, data: col }));
-    // Destroy any existing table before re-initializing
-    if ($.fn.DataTable.isDataTable('#' + tableId)) {
-      $('#' + tableId).DataTable().destroy();
-      $('#' + tableId).empty();
-    }
     $('#' + tableId).DataTable({
       data: data,
       columns: cols,
@@ -68,25 +61,21 @@ function renderTable(csvUrl, tableId) {
       scrollX: true,
       responsive: true
     });
-    if (tableId === 'nodesTable') nodesTableInitialized = true;
-    if (tableId === 'edgesTable') edgesTableInitialized = true;
   });
 }
 
 $(function() {
-  // Only initialize the visible table at first
+  // Start with node table only
   renderTable('nodes.csv', 'nodesTable');
 
   $('#nodesBtn').click(function() {
     $(this).addClass('active'); $('#edgesBtn').removeClass('active');
-    $('#edgesTable').hide(); $('#nodesTable').show();
-    if (!nodesTableInitialized) renderTable('nodes.csv', 'nodesTable');
+    renderTable('nodes.csv', 'nodesTable');
   });
 
   $('#edgesBtn').click(function() {
     $(this).addClass('active'); $('#nodesBtn').removeClass('active');
-    $('#nodesTable').hide(); $('#edgesTable').show();
-    if (!edgesTableInitialized) renderTable('edges.csv', 'edgesTable');
+    renderTable('edges.csv', 'edgesTable');
   });
 });
 </script>
