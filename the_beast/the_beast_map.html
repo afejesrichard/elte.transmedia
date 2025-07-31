@@ -79,6 +79,22 @@
 
 <div id="cy"></div>
 
+<div id="node-tooltip" style="
+  display:none;
+  position:absolute;
+  min-width:240px;
+  background:rgba(255,255,255,0.98);
+  box-shadow:0 8px 32px 0 #3335,0 1.5px 8px #bbb9;
+  border-radius:13px;
+  padding:16px 18px;
+  z-index:99;
+  pointer-events:auto;
+  font-size:1.1em;
+  border:1px solid #8882;
+  color:#222;
+"></div>
+
+
 <div id="legend-wrapper">
   <div style="display: flex; align-items: center;">
     <span id="mode-label">Color: Type</span>
@@ -286,6 +302,49 @@ Promise.all(groupFiles.map(f =>
       updateLegend("type");
     });
 });
+
+
+// ---- NODE TOOLTIP LOGIC ----
+
+const tooltip = document.getElementById("node-tooltip");
+
+function showNodeTooltip(node, evt) {
+  // Build pretty info HTML
+  let html = `<b style="font-size:1.16em;">${node.data("Label") || node.data("name")}</b><br><hr style="margin:6px 0;">`;
+  Object.entries(node.data()).forEach(([k, v]) => {
+    if (k === "Label") return; // already shown
+    html += `<b>${k}</b>: ${String(v).replaceAll("\n", "<br>")}<br>`;
+  });
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+  // Calculate screen position of node (viewport->client)
+  let pos = node.renderedPosition();
+  let cx = cy.container().getBoundingClientRect();
+  tooltip.style.left = (pos.x + cx.left + 20) + "px";
+  tooltip.style.top = (pos.y + cx.top - 10) + "px";
+}
+
+function hideNodeTooltip() {
+  tooltip.style.display = "none";
+}
+
+// Click on node: show tooltip
+cy.on('tap', 'node', function(evt) {
+  showNodeTooltip(this, evt);
+  evt.stopPropagation();
+});
+
+// Click anywhere else: hide tooltip
+cy.on('tap', function(evt) {
+  if (evt.target === cy) hideNodeTooltip();
+});
+
+// Also hide tooltip on zoom/pan (optional for mobile)
+cy.on('zoom pan', hideNodeTooltip);
+
+// Optional: hide on scroll out of viewport
+window.addEventListener('scroll', hideNodeTooltip);
+
 </script>
 </body>
 </html>
