@@ -101,25 +101,38 @@ const typeColorMap = {
   "Other": "#0074D9"
 };
 
-// Distinct colors for up to 6 groups (modify/add as needed)
+// Distinct colors for up to 6 groups
 const groupColors = [
-  "#cc2a36", "#3366cc", "#f47c3c", "#2ecca3", "#ad0bcc", "#e6d72a", "#8085e9", "#ffb300"
+  "#cc2a36", "#3366cc", "#f47c3c", "#2ecca3", "#ad0bcc", "#e6d72a"
 ];
 
-const groupFiles = ['group1.txt', 'group2.txt', 'group3.txt', 'group4.txt', 'group5.txt', 'group6.txt'];
+const groupFiles = [
+  'group1.txt', 'group2.txt', 'group3.txt',
+  'group4.txt', 'group5.txt', 'group6.txt'
+];
 
 let cy;
-let groupMembership = {}; // id -> group idx
+let groupMembership = {}; // node 'name'/id -> group idx
 let colorMode = "type"; // or "group"
 
 function setNodeColors(mode) {
   cy.nodes().forEach(node => {
     if (mode === "group") {
-      let groupIdx = groupMembership[node.id()];
-      node.style("background-color", typeof groupIdx === "number" ? groupColors[groupIdx] : "#bbb");
+      let groupIdx = groupMembership[node.data("name")];
+      if (typeof groupIdx === "number") {
+        node.style("background-color", groupColors[groupIdx]);
+        node.style("box-shadow", `0 0 24px 12px ${groupColors[groupIdx]}50`);
+        node.style("filter", "drop-shadow(0 0 10px " + groupColors[groupIdx] + ")");
+      } else {
+        node.style("background-color", "#bbb");
+        node.style("box-shadow", "none");
+        node.style("filter", "none");
+      }
     } else {
       const t = node.data("type");
       node.style("background-color", typeColorMap[t] || "#0074D9");
+      node.style("box-shadow", "none");
+      node.style("filter", "none");
     }
   });
   updateLegend(mode);
@@ -163,20 +176,19 @@ function updateLegend(mode) {
 function assignGroupsToNodes(nodes, groupLists) {
   const membership = {};
   for (let g = 0; g < groupLists.length; g++) {
-    groupLists[g].forEach(id => {
-      membership[id] = g;
+    groupLists[g].forEach(name => {
+      membership[name] = g;
     });
   }
   return membership;
 }
 
-// Load group lists
+// Load group lists using "name" for matching
 Promise.all(groupFiles.map(f =>
   fetch(f).then(res => res.text()).then(txt =>
     txt.split('\n').map(x => x.trim().replace(/^"|"$/g, '')).filter(Boolean)
   )
 )).then(groupLists => {
-  // Map from label to node id after the graph loads
   fetch("The_Beast_transmedia_map.cyjs")
     .then(res => res.json())
     .then(data => {
@@ -185,15 +197,8 @@ Promise.all(groupFiles.map(f =>
       const filteredNodes = elements.nodes.filter(n =>
         !(n.data.owner && n.data.owner.toUpperCase() === 'FAN')
       );
-      // Build label->id mapping for group assignment
-      const labelToId = {};
-      filteredNodes.forEach(n => { labelToId[n.data.Label] = n.data.id; });
-
-      // Map group membership using node ids
-      const groupIdLists = groupLists.map(list =>
-        list.map(lbl => labelToId[lbl]).filter(x => !!x)
-      );
-      groupMembership = assignGroupsToNodes(filteredNodes.map(n => n.data.id), groupIdLists);
+      // Map group membership using the "name" field
+      groupMembership = assignGroupsToNodes(filteredNodes, groupLists);
 
       const nodeIds = new Set(filteredNodes.map(n => n.data.id));
       const filteredEdges = elements.edges.filter(e =>
