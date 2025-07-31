@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EverymanHYBRID Node Table</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      padding: 2em; 
+      background: #f7f7fa;
+      color: #222; 
+    }
+    h1 { font-size: 2em; margin-bottom: 0.5em;}
+    table.dataTable thead th {
+      background: #263159;
+      color: #fff;
+      font-weight: 600;
+    }
+    table.dataTable { 
+      border-radius: 1em; 
+      overflow: hidden; 
+      box-shadow: 0 8px 30px rgba(60,60,120,0.1); 
+      background: #fff;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+      border-radius: 1em;
+      border: 1px solid #263159;
+      padding: 0.2em 1em;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      background: #263159;
+      color: #fff !important;
+      border-radius: 0.5em;
+      margin: 0 0.2em;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: #3e4c8a;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>EverymanHYBRID Node Table</h1>
+  <p>This is a searchable and sortable table of the EMH dataset. Use the search box to filter results. Click headers to sort.</p>
+  <table id="nodeTable" class="display" width="100%"></table>
+
+  <script>
+    // Helper: nice display order of columns
+    const columnOrder = [
+      "Id", "Label", "Node type", "platform", "affiliation", "owner", "start_time", "title"
+    ];
+
+    // Fetch and render
+    fetch('emh_data.json')
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.length) {
+          $('#nodeTable').html('<tr><td>No data found.</td></tr>');
+          return;
+        }
+        // All columns that actually exist
+        let allColumns = new Set();
+        data.forEach(row => Object.keys(row).forEach(k => allColumns.add(k)));
+        allColumns = Array.from(allColumns);
+
+        // Sort columns by preferred order, then rest
+        const columns = columnOrder.concat(allColumns.filter(k => !columnOrder.includes(k)))
+          .map(key => ({
+            title: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
+            data: key
+          }));
+
+        // Build DataTable
+        $('#nodeTable').DataTable({
+          data: data,
+          columns: columns,
+          pageLength: 25,
+          responsive: true,
+          order: [[0, 'asc']],
+          language: { search: "Quick search:" }
+        });
+      });
+  </script>
+</body>
+</html>
