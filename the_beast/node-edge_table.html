@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Beast ARG Node/Edge Tables</title>
+  <title>The Beast ARG Network Tables</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 0; background: #fafafe; }
@@ -34,26 +34,27 @@
     </div>
   </div>
 <script>
-// Helper to load CSV to array of objects
-function csvToArray(str, delimiter = ',') {
-  const rows = str.split('\n').filter(Boolean);
-  const headers = rows[0].split(delimiter);
+// Helper to load semicolon CSV to array of objects
+function csvToArray(str, delimiter = ';') {
+  const rows = str.replace(/\r/g, '').split('\n').filter(Boolean);
+  if (rows.length < 2) return [];
+  const headers = rows[0].split(delimiter).map(h => h.trim());
   return rows.slice(1).map(row => {
-    const values = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g).map(v=>v.replace(/^"|"$/g,''));
-    return headers.reduce((obj, header, i) => (obj[header.trim()] = values[i] || "", obj), {});
+    const values = row.split(delimiter);
+    return headers.reduce((obj, header, i) => (obj[header] = values[i] || "", obj), {});
   });
 }
 
-function renderTable(csvUrl, tableId, tableTitle) {
+function renderTable(csvUrl, tableId) {
   $.get(csvUrl, function(csv) {
-    const data = csvToArray(csv);
-    if (data.length == 0) return;
+    const data = csvToArray(csv, ';');
+    if (data.length === 0) return;
     const cols = Object.keys(data[0]).map(col => ({ title: col, data: col }));
     $('#' + tableId).DataTable({
       data: data,
       columns: cols,
       dom: 'Bfrtip',
-      buttons: ['copy', 'csv', 'excel', 'print'],
+      buttons: ['copy', 'csv', 'print'],
       pageLength: 25,
       order: [],
       destroy: true,
@@ -75,8 +76,8 @@ $(function() {
   });
 
   // Load and render both tables
-  renderTable('nodes.csv', 'nodesTable', 'Node Table');
-  renderTable('edges.csv', 'edgesTable', 'Edge Table');
+  renderTable('nodes.csv', 'nodesTable');
+  renderTable('edges.csv', 'edgesTable');
 });
 </script>
 </body>
