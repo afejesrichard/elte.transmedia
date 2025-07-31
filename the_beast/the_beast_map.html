@@ -89,6 +89,7 @@
       color: #222;
       max-width: 400px;
       word-break: break-word;
+      transition: left 0.1s, top 0.1s;
     }
   </style>
 </head>
@@ -154,7 +155,6 @@ function setNodeColors(mode) {
       let groupIdx = groupMembership[node.data("name")];
       if (typeof groupIdx === "number") {
         node.style("background-color", groupColors[groupIdx]);
-        // Big glow!
         node.style("box-shadow", `0 0 80px 32px ${groupColors[groupIdx]}cc`);
         node.style("filter", `drop-shadow(0 0 64px ${groupColors[groupIdx]})`);
       } else {
@@ -231,6 +231,17 @@ function assignGroupsToNodes(nodes, groupLists) {
   return membership;
 }
 
+// List of fields to display in tooltip
+const tooltipFields = [
+  {key: "Label", label: "Label"},
+  {key: "type", label: "Type"},
+  {key: "Platform", label: "Platform"},
+  {key: "Affiliation", label: "Affiliation"},
+  {key: "outdegree", label: "Outdegree"},
+  {key: "indegree", label: "Indegree"},
+  {key: "BetweennessCentrality", label: "Betweenness Centrality"}
+];
+
 // Load group lists using "name" for matching
 Promise.all(groupFiles.map(f =>
   fetch(f).then(res => res.text()).then(txt =>
@@ -294,16 +305,33 @@ Promise.all(groupFiles.map(f =>
       const tooltip = document.getElementById("node-tooltip");
       function showNodeTooltip(node, evt) {
         let html = `<b style="font-size:1.16em;">${node.data("Label") || node.data("name")}</b><br><hr style="margin:6px 0;">`;
-        Object.entries(node.data()).forEach(([k, v]) => {
-          if (k === "Label") return;
-          html += `<b>${k}</b>: ${String(v).replaceAll("\n", "<br>")}<br>`;
+        tooltipFields.forEach(f => {
+          let val = node.data(f.key);
+          if (val !== undefined && f.key !== "Label") {
+            html += `<b>${f.label}</b>: ${String(val).replaceAll("\n", "<br>")}<br>`;
+          }
         });
         tooltip.innerHTML = html;
         tooltip.style.display = "block";
+        // Position smartly: default right, but shift if would overflow
         let pos = node.renderedPosition();
         let cx = cy.container().getBoundingClientRect();
-        tooltip.style.left = (pos.x + cx.left + 20) + "px";
-        tooltip.style.top = (pos.y + cx.top - 10) + "px";
+        let tooltipW = tooltip.offsetWidth || 260;
+        let tooltipH = tooltip.offsetHeight || 160;
+        let pageW = window.innerWidth;
+        let pageH = window.innerHeight;
+        // Default position
+        let left = pos.x + cx.left + 20;
+        let top = pos.y + cx.top - 10;
+        // Adjust if would overflow right
+        if (left + tooltipW > pageW - 20) left = pageW - tooltipW - 20;
+        // Adjust if would overflow bottom
+        if (top + tooltipH > pageH - 20) top = pageH - tooltipH - 20;
+        // Adjust if would overflow top/left
+        if (left < 5) left = 5;
+        if (top < 5) top = 5;
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
       }
       function hideNodeTooltip() { tooltip.style.display = "none"; }
       cy.on('tap', 'node', function(evt) {
@@ -322,7 +350,6 @@ Promise.all(groupFiles.map(f =>
       switchEl.addEventListener('change', function() {
         colorMode = switchEl.checked ? "group" : "type";
         modeLabel.textContent = "Color: " + (colorMode === "type" ? "Type" : "Group");
-        // Reset all filters to enabled on switch
         activeFilters = {};
         setNodeColors(colorMode);
       });
