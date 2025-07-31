@@ -37,12 +37,16 @@
       align-items: center;
       cursor: pointer;
       margin-right: 10px;
+      user-select: none;
     }
     .legend-color {
       width: 16px;
       height: 16px;
       margin-right: 6px;
       border: 1px solid #000;
+    }
+    .legend-item input[type=checkbox] {
+      margin-right: 5px;
     }
     .legend-item.hidden {
       opacity: 0.4;
@@ -79,7 +83,7 @@
   <div style="display: flex; align-items: center;">
     <span id="mode-label">Color: Type</span>
     <label id="switch">
-      <input type="checkbox" id="colorSwitch" style="margin-right:5px;">
+      <input type="checkbox" id="colorSwitch">
       Group coloring
     </label>
     <div id="legend"></div>
@@ -101,11 +105,9 @@ const typeColorMap = {
   "Other": "#0074D9"
 };
 
-// Distinct colors for up to 6 groups
 const groupColors = [
   "#cc2a36", "#3366cc", "#f47c3c", "#2ecca3", "#ad0bcc", "#e6d72a"
 ];
-
 const groupFiles = [
   'group1.txt', 'group2.txt', 'group3.txt',
   'group4.txt', 'group5.txt', 'group6.txt'
@@ -114,15 +116,28 @@ const groupFiles = [
 let cy;
 let groupMembership = {}; // node 'name'/id -> group idx
 let colorMode = "type"; // or "group"
+let activeFilters = {}; // {type/group idx: true/false}
 
 function setNodeColors(mode) {
   cy.nodes().forEach(node => {
+    // Should be visible? (legend-based filter)
+    let show = true;
+    if (mode === "type") {
+      let t = node.data("type");
+      show = activeFilters[t] !== false;
+    } else {
+      let groupIdx = groupMembership[node.data("name")];
+      show = typeof groupIdx === "number" && activeFilters[groupIdx] !== false;
+    }
+    node.style("display", show ? "element" : "none");
+    // Color and glow
     if (mode === "group") {
       let groupIdx = groupMembership[node.data("name")];
       if (typeof groupIdx === "number") {
         node.style("background-color", groupColors[groupIdx]);
-        node.style("box-shadow", `0 0 24px 12px ${groupColors[groupIdx]}50`);
-        node.style("filter", "drop-shadow(0 0 10px " + groupColors[groupIdx] + ")");
+        // Big glow!
+        node.style("box-shadow", `0 0 80px 32px ${groupColors[groupIdx]}99`);
+        node.style("filter", `drop-shadow(0 0 64px ${groupColors[groupIdx]})`);
       } else {
         node.style("background-color", "#bbb");
         node.style("box-shadow", "none");
@@ -143,14 +158,21 @@ function updateLegend(mode) {
   legend.innerHTML = "";
   if (mode === "type") {
     Object.entries(typeColorMap).forEach(([type, color]) => {
-      const item = document.createElement("div");
+      const item = document.createElement("label");
       item.className = "legend-item";
-      item.dataset.type = type;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = activeFilters[type] !== false;
+      checkbox.addEventListener("change", () => {
+        activeFilters[type] = checkbox.checked;
+        setNodeColors(colorMode);
+      });
       const colorBox = document.createElement("div");
       colorBox.className = "legend-color";
       colorBox.style.backgroundColor = color;
       const label = document.createElement("span");
       label.textContent = type;
+      item.appendChild(checkbox);
       item.appendChild(colorBox);
       item.appendChild(label);
       legend.appendChild(item);
@@ -158,14 +180,21 @@ function updateLegend(mode) {
   } else {
     // group mode
     for (let i = 0; i < groupFiles.length; i++) {
-      const item = document.createElement("div");
+      const item = document.createElement("label");
       item.className = "legend-item";
-      item.dataset.group = i;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = activeFilters[i] !== false;
+      checkbox.addEventListener("change", () => {
+        activeFilters[i] = checkbox.checked;
+        setNodeColors(colorMode);
+      });
       const colorBox = document.createElement("div");
       colorBox.className = "legend-color";
       colorBox.style.backgroundColor = groupColors[i % groupColors.length];
       const label = document.createElement("span");
       label.textContent = `Group ${i+1}`;
+      item.appendChild(checkbox);
       item.appendChild(colorBox);
       item.appendChild(label);
       legend.appendChild(item);
@@ -248,6 +277,8 @@ Promise.all(groupFiles.map(f =>
       switchEl.addEventListener('change', function() {
         colorMode = switchEl.checked ? "group" : "type";
         modeLabel.textContent = "Color: " + (colorMode === "type" ? "Type" : "Group");
+        // Reset all filters to enabled on switch
+        activeFilters = {};
         setNodeColors(colorMode);
       });
 
