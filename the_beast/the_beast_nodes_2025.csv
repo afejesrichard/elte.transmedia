@@ -1,0 +1,619 @@
+﻿name;Label;owner;affiliation;platform;type;start_time;Degree;indegree;outdegree;BetweennessCentrality
+0;Trailer #2;;;TV;Video;04/09/2001;7;2;5;3,51
+1;"(503) 321 5122 ""Welcome my child. Once upon a time there was a forest, that teemed with life love, sex and violence.""";;Mother;RL;Sound;04/09/2001;2;1;1;0,57
+2;thevisionary.net;;;INT;Webpage;04/09/2001;3;1;2;1,25
+3;"""Once upon a time, there was a rude""";;;INT;Sound;04/09/2001;1;1;0;0,00
+4;"""""I am so, so sorry. I don't know what got into me.""";;;EMAIL;Email;04/09/2001;2;1;1;1,77
+5;"""JEANINE Once upon a time there was a young man""";;;EMAIL;Email;04/09/2001;3;1;2;2,43
+6;Bangalore World University webpage;;;INT;Webpage;04/09/2001;57;61;7;26,20
+7;A.I. Studies department webpage;;;INT;Webpage;04/09/2001;11;4;7;9,23
+8;"212 502-1177 ""I am out of town on personal business for a few days.""";JS;Jeanine Salla;RL;Sound;04/09/2001;6;2;4;0,68
+9;"(919) 425-2310 """"I want to thank everybody for their support during this difficult time.""";NAN;Nancy Chan;RL;Sound;04/09/2001;4;2;2;0,44
+10;"jsalla@bangaloreworldu-in.co.nz ""Although Dr. Salla would prefer to deal with you in person,""";JS;;EMAIL;Email;04/09/2001;2;1;1;0,00
+11;Salla Family Webpage;LJS;Laia Joanna Salla;INT;Webpage;04/09/2001;12;3;9;28,15
+12;BWU Alum Swinton Featured in;;Martin Swinton;INT;Post;04/09/2001;6;1;5;2,78
+13;Chan Family webpage;EC;Evan Chan;INT;Webpage;04/09/2001;6;1;5;2,27
+14;Donutech webpage;;;INT;Webpage;04/09/2001;8;11;6;7,01
+15;Chan Family scrapbook;EC;Evan Chan;INT;Photo;04/09/2001;28;16;12;6,41
+16;Chan Family news;EC;Evan Chan;INT;Post;04/09/2001;7;3;4;0,14
+17;Four Women webpage;LJS;Laia Joanna Salla;INT;Webpage;04/09/2001;9;2;7;5,37
+18;in memoriam webpage;LJS;Laia Joanna Salla;INT;Webpage;04/09/2001;5;3;2;1,48
+19;Letter webpage (Chemistry puzzle);LJS;Sencha;INT;Puzzle;04/09/2001;5;1;4;1,22
+20;"""Get out. Deep Water. You would drown.""";LJS;Laia Joanna Salla;INT;Animation;04/09/2001;1;1;0;0,00
+21;inourimage.org;;;INT;Webpage;04/09/2001;13;12;7;4,59
+22;Short History of Robot Evolution;;;INT;Webpage;04/09/2001;2;2;0;0,00
+23;Existence as an AI;;;INT;Webpage;04/09/2001;2;2;0;0,00
+24;How you can Help;;;INT;Webpage;04/09/2001;2;2;0;0,00
+25;News;;;INT;Webpage;04/09/2001;3;2;2;4,84
+26;Research Staff;;;INT;Webpage;04/09/2001;11;1;10;1,79
+27;about ibrim;;;INT;Webpage;04/09/2001;1;1;0;0,00
+28;about carter;;;INT;Webpage;04/09/2001;1;1;0;0,00
+29;about tiffany;;;INT;Webpage;04/09/2001;1;1;0;0,00
+30;about valerie;;;INT;Webpage;04/09/2001;1;1;0;0,00
+31;about mario;;;INT;Webpage;04/09/2001;1;1;0;0,00
+32;about svetlana;;;INT;Webpage;04/09/2001;2;2;0;0,00
+33;about moussa;;;INT;Webpage;04/09/2001;1;1;0;0,00
+34;about salif;;;INT;Webpage;04/09/2001;1;1;0;0,00
+35;about evan;;;INT;Webpage;04/09/2001;1;1;0;0,00
+36;"""If you get this message, I'm either not here or working on some vast""";MD;Mario Dauphin;EMAIL;Email;04/09/2001;2;1;1;1,12
+37;unite-and-resist.org;;;INT;Webpage;04/09/2001;25;13;14;16,83
+38;Evan Chan's private workplace webpage;EC;Evan Chan;INT;Webpage;04/09/2001;25;3;22;12,82
+39;Change in policy;EC;Mother;INT;Post;07/13/2001;1;1;0;0,00
+40;Forgiveness;EC;Mother;INT;Post;07/10/2001;3;1;2;0,47
+41;Candy;EC;Mother;INT;Post;06/28/2001;1;1;0;0,00
+42;The Witch;EC;Mother;INT;Post;06/05/2001;1;1;0;0,00
+43;The pillaging continues;EC;Mother;INT;Post;04/24/2001;1;1;0;0,00
+44;grave robber;EC;Mother;INT;Post;04/10/2001;1;1;0;0,00
+45;Big Push;EC;Ibrim Hoxa;INT;Post;04/09/2001;1;1;0;0,00
+46;Search Request;EC;Instant Genius;INT;Post;04/09/2001;1;1;0;0,00
+47;Cover for you on Sat.;EC;Mario Dauphin;INT;Post;04/09/2001;1;1;0;0,00
+48;Gene Swapping?;EC;Jeanine Salla;INT;Post;04/09/2001;2;1;1;0,06
+49;Authorization Expired;EC;Greater Durham Public Library;INT;Post;04/09/2001;1;1;0;0,00
+50;Poetry Rejected;EC;Kalamazoo Poetry Paths;INT;Post;04/09/2001;1;1;0;0,00
+51;On Track;EC;Ibrim Hoxa;INT;Post;04/09/2001;1;1;0;0,00
+52;Hey This is Me;EC;Mel Green;INT;Post;04/09/2001;1;1;0;0,00
+53;Haven't Seen You;EC;Kitty's Subdermal Sin Massage Institute;INT;Post;04/09/2001;1;1;0;0,00
+54;(Events) January;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+55;(Events) February;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+56;(Events) March;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+57;(Events) April;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+58;(Events) May;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+59;(Events) June;EC;Evan Chan;INT;Post;04/09/2001;1;1;0;0,00
+60;"""If you need to know how to get to the funeral""";JS;Jeanine Salla;RL;Sound;04/09/2001;2;1;1;0,22
+61;"""Laia, I know your not going to like this""";JS;Jeanine Salla;RL;Sound;04/09/2001;1;1;0;0,00
+62;""" M.. Mrs. Chan... you don't know me but I am so sorry..""";NAN;;RL;Sound;04/09/2001;2;2;0;0,00
+63;Metropolitan Living Homes;;;INT;Webpage;04/09/2001;35;17;18;8,70
+64;Bosch Bauwerke GMBH;BB;Beate Bosch;INT;Webpage;04/09/2001;17;10;7;1,88
+65;Kate Nei webpage;KN;Kate Nei;INT;Webpage;04/09/2001;16;13;3;1,81
+66;Martin Swinton webpage;MS;Martin Swinton;INT;Webpage;04/09/2001;17;3;14;8,27
+67;'Breaking News: The Tragic Death of a Martin Swinton Home!';;Martin Swinton;INT;Webpage;04/16/2001;1;1;0;0,00
+68;Corporate Officers;;;INT;Webpage;04/09/2001;1;1;0;0,00
+69;Investor Relations;;;INT;Webpage;04/09/2001;3;2;1;0,18
+70;Press Releases;;;INT;Webpage;04/09/2001;1;1;0;0,00
+71;Rising Stars;;;INT;Webpage;04/09/2001;20;10;10;0,00
+72;Beate Bosch;;;INT;Webpage;04/09/2001;22;10;12;0,28
+73;McDonald Heard;;;INT;Webpage;04/09/2001;21;10;11;0,17
+74;Kate Nei;;;INT;Webpage;04/09/2001;24;12;12;1,15
+75;Martin Swinton;;;INT;Webpage;04/09/2001;22;10;12;0,67
+76;House Calls;;;INT;Webpage;04/09/2001;21;10;11;0,17
+77;Iasa Musings;;;INT;Webpage;04/09/2001;20;10;10;0,00
+78;Monthly News;;;INT;Webpage;04/09/2001;20;11;10;0,48
+79;Other Features;;;INT;Webpage;04/09/2001;21;10;11;0,17
+80;Ballroom;;;INT;Webpage;04/09/2001;23;11;12;0,17
+81;Borneo Root;;;INT;Webpage;04/09/2001;2;2;0;0,00
+82;Cruises;;;INT;Webpage;04/09/2001;2;2;0;0,00
+83;Revo Grout;;;INT;Webpage;04/09/2001;1;1;0;0,00
+84;Electracopter;;;INT;Webpage;04/09/2001;1;1;0;0,00
+85;JWG Wine;;;INT;Webpage;04/09/2001;1;1;0;0,00
+86;Nannybot;;;INT;Webpage;04/09/2001;1;1;0;0,00
+87;No Bad AI's;;;INT;Webpage;04/09/2001;1;1;0;0,00
+88;Subscribe;;;INT;Webpage;04/09/2001;1;1;0;0,00
+89;Departments;;;INT;Webpage;04/09/2001;49;46;18;8,38
+90;Campuses;;;INT;Webpage;04/09/2001;49;46;13;1,46
+91;BWU Businesses;;;INT;Webpage;04/09/2001;49;46;3;0,02
+92;BWU News;;;INT;Webpage;04/09/2001;18;1;18;5,18
+93;Tragic Death, Glorious Life: The Visionary Passes;;;INT;Post;04/09/2001;5;1;4;0,00
+94;Alarming Thermoplankton Dead Zones;;;INT;Post;04/09/2001;5;1;4;0,00
+95;Another Mitochondrial DNA Mystery;;;INT;Post;04/09/2001;5;1;4;0,00
+96;Anniversary Of The Bangalore Tiger;;;INT;Post;04/09/2001;5;1;4;0,00
+97;Xander's Death Blow The Latest In A Chorus Of Storms Ravages The Indian Federation;;;INT;Post;04/09/2001;5;2;4;0,01
+98;Xander and Thor: What Went Wrong?;;;INT;Post;04/09/2001;5;2;4;0,01
+99;Xander Sidebar An Introduction to Thermo-Plankton;;;INT;Post;04/09/2001;5;2;4;0,01
+100;BWU-Guadalajara Ends Controversial Research Program;;;INT;Post;04/09/2001;6;1;5;0,32
+101;Senator Mann Opens the Gates in Washington;;;INT;Post;04/09/2001;5;1;4;0,00
+102;BWU-Edinburgh Prepares for Centennial;;;INT;Post;04/09/2001;5;1;4;0,00
+103;BWU Robots Assist Research on Ocean Floor;;;INT;Post;04/09/2001;5;1;4;0,00
+104;Dr. Jeanine Salla Named to Dynatech Chair;;;INT;Post;04/09/2001;5;1;4;0,00
+105;BWU-NY Student Found Catatonic In Dorm Room.;;;INT;Post;04/09/2001;5;1;4;0,00
+106;A Darkening Shadow Over Troubled Waters;;;INT;Post;05/23/2001;5;2;4;0,01
+107;Discord in Palmer Land;;;INT;Post;05/23/2001;5;2;4;0,01
+108;Korea Cup: We Have A Winner!;;;INT;Post;05/23/2001;5;2;4;0,01
+109;Bangalore;;;INT;Post;04/09/2001;4;1;4;0,00
+110;Dunedin;;;INT;Post;04/09/2001;4;1;4;0,00
+111;Edinburgh;;;INT;Post;04/09/2001;4;1;4;0,00
+112;Fez;;;INT;Post;04/09/2001;4;1;4;0,00
+113;Guadalajara;;;INT;Post;04/09/2001;4;1;4;0,00
+114;New York City;;;INT;Post;04/09/2001;4;1;4;0,00
+115;Pyongyang;;;INT;Post;04/09/2001;4;1;4;0,00
+116;Santiago;;;INT;Post;04/09/2001;4;1;4;0,00
+117;Wiesbaden;;;INT;Post;04/09/2001;4;1;4;0,00
+118;Worcester;;;INT;Post;04/09/2001;4;1;4;0,00
+119;Arts and Humanities;;;INT;Webpage;04/09/2001;4;1;4;0,02
+120;Agristudies;;;INT;Webpage;04/09/2001;4;1;4;0,02
+121;Bioscience;;;INT;Webpage;04/09/2001;4;1;4;0,02
+122;Business;;;INT;Webpage;04/09/2001;4;1;4;0,02
+123;Climate Control;;;INT;Webpage;04/09/2001;4;1;4;0,02
+124;Computing;;;INT;Webpage;04/09/2001;4;1;4;0,02
+125;Data Sphere Studies;;;INT;Webpage;04/09/2001;4;1;4;0,02
+126;Education;;;INT;Webpage;04/09/2001;4;1;4;0,02
+127;Engineering;;;INT;Webpage;04/09/2001;4;1;4;0,02
+128;Law;;;INT;Webpage;04/09/2001;4;1;4;0,02
+129;Mathematics and Physics;;;INT;Webpage;04/09/2001;4;1;4;0,02
+130;Medicine;;;INT;Webpage;04/09/2001;4;1;4;0,02
+131;Oceanography and Earth Sciences;;;INT;Webpage;04/09/2001;4;1;4;0,02
+132;Propulsion;;;INT;Webpage;04/09/2001;4;1;4;0,02
+133;Social Sciences;;;INT;Webpage;04/09/2001;4;1;4;0,02
+134;"""Your interface does not conform to Earth-Net 39 standard.""";;;INT;Post;04/09/2001;2;1;1;1,68
+135;Cloudmaker;EC;Evan Chan;INT;Photo;04/09/2001;4;1;3;0,19
+136;Cloudmaker pop-up;EC;Evan Chan;INT;Webpage;04/09/2001;1;1;0;0,00
+137;Evan's Page;EC;Evan Chan;INT;Webpage;04/09/2001;12;5;7;7,56
+138;Nancy's Page;EC;Nancy Chan;INT;Webpage;04/09/2001;14;7;7;3,47
+139;Nancy's Zen Garden #1;EC;Nancy Chan;INT;Photo;04/09/2001;2;1;1;0,00
+140;Nancy's Zen Garden #2;EC;Nancy Chan;INT;Photo;04/09/2001;2;1;1;0,00
+141;Nancy's Zen Garden #3;EC;Nancy Chan;INT;Photo;04/09/2001;2;1;1;0,00
+142;Derrick's boat;EC;Derrick Chan;INT;Photo;04/09/2001;1;1;0;0,00
+143;Nancyâ€™s Back;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+144;Nice day in the sun;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+145;Spending time together;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+146;Nancy in Her Play Clothes;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+147;Cheers!;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+148;Evan having boat envy;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+149;Evan in His Work Uniform;EC;Evan Chan;INT;Photo;04/09/2001;3;1;2;5,44
+150;Evan's close up shot;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+151;Those innocent eyes;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+152;Derrick & Lucy;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+153;With our friends the Sallas;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+154;Lucas & Phoebe;EC;Evan Chan;INT;Photo;04/09/2001;2;1;1;0,00
+155;Sentient Property Crime Bureau webpage;;;INT;Webpage;04/09/2001;13;6;7;12,04
+156;"""Boy, did you pick the wrong side.""";;;RL;Sound;04/13/2001;1;1;0;0,00
+157;7 TO 1 A RESPONSE BY KATYA RUKOWSKY;;;INT;Webpage;04/09/2001;4;2;2;0,25
+158;Who is the Anti-Robot Militia?;;;INT;Webpage;04/09/2001;16;8;8;0,00
+159;What is the Anti-Robot Militia?;;;INT;Webpage;04/09/2001;16;8;8;0,00
+160;Mankind First â€” ARM's positions on the issues;;;INT;Webpage;04/09/2001;16;8;8;0,00
+161;Know Thy Enemy.;;;INT;Webpage;04/09/2001;17;9;8;1,53
+162;NEWS from the Front;;;INT;Webpage;04/09/2001;17;8;9;0,14
+163;Heroes and martyrs.;;;INT;Webpage;04/09/2001;16;8;8;0,00
+164;Support ARM â€” order merchandise.;;;INT;Webpage;04/09/2001;16;8;8;0,00
+165;Members Only Pages.;;;INT;Webpage;04/09/2001;17;8;9;0,28
+166;Metalle;;;INT;Webpage;04/09/2001;6;1;5;0,17
+167;Keramik;;;INT;Webpage;04/09/2001;5;1;4;0,00
+168;Steine;;;INT;Webpage;04/09/2001;5;1;4;0,00
+169;Flussigkeiten;;;INT;Webpage;04/09/2001;5;1;4;0,00
+170;Unser unternehmen;;;INT;Webpage;04/09/2001;11;7;4;0,37
+171;Nachrichten;;;INT;Webpage;04/09/2001;12;7;5;0,66
+172;IASA Links;;;INT;Webpage;04/09/2001;10;9;1;0,09
+173;Freidenker;;;INT;Webpage;04/09/2001;6;1;5;0,20
+175;Elements of Design;KN;Kate Nei;INT;Webpage;04/09/2001;17;9;8;1,31
+176;Fire;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+177;Water;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+178;Earth;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+179;Air;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+180;Light;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+181;News;KN;Kate Nei;INT;Webpage;04/09/2001;17;8;9;0,92
+182;Operations;KN;Kate Nei;INT;Webpage;04/09/2001;16;8;8;0,01
+183;"(212) 613-1680 ""Hello you have reached Martin Swinton Designs.""";MS;Martin Swinton;RL;Sound;04/09/2001;5;2;3;1,69
+184;[terry.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+185;[origen.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+186;[martin.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+187;[kazak.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+188;[ivy.html];MS;Martin Swinton;INT;Webpage;04/09/2001;2;1;1;1,58
+189;[indira.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+190;[iasa.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+191;[ariel.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+192;[ali.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+193;[brutus.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+194;[ecumartinreact.html];MS;Martin Swinton;INT;Webpage;04/09/2001;1;1;0;0,00
+195;Your SPCP;;;INT;Webpage;04/09/2001;8;4;4;0,00
+196;Sentient Property and the Law;;;INT;Webpage;04/09/2001;8;4;4;0,00
+197;SPCB's Most Wanted;;;INT;Webpage;04/09/2001;10;4;6;0,15
+198;News and Investigations;;;INT;Webpage;04/09/2001;11;4;7;3,24
+199;Hidden HTML page (Red King page);RK;Red King;INT;Webpage;04/09/2001;15;4;11;32,14
+200;Jeanine Salla department page;;Jeanine Salla;INT;Webpage;04/09/2001;17;9;9;35,16
+201;Pan American Coroners Office;;;INT;Webpage;04/09/2001;21;15;6;11,49
+202;What is PACO;;;INT;Webpage;04/09/2001;17;13;4;0,00
+203;Case File Database;;;INT;Webpage;04/09/2001;23;13;10;13,70
+204;Press and News;;;INT;Webpage;04/09/2001;25;13;12;1,16
+205;FAQs;;;INT;Webpage;04/09/2001;17;13;4;0,00
+206;Dr. Djombe Ojimbwa Retires;;;INT;Webpage;04/09/2001;6;1;5;0,00
+207;New Forensic Robotics Institute Opens;;;INT;Webpage;04/09/2001;6;1;5;0,00
+208;Was one of the Saratoga shooter electronically-depressed?;;;INT;Webpage;04/09/2001;6;1;5;0,00
+209;New Director of Autopsy Services;;;INT;Webpage;04/09/2001;6;1;5;0,00
+210;Coroner in Saratoga killings steps down.;;;INT;Webpage;04/09/2001;6;1;5;0,00
+211;Homocysteine and Aids-Hybrid-K;;;INT;Webpage;04/09/2001;6;1;5;0,00
+212;New Head of Forensic Anthropology at PACO;;;INT;Webpage;04/09/2001;6;1;5;0,00
+213;Pet Care;;;INT;Webpage;04/09/2001;6;1;5;0,00
+214;Evan Chan Case File;;Evan Chan;INT;Webpage;04/09/2001;3;2;1;0,15
+215;Case File Fee Pop-up;;Sencha;INT;Webpage;04/09/2001;1;1;0;0,00
+216;AIT webpage;;;INT;Webpage;04/09/2001;56;28;28;3,54
+217;Administration (AIT);;;INT;Webpage;04/09/2001;34;27;7;0,00
+218;Student Services (AIT);;;INT;Webpage;04/09/2001;34;27;7;0,00
+219;Campuses (AIT);;;INT;Webpage;04/09/2001;34;27;7;0,00
+220;Athletics (AIT);;;INT;Webpage;04/09/2001;34;27;7;0,00
+221;Student Research (AIT);;;INT;Webpage;04/09/2001;34;27;7;0,00
+222;Graduate Placement (AIT);;;INT;Webpage;04/09/2001;35;27;8;0,87
+223;Alumni & Friends (AIT);;;INT;Webpage;04/09/2001;37;27;10;7,61
+224;AIT Today;;;INT;Webpage;04/09/2001;42;22;20;0,98
+225;Baffling Malfunctions Plague Datasphere;;;INT;Post;04/09/2001;11;2;9;0,01
+226;The Sad Passing of AIT Alumnus Jeanine Salla;;Jeanine Salla;INT;Post;04/09/2001;11;2;9;0,01
+227;Circuit Mystery Part 1: Troubles at the Cathedrium;;;INT;Post;04/09/2001;11;2;9;0,01
+228;Circuit Mystery Part 2: S2 on Trident and the TP-Web;;;INT;Post;04/09/2001;11;2;9;0,01
+229;Robots' Feelings About Mankind;;;INT;Post;04/09/2001;12;2;10;0,10
+230;Mann Act II Passes on Fast Track;;;INT;Post;04/09/2001;11;2;9;0,01
+231;Senator Julia Mann Shot;;;INT;Post;04/09/2001;11;2;9;0,01
+232;Mann Act II Introduced Into Senate;;;INT;Post;04/09/2001;11;2;9;0,01
+233;AIT Announces First Mission to the Stars!;;;INT;Post;04/09/2001;11;2;9;0,01
+234;Again Spinoza Speaks;;;INT;Post;04/09/2001;11;2;9;0,01
+235;AIT-UB's Yakutia Study Uncovers Ruse;;;INT;Post;04/09/2001;11;2;9;0,01
+236;EUSC's Alexis Announces Hearings;;;INT;Post;04/09/2001;11;2;9;0,01
+237;AIT-Brooks Djinn Caught Passing Top Secret Code;;;INT;Post;04/09/2001;12;3;9;2,78
+238;AIT-Brooks Without Conscience;;;INT;Post;04/09/2001;11;2;9;0,01
+239;AIT-Zaragosa's Alexis Appointed to EU's Storm Commission;;;INT;Post;04/09/2001;11;2;9;0,01
+240;AIT Investigates Band of Tweaks;;;INT;Post;04/09/2001;11;2;9;0,01
+241;AIT Completes AI System for ECO;;;INT;Post;04/09/2001;11;2;9;0,01
+242;"AIT Implants Give Accident Victims ""New Legs""";;;INT;Post;04/09/2001;11;2;9;0,01
+243;Cutting Edge Gladiator Routines Bring Oilshed to New Level;;;INT;Post;04/09/2001;12;2;10;0,57
+244;AIT Sports Roundup - with an editorial by Mara Finnerty;;;INT;Post;04/09/2001;11;2;9;0,01
+246;Belladerma webpage;;;INT;Webpage;04/09/2001;18;10;8;1,42
+247;Belladerma's Beautiful Companions;;;INT;Webpage;04/09/2001;16;8;8;0,00
+248;The Milano Gallery;;;INT;Webpage;04/09/2001;16;8;8;0,00
+249;Gallery of Pets;;;INT;Webpage;04/09/2001;16;8;8;0,00
+250;Statuary Hall;;;INT;Webpage;04/09/2001;16;8;8;0,00
+251;Topiary Hall;;;INT;Webpage;04/09/2001;16;8;8;0,00
+252;Belladerma Catalog;;;INT;Webpage;04/09/2001;19;9;10;0,53
+253;Option Menu;;;INT;Webpage;04/09/2001;16;8;8;0,00
+254;Contact Us;;;INT;Webpage;04/09/2001;17;8;9;2,71
+255;Belladerma Faxes;;;RL;Object;04/09/2001;2;1;1;2,81
+256;"""No, u didnt want 2 tok 2 P-a aneway.""";;;EMAIL;Email;04/09/2001;2;1;1;2,92
+257;"""F: Hello? Hang on a sec... M: Belladerma's willing to pay for?""";;;RL;Sound;04/09/2001;2;1;1;3,01
+258;Rogue Retrieval webpage;;;INT;Webpage;04/09/2001;14;7;7;5,35
+259;History;;;INT;Webpage;04/09/2001;11;6;5;0,02
+260;Agents;;;INT;Webpage;04/09/2001;14;8;6;0,77
+261;FAQ (RR);;;INT;Webpage;04/09/2001;11;6;5;0,02
+262;Testimonials;;;INT;Webpage;04/09/2001;11;6;5;0,02
+263;Contact Us;;;INT;Webpage;04/09/2001;7;7;0;0,00
+265;UPDATE: Tiger Team Takes Down Hostage-Killing Rogue;;;INT;Post;04/09/2001;2;1;1;4,76
+266;[update.htm];;;INT;Webpage;04/09/2001;10;3;7;5,48
+267;Kent Whitman autopsy report;;;INT;Webpage;04/09/2001;12;3;9;20,52
+268;"Secret image message (""""Take free bird to DC node for new face,"")";;;INT;Photo;04/09/2001;3;2;1;1,66
+269;Electric Toyland webpage;;;INT;Webpage;04/09/2001;8;3;5;0,79
+270;Guest Book (ET);;;INT;Webpage;04/09/2001;7;2;5;0,43
+271;Specials (ET);;;INT;Webpage;04/09/2001;6;2;4;0,01
+272;Contact (ET);;;INT;Webpage;04/09/2001;4;3;1;0,15
+273;"[IMAGE OF ELECTRIC TOYLAND LOGO] ""Thank you for contacting Electric Toyland.""";;;EMAIL;Email;04/09/2001;1;1;0;0,00
+274;Rational Hatter webpage;;;INT;Webpage;04/09/2001;11;6;5;1,52
+275;Panama Hats;;;INT;Webpage;04/09/2001;10;5;5;0,00
+276;Tensilite Hats;;;INT;Webpage;04/09/2001;10;5;5;0,00
+277;Felt Hats;;;INT;Webpage;04/09/2001;10;5;5;0,00
+278;Tweed Hats;;;INT;Webpage;04/09/2001;10;5;5;0,00
+279;Custom Designs;;;INT;Webpage;04/09/2001;14;5;9;0,81
+280;Order;;;INT;Webpage;04/09/2001;1;1;0;0,00
+281;Sketch;;;INT;Webpage;04/09/2001;1;1;0;0,00
+282;"Secret order page (""hakd & crakd bi the bad giz, damit. Slopenis kilz."")";;;INT;Webpage;04/09/2001;1;1;0;0,00
+283;"""OK, I've tagged you for periodic bursts of Laia-type insight.""";LJS;Mephisto;EMAIL;Email;04/09/2001;2;1;1;0,00
+284;"""Venus, the goddess of love, has a surface pressure of 94.5 atmospheres and a surface temperature over 400ÂşC.,""";LJS;Laia Joanna Salla;EMAIL;Email;04/17/2001;3;2;1;3,07
+285;Easter 2142;LJS;Laia Joanna Salla;INT;Post;04/09/2001;12;10;2;1,03
+286;15 May 42;LJS;Laia Joanna Salla;INT;Post;04/09/2001;10;8;2;0,08
+287;They Did It;LJS;Laia Joanna Salla;INT;Post;04/09/2001;10;7;3;0,08
+288;Not Entirely Sober;LJS;Laia Joanna Salla;INT;Post;04/09/2001;12;7;5;0,33
+289;Off to See the King;LJS;Laia Joanna Salla;INT;Post;06/19/2001;11;6;5;1,16
+290;Mike Royal;LJS;Laia Joanna Salla;INT;Post;04/09/2001;10;4;6;0,90
+291;Independence Day;LJS;Laia Joanna Salla;INT;Post;04/09/2001;13;3;10;0,76
+292;So who was I kidding?;LJS;Laia Joanna Salla;INT;Post;04/09/2001;10;2;8;0,15
+293;Waking;LJS;Laia Joanna Salla;INT;Post;04/09/2001;9;1;8;0,00
+294;"""Your 'wares are pretty hopelessly out of date."" Popup";LJS;Laia Joanna Salla;INT;Webpage;04/09/2001;1;1;0;0,00
+295;mannact.htm;LJS;Laia Joanna Salla;INT;Webpage;04/09/2001;4;2;2;1,24
+296;"""Some progress here.  I have certainly learned to pay attention to bounce-back email...""";LJS;Laia Joanna Salla;EMAIL;Email;04/24/2001;2;1;1;2,93
+298;"""Are you a man or are you a mouse?""";;;INT;Webpage;04/24/2001;3;2;1;2,72
+299;"[94hgblkf94jf.asp] ""After the summer Over the moon And between the nets""";;;INT;Webpage;04/24/2001;4;2;2;2,84
+300;congratulations page;;;INT;Webpage;04/24/2001;2;1;1;0,91
+301;Wrong Page;;;INT;Webpage;04/24/2001;2;1;1;0,94
+302;'What's my name?' Page;;;INT;Puzzle;04/24/2001;4;1;3;0,97
+303;Error message sound;;;INT;Sound;04/24/2001;2;1;1;0,00
+304;'Where am I from?' Page;;;INT;Puzzle;04/24/2001;4;2;2;0,32
+305;'What business am I in?' Page;;;INT;Puzzle;04/24/2001;3;1;2;0,00
+306;"""No faculty mymbyr yxists with thy namy of >>mowz<<.""";;;INT;Webpage;04/24/2001;2;1;1;0,59
+307;"""Georg"" page";;;INT;Puzzle;04/24/2001;3;1;2;1,30
+308;"""The IASA hack in not Lancelot Brown."" Page";;;INT;Webpage;04/24/2001;2;1;1;0,05
+309;"""Knock, knock, knock! Who's there,"" Pop-up";;;INT;Webpage;04/24/2001;12;1;11;2,71
+310;Martin Swinton Diary;;;INT;Webpage;04/24/2001;6;2;4;0,59
+311;Gallery (Martin Swinton);;;INT;Webpage;04/24/2001;2;1;1;1,72
+312;Japanes Kate Nei site;;;INT;Webpage;04/24/2001;18;9;9;1,49
+313;News (Japanese Kate Nei site);;;INT;Webpage;04/24/2001;16;8;8;0,23
+315;Elements of Design (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+316;Fire (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+317;Water (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+318;Earth (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+319;Air (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+320;Light (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;16;7;9;0,00
+321;Operations (Japanese Kate Nei site);KN;Kate Nei;INT;Webpage;04/24/2001;17;8;9;0,00
+322;La Clinique de Lille webpage;;;INT;Webpage;04/24/2001;4;2;2;0,43
+323;Bangalore World University News Networks;FAN;;INT;Webpage;04/09/2001;23;11;12;12,24
+324;Subscribe (BWUNN);FAN;;INT;Webpage;04/09/2001;10;8;2;0,00
+325;Filmfest;FAN;;INT;Webpage;04/09/2001;10;9;1;0,15
+326;Apostrophe Mag;FAN;;INT;Webpage;04/09/2001;1;1;0;0,00
+327;Kids;FAN;;INT;Webpage;04/09/2001;21;8;13;4,91
+328;Eliza's Tearoom;;;INT;Webpage;04/09/2001;17;6;12;11,71
+329;Sophia;;;INT;Webpage;04/09/2001;0;1;0;0,00
+330;Graphics Challenge;FAN;;INT;Puzzle;04/09/2001;1;1;0;0,00
+331;Headline Puzzle;FAN;;INT;Puzzle;04/09/2001;1;1;0;0,00
+332;Nine to Five;FAN;;INT;Puzzle;04/09/2001;1;1;0;0,00
+333;Birds;FAN;;INT;Puzzle;04/09/2001;1;1;0;0,00
+334;Hint;FAN;;INT;Puzzle;04/09/2001;1;1;0;0,00
+335;Search;FAN;;INT;Webpage;04/09/2001;12;7;5;0,00
+336;Anti-Robot Riots in Ciudad Juarez;FAN;;INT;Webpage;04/09/2001;10;1;9;3,99
+337;Pan-American Congress considers Mann Act II;FAN;;INT;Webpage;04/09/2001;10;2;8;0,95
+338;Troubled AI at sleep clinic attacks BWU-NY systems;FAN;;INT;Webpage;04/09/2001;4;1;3;1,05
+339;Cybertronics Corp webpage;;;INT;Webpage;04/09/2001;9;3;7;1,20
+340;Books (BWUNN);FAN;;INT;Webpage;04/09/2001;8;0;8;0,00
+341;Background1 (BWUNN);FAN;;INT;Webpage;04/09/2001;9;1;8;0,00
+342;Weather (BWUNN);FAN;;INT;Webpage;04/09/2001;12;2;10;0,00
+343;New bizrocket makes its debut;FAN;;INT;Webpage;04/09/2001;9;1;8;0,18
+344;Subject: When is a red herring not?;LJS;Laia Joanna Salla;EMAIL;Email;05/01/2001;3;1;2;2,66
+345;Red Herring webpage (OOG);;;INT;Webpage;04/24/2001;2;1;1;0,00
+346;'Innovation' Page (hall of fame);;;INT;Webpage;04/24/2001;5;4;1;0,15
+347;Members Only asp Page;;;INT;Webpage;05/01/2001;5;1;5;4,60
+348;Kal-63 Memorial;;;INT;Webpage;05/01/2001;1;1;0;0,00
+349;In our Defense;;;INT;Webpage;05/01/2001;2;1;1;0,91
+350;Catalogs and Merchandise;;;INT;Webpage;05/01/2001;1;1;0;0,00
+351;New UAN form;;;INT;Webpage;05/01/2001;2;1;1;0,44
+352;Special Event Rally;;;INT;Webpage;05/01/2001;4;1;4;2,62
+353;New UAN email;;;EMAIL;Email;05/01/2001;2;1;1;0,40
+354;Spherewatch webpage;FAN;Fan;INT;Webpage;05/01/2001;12;6;6;2,08
+355;Becoming page (Spherewatch);FAN;Fan;INT;Webpage;05/01/2001;4;4;0;0,00
+356;What is Spherewatch?;FAN;Fan;INT;Webpage;05/01/2001;9;3;6;0,22
+357;Who is Evan Chan?;FAN;Fan;INT;Webpage;05/01/2001;7;2;5;0,15
+358;Members' Forum (Spherewatch);FAN;Fan;INT;Webpage;05/01/2001;1;1;0;0,00
+359;Contact;FAN;Fan;INT;Webpage;05/01/2001;6;2;4;0,07
+360;Member information (Spherewatch);FAN;Fan;INT;Webpage;05/01/2001;2;2;0;0,00
+361;Cloudmakers;FAN;Fan;INT;Webpage;05/01/2001;1;1;0;0,00
+362;Searcher Levels;FAN;Fan;INT;Webpage;05/01/2001;5;1;4;0,00
+363;Jeanine Salla business card;JS;Jeanine Salla;RL;Object;04/30/2001;2;0;2;0,00
+364;BWU Old Spanish Dust;;Jeanine Salla;INT;Webpage;05/01/2001;7;3;4;2,13
+365;oneirophage.htm;JS;Jeanine Salla;INT;Post;05/01/2001;5;2;3;1,47
+366;thestepself.htm;JS;Jeanine Salla;INT;Post;05/22/2001;2;1;1;0,13
+367;vayu.htm;JS;Jeanine Salla;INT;Post;07/03/2001;1;1;0;0,00
+368;Catskill Seaview Clinic;;;INT;Webpage;05/01/2001;6;3;3;1,53
+369;FLETCHER CAPS MURDEROUS SEXBOT'S FLIGHT;;;INT;Webpage;05/01/2001;8;2;6;0,45
+370;More about Diane Fletcher popup;;;INT;Webpage;05/01/2001;3;1;2;0,21
+371;You don't have much luck keeping your birds caged, do you?;;;INT;Webpage;05/01/2001;1;1;0;0,00
+372;"""As Dr. Salla's Administrative alleged Intelligence, it is my melancholy task to brush you off."" (Jeanine auto-responder)";JS;;EMAIL;Email;05/01/2001;3;2;1;1,50
+373;"""Please enter your four digit code to check your messages... meat!""";JS;;RL;Sound;05/01/2001;3;2;1;0,15
+374;"""You have one new message to ignore.""";JS;;RL;Sound;05/01/2001;1;1;0;0,00
+375;LA Times Advert;;;RL;Object;05/06/2001;3;2;1;0,00
+376;NYC ARM Rally;;;RL;Event;05/06/2001;7;3;4;0,88
+377;LA ARM Rally;;;RL;Event;05/06/2001;6;3;3;0,29
+378;Chicago ARM Rally;;;RL;Event;05/06/2001;7;4;3;0,29
+379;Your ranking is: 2 Your 5th letter emails;;;EMAIL;Email;05/06/2001;6;1;6;0,58
+381;ARM Rally Bandana;;;RL;Object;05/06/2001;3;3;0;0,00
+382;ARM Rally leaflet;;;RL;Object;05/06/2001;6;3;3;0,15
+384;http://www.unite-and-resist.org/14;;;INT;Puzzle;05/06/2001;4;2;2;0,05
+386;http://www.unite-and-resist.org/3358;;;INT;Puzzle;05/06/2001;4;2;2;0,05
+387;2nd puzzle (A2DHNC9A8EL7X8.asp);;;INT;Puzzle;05/06/2001;6;4;2;0,15
+388;http://www.unite-and-resist.org/5657;;;INT;Puzzle;05/06/2001;3;1;2;0,05
+389;ENGINER WANTED CYBERNETIC EXP. PRG. (Mirror message);;;RL;Object;05/06/2001;3;2;1;0,44
+390;"JohnGalt@donu-tech.com ""Thanks for submitting your resume.""";;;EMAIL;Email;05/06/2001;2;1;1;0,29
+391;Colossus by D. F. Jones;;;RL;Object;05/06/2001;1;1;0;0,00
+392;Mortal Engine by Stansislaw Lem;;;RL;Object;05/06/2001;1;1;0;0,00
+393;The Robots of Dawn by Isaac Asimov;;;RL;Object;05/06/2001;1;1;0;0,00
+394;'Get a job' page;;;INT;Webpage;05/06/2001;2;1;1;0,00
+395;RUR-14 puzzle (http://www.unite-and-resist.org/0-997B-1047-1-100-0-A.html);;;INT;Puzzle;05/06/2001;2;1;1;0,15
+396;"""Subject: He ordered a replacement""";LJS;Laia Joanna Salla;EMAIL;Email;05/08/2001;2;1;1;2,36
+397;Representative papers (JS department page);;Jeanine Salla;INT;Webpage;05/08/2001;8;2;6;0,81
+398;Calendar (JS department page);;Jeanine Salla;INT;Webpage;05/08/2001;6;2;4;0,00
+399;Sophia's Temple;;Sophia;INT;Webpage;05/08/2001;3;1;2;0,02
+400;Eyes and login screen;;;RL;Photo;05/08/2001;56;5;51;11,16
+401;[ivyanger.txt];;;INT;Post;05/08/2001;8;4;4;0,59
+402;[Ivy - joy];;;INT;Post;05/08/2001;7;4;3;0,00
+403;[Basta - anger];;;INT;Post;05/08/2001;7;4;3;0,00
+404;[Ivy - sad];;;INT;Post;05/08/2001;7;4;3;0,00
+405;[Allen Hobby - anger];;;INT;Post;05/08/2001;4;2;2;0,08
+406;[Allen Hobby - guilt];;;INT;Post;05/08/2001;3;2;1;0,00
+407;[Jeanine Salla - happy];;Jeanine Salla;INT;Post;05/08/2001;7;4;3;0,00
+408;[Jeanine Salla - fear];;Jeanine Salla;INT;Post;05/08/2001;7;4;3;0,00
+409;[Jeanine Salla - lust];;Jeanine Salla;INT;Post;05/08/2001;7;4;3;0,00
+410;[Laia - guilt];;Laia Joanna Salla;INT;Post;05/08/2001;13;7;6;0,18
+411;[Laia - fear];;Laia Joanna Salla;INT;Post;05/08/2001;5;3;2;0,00
+412;[Laia - joy];;Laia Joanna Salla;INT;Post;05/08/2001;5;3;2;0,00
+413;[Down and Out Café];;;INT;Webpage;04/09/2001;2;1;1;0,75
+414;7 to 1 webpage;;;INT;Webpage;04/09/2001;6;3;3;0,23
+415;Curious.html;;;INT;Post;04/09/2001;1;1;0;0,00
+416;Laia-urgent.html;;;INT;Webpage;04/09/2001;2;1;1;0,01
+417;7to1.html;;;INT;Puzzle;04/09/2001;1;1;0;0,00
+418;[Jeanine Salla - anger];;Jeanine Salla;INT;Post;05/08/2001;2;1;1;0,00
+419;[Evan Chan - fear];;Evan Chan;INT;Post;05/08/2001;5;4;1;0,00
+420;[Venus - lust];;Venus;INT;Post;05/08/2001;6;3;3;0,00
+421;[Evan Chan - anger];;Evan Chan;INT;Post;05/08/2001;6;3;3;0,00
+422;[Evan's adultery];;Nancy Chan;INT;Photo;05/08/2001;7;4;3;0,00
+423;[Red King - lust];;Red King;INT;Post;05/08/2001;10;5;5;6,09
+424;[Red King - regret];;Red King;INT;Photo;05/08/2001;9;5;4;0,00
+425;[Red King - fear];;Red King;INT;Post;05/08/2001;9;5;4;0,00
+426;[Red King - anger];;Red King;INT;Post;05/08/2001;9;5;4;0,00
+427;[Red King - happy];;Red King;INT;Post;05/08/2001;9;5;4;0,00
+428;[Kent Whitman - fear];;Kent Whitman;INT;Post;05/08/2001;5;2;3;1,10
+429;[Fidelio Belem - fear];;Fidelio Belem;INT;Post;05/08/2001;3;1;2;0,00
+430;[Audrey Green - fear];;Audrey Green;INT;Post;05/08/2001;5;3;2;0,00
+431;[Audrey Green - guilt];;Audrey Green;INT;Post;05/08/2001;5;3;2;0,00
+432;[Audrey Green - anger];;Audrey Green;INT;Post;05/08/2001;6;3;3;0,04
+433;[Eliza - fear];;Eliza;INT;Post;05/08/2001;4;2;2;0,02
+434;[Eliza - sad];;Eliza;INT;Photo;05/08/2001;4;2;2;0,02
+435;[Diane Fletcher - alert];;Diane Fletcher;INT;Post;05/08/2001;9;5;4;0,00
+436;[Diane Fletcher - rage];;Diane Fletcher;INT;Post;05/08/2001;9;5;4;0,00
+437;[Diane Fletcher - joy];;Diane Fletcher;INT;Post;05/08/2001;9;5;4;0,00
+438;[Diane Fletcher - guilt];;Diane Fletcher;INT;Post;05/08/2001;9;5;4;0,00
+439;[Diane Fletcher - fear];;Diane Fletcher;INT;Post;05/08/2001;9;5;4;0,00
+440;NY Times Advert;;;RL;Object;05/08/2001;3;2;1;0,00
+441;Kh1 webpage;RK;Red King;INT;Webpage;05/08/2001;1;1;0;0,00
+442;Subject: Died;LJS;Laia Joanna Salla;EMAIL;Email;05/15/2001;2;1;1;2,22
+445;(702) 387-3822 (Pia);;;RL;Sound;05/15/2001;2;1;1;0,02
+446;Nancy's voicemail (plant voicemail);;;RL;Sound;05/15/2001;2;1;1;0,17
+447;"""Pia says that she talked to Alexsi again,""";;;RL;Sound;05/15/2001;2;2;0;0,00
+448;"Kate Nei ""fake"" case file";;Kate Nei;INT;Webpage;05/15/2001;2;2;0;0,00
+449;"PACO ""This account has been disabled due to a security violation.""";;Audrey Green;INT;Webpage;05/15/2001;1;1;0;0,00
+450;Kate Nei Disintegration;KN;Ivy;INT;Webpage;05/15/2001;2;1;1;0,17
+451;"""This is Orelious over at apostrophe calling about the special screening""";JS;;RL;Sound;05/15/2001;1;1;0;0,00
+452;Enrico Basta case file;;Enrico Basta;INT;Webpage;05/23/2001;1;1;0;0,00
+453;Ivy's video (Basta's house);KN;Ivy;INT;Video;05/23/2001;1;1;0;0,00
+454;Subject: They are talking overhead....;LJS;Laia Joanna Salla;EMAIL;Email;05/22/2001;2;1;1;2,10
+455;Subject: Broke the Line;LJS;Laia Joanna Salla;EMAIL;Email;05/29/2001;3;1;2;1,98
+456;Another Stone;LJS;Sencha;INT;Puzzle;05/29/2001;3;2;1;1,17
+457;Altered, hacked page;;Loki;INT;Webpage;05/29/2001;1;1;0;0,00
+458;"""We are not you.  You are physically fragile,""";;;INT;Post;05/29/2001;1;1;0;0,00
+459;"Putting_it_all_together.txt (""Help us please"")";LJS;Laia Joanna Salla;EMAIL;Post;05/29/2001;1;1;0;0,00
+461;Beelzebub email ('Help');;;EMAIL;Email;05/29/2001;1;0;3;0,00
+462;Cloudmakers webpage;FAN;;INT;Webpage;04/09/2001;1;1;0;0,00
+465;Invoice (Nostradamus);;Martin Swinton;INT;Webpage;05/29/2001;2;1;1;0,01
+466;[Loki - nightmare];;Loki;INT;Video;05/08/2001;1;1;0;0,00
+467;Subject: My last message;LJS;Laia Joanna Salla;EMAIL;Email;06/05/2001;2;1;1;1,71
+468;Conversation of Brutus;RK;Brutus;INT;Webpage;06/05/2001;2;2;0;0,00
+469;ARM coded page;;Red King;INT;Webpage;06/05/2001;1;1;0;0,00
+470;Doomed soul puzzle (Domino);LJS;Sencha;INT;Puzzle;06/05/2001;3;2;1;0,15
+471;[Special services] (Catskills Seaview Clinic);;;INT;Webpage;06/05/2001;2;1;1;0,38
+472;[Hidden page] (Catskills Seaview Clinic);;;INT;Webpage;06/05/2001;2;1;1;0,21
+473;[Patient files] (Catskills Seaview Clinic);;;INT;Webpage;06/05/2001;5;2;3;0,58
+474;[Barret Howard files] (Catskills Seaview Clinic);;;INT;Webpage;06/05/2001;1;1;0;0,00
+475;Brutus picture (Beate Bosch);;Brutus;INT;Photo;06/05/2001;1;1;0;0,00
+476;Martin Swinton voicemail #1;MS;Diane Fletcher;RL;Sound;06/05/2001;2;1;1;1,00
+477;Martin Swinton voicemail #2;MS;;RL;Sound;06/05/2001;3;1;2;0,86
+478;Martin Swinton voicemail #3;MS;;RL;Sound;06/05/2001;2;1;1;0,21
+479;Martin Swinton voicemail #4 (old);MS;Diane Fletcher;RL;Sound;06/05/2001;2;1;1;0,03
+480;[Monica Swinton files] (Catskills Seaview Clinic);;Monica Swinton;INT;Webpage;06/05/2001;2;1;1;0,04
+481;Products:Neural Data Control page (Cybertronics);;;INT;Webpage;06/05/2001;1;1;0;0,00
+482;Research Division page (Cybertronics);;;INT;Webpage;06/05/2001;1;1;0;0,00
+483;Employee Services page (Cybertronics);;;INT;Webpage;06/05/2001;2;1;1;0,29
+484;News page (Cybertronics);;;INT;Webpage;06/05/2001;2;1;1;0,05
+485;'How you can help' page (7to1);;;INT;Webpage;04/09/2001;1;1;0;0,00
+486;Subject: Body, Bouquet, and Color;LJS;Laia Joanna Salla;EMAIL;Email;06/12/2001;2;1;1;1,59
+487;'The Story So Far';;;INT;Webpage;06/12/2001;25;1;24;18,03
+488;"""OK, the computer has tagged you""";LJS;Laia Joanna Salla;EMAIL;Email;06/12/2001;1;1;0;0,00
+489;[Jackson White - fear];;Jackson White;INT;Post;06/12/2001;9;5;4;0,00
+490;[Jackson White - happy];;Jackson White;INT;Post;06/12/2001;9;5;4;0,00
+491;[Jackson White - sadness];;Jackson White;INT;Post;06/12/2001;9;5;4;0,00
+492;[Jackson White - rage];;Jackson White;INT;Post;06/12/2001;15;5;10;0,05
+493;[Jackson White - lust];;Jackson White;INT;Post;06/12/2001;9;5;4;0,00
+494;[John Greenstreet - fear];;John Greenstreet;INT;Post;06/12/2001;11;6;5;0,04
+495;[John Greenstreet - happy];;John Greenstreet;INT;Post;06/12/2001;10;6;4;0,00
+496;[John Greenstreet - sadness];;John Greenstreet;INT;Post;06/12/2001;10;6;4;0,00
+497;[John Greenstreet - rage];;John Greenstreet;INT;Post;06/12/2001;11;6;5;0,01
+498;[John Greenstreet - lust];;John Greenstreet;INT;Post;06/12/2001;10;6;4;0,00
+499;John Greenstreet case file;;John Greenstreet;INT;Webpage;06/12/2001;3;3;0;0,00
+500;"""Is rounded with a sleep.""";;Martin Swinton;INT;Webpage;06/12/2001;1;1;0;0,00
+501;"""Is rounded with a sleep""";;Martin Swinton;INT;Webpage;06/12/2001;1;1;0;0,00
+502;"""Freedom hurts. Mine, yours, his.""";;Beate Bosch;INT;Post;06/12/2001;1;1;0;0,00
+503;"""Turn about is fair play"" puzzle";;Diane Fletcher;INT;Puzzle;06/12/2001;2;1;1;0,22
+504;/May_I/ page;;;INT;Webpage;06/12/2001;4;3;1;0,96
+505;"""Swinton, you made yourself one hell of an enemy"" (Martin Swinton voicemail)";MS;Jim Wheeler;RL;Sound;06/15/2001;2;1;1;0,18
+506;"""Mr. Swinton, Diane Fletcher here."" (Martin Swinton voicemail)";MS;Diane Fletcher;RL;Sound;06/15/2001;1;1;0;0,00
+507;Origen image;;;INT;Photo;06/15/2001;3;2;1;0,06
+508;8domicide8 page (SPCB);;Red King;INT;Webpage;06/15/2001;2;2;0;0,00
+509;/SPID-BAH-42RKD1-H/ page (SPCB);;Red King;INT;Webpage;06/15/2001;3;3;0;0,00
+510;Subject: Jeanine Salla is not used to being crossed...;LJS;Laia Joanna Salla;EMAIL;Email;06/19/2001;2;1;1;1,46
+511;Watchtower Security webpage;;;INT;Webpage;06/15/2001;5;2;3;0,32
+512;Watchtower Security photos;;;INT;Webpage;06/15/2001;1;1;0;0,00
+513;"""enforce attention like deep harmony""";;Martin Swinton;INT;Webpage;06/19/2001;2;1;1;0,34
+514;"""enforce attention like deep harmony.""";;Martin Swinton;INT;Webpage;06/19/2001;3;1;2;0,09
+515;sleep.asp;;Martin Swinton;INT;Webpage;06/12/2001;3;3;0;0,00
+516;6.18.2142.asp;;Martin Swinton;INT;Puzzle;06/19/2001;2;1;1;0,17
+517;Catskill Seaview Clinic - Goose;;Monica Swinton;INT;Webpage;06/19/2001;2;2;0;0,00
+518;SPCB bupstream.htm;;Red King;INT;Puzzle;06/19/2001;1;1;0;0,00
+519;La Clinique de Lille ('Dossiers de Recherche Avancée');;;INT;Webpage;04/24/2001;3;2;1;0,16
+520;La Clinique de Lille (Beverly Gilbert report);;;INT;Webpage;04/24/2001;1;1;0;0,00
+521;Catskill Seaview Clinic - Nature;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,41
+522;Catskill Seaview Clinic - Superior;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,03
+523;Catskill Seaview Clinic - Teresa;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,02
+524;Catskill Seaview Clinic - Hubbard;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,59
+525;Catskill Seaview Clinic - Lode;;Monica Swinton;INT;Webpage;06/19/2001;1;0;1;0,00
+526;Catskill Seaview Clinic - Courage;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,03
+527;Catskill Seaview Clinic - Russia;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,22
+528;Catskill Seaview Clinic - Whistlers;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,01
+529;Catskill Seaview Clinic - Necessity;;Monica Swinton;INT;Webpage;06/19/2001;2;1;1;0,78
+530;Subject: stuck;LJS;Laia Joanna Salla;EMAIL;Email;06/26/2001;3;1;2;1,32
+531;Image of a bill;LJS;Red King;EMAIL;Photo;06/26/2001;3;1;2;0,37
+532;(212) 613-1632 Mike Royal;MR;Mike Royal;RL;Sound;06/26/2001;7;1;6;0,07
+533;"""This is Statue Security. Everything is under control.""";MR;Mike Royal;RL;Sound;06/26/2001;2;2;0;0,00
+534;[Mike Royal - fear];;Mike Royal;INT;Post;06/26/2001;10;6;4;0,00
+535;[Mike Royal - lust];;Mike Royal;INT;Post;06/26/2001;10;6;4;0,00
+536;[Mike Royal - sadness];;Mike Royal;INT;Post;06/26/2001;10;6;4;0,00
+537;[Mike Royal - anger];;Mike Royal;INT;Post;06/26/2001;10;6;4;0,00
+538;[Mike Royal - happy];;Mike Royal;INT;Post;06/26/2001;10;6;4;0,00
+539;God page (SPCB);;Red King;INT;Webpage;06/26/2001;1;1;0;0,00
+540;thief.asp;LJS;Sencha;INT;Puzzle;06/26/2001;1;1;0;0,00
+541;"""and less than kind""";;Martin Swinton;INT;Webpage;06/26/2001;2;1;1;0,23
+542;"""and less than kind.""";;Martin Swinton;INT;Webpage;06/26/2001;2;1;1;0,09
+543;6.25.2142.asp;;Martin Swinton;INT;Puzzle;06/26/2001;2;1;1;0,06
+544;Investor Relations (actual page);;;INT;Webpage;06/26/2001;1;1;0;0,00
+545;Private Files (Watchtower Security);;;INT;Webpage;06/26/2001;2;2;0;0,00
+546;Tower.html (electric toyland);;;INT;Webpage;06/26/2001;2;1;1;0,04
+547;"""Good evening, meat. The year is 2142, and we are done with you.""";;;RL;Sound;06/26/2001;2;1;1;0,15
+548;"""Good work, Oliver. With your help, we can finally bring the battle to the metal-head on his own turf.""";;;RL;Sound;06/26/2001;1;1;0;0,00
+549;C. Gilbert input page (Cybertronics);;;INT;Webpage;06/26/2001;2;1;1;0,15
+550;"""5/12/'98  banner day""";;;INT;Post;06/26/2001;2;1;1;0,00
+551;"""thou shalt not escape calumny";;Martin Swinton;INT;Webpage;07/03/2001;1;1;0;0,00
+552;letter from Claude's lawyers;;Martin Swinton;INT;Webpage;07/03/2001;2;1;1;0,17
+553;alternative letter from Claude's lawyers;;Martin Swinton;INT;Webpage;07/03/2001;1;1;0;0,00
+554;Letter sent by Georg;;;INT;Webpage;07/03/2001;2;1;1;0,03
+555;onlythefirststep.html;;;INT;Webpage;07/03/2001;7;1;6;0,00
+556;"""You don't have much luck keeping your birds caged, do you?"" popup";;;INT;Webpage;07/03/2001;2;1;1;0,15
+557;Badmetal webpage;;;INT;Webpage;07/03/2001;1;1;0;0,00
+558;Subject: me;LJS;Laia Joanna Salla;EMAIL;Email;07/03/2001;3;1;2;0,65
+559;Jeanine Salla case file;;Jeanine Salla;INT;Webpage;07/03/2001;4;3;1;0,07
+560;1.htm;;;INT;Webpage;07/03/2001;4;2;2;1,08
+561;2.htm;;;INT;Webpage;07/03/2001;2;1;1;0,75
+562;3.htm;;;INT;Webpage;07/03/2001;2;1;1;0,61
+563;4.htm;;;INT;Webpage;07/03/2001;2;1;1;0,47
+564;5.htm;;;INT;Webpage;07/03/2001;2;1;1;0,32
+565;6.htm;;;INT;Webpage;07/03/2001;2;1;1;0,18
+566;7.htm;;;INT;Webpage;07/03/2001;2;1;1;0,03
+567;Jane Doe case file;;Jeanine Salla;INT;Webpage;07/03/2001;2;1;1;0,02
+568;Teddy sound file / call;;;RL;Sound;07/06/2001;1;0;1;0,00
+569;"""I'm so glad you've come.""";;;INT;Webpage;07/06/2001;1;1;0;0,00
+570;Subject: Fwd: in this case, not quite laia;LJS;Red King;EMAIL;Email;07/10/2001;3;1;2;0,48
+571;After page (SPCB);;Red King;INT;Webpage;07/10/2001;1;1;0;0,00
+572;[Geri Khan files] (Catskills Seaview Clinic);;;INT;Webpage;06/05/2001;1;1;0;0,00
+573;"""Monica Monica fly from your home! Your brain is on fire and your changeling is gone. Monica, Monica now you are two. To take care of David, I made one of you.""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+574;"""A diller, a dollar, a hundred-year scholar.""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+575;"""Oh where are you going with Hobby's AI?""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+576;"""Who killed Allen Hobby?""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+577;"""Georgy-Porgy, faithless AI.""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+578;"""Seas that are hot, seas that are cold,""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+579;"""I'm a little labtech, short and stout.""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+580;"""Geri? Geeeerrrrrrrrrrrrrrriiii.""";;Eliza;INT;Sound;07/10/2001;2;2;0;0,00
+582;"""What were we doing searching for David under your name?""";MS;;RL;Sound;07/10/2001;1;1;0;0,00
+583;Password prompt popup (Nancy's page);;;INT;Webpage;07/10/2001;3;2;1;0,15
+584;Letter from Nancy to Laia;;;INT;Webpage;07/10/2001;1;1;0;0,00
+585;Svetlana's personal page;;;INT;Webpage;07/13/2001;2;2;0;0,00
+586;Crash analysis lab (Watchtower Security);;;INT;Puzzle;07/13/2001;2;2;0;0,00
+587;[candy.htm] (Cybertronics);;;INT;Webpage;04/09/2001;2;2;0;0,00
+588;[accept.htm] (Cybertronics);;;INT;Webpage;04/09/2001;1;1;0;0,00
+589;[ahobby.htm] (Cybertronics);;;INT;Webpage;04/09/2001;3;2;1;0,08
+591;Martin Swinton slideshow (nor witch hath power to charm);;Martin Swinton;INT;Photo;07/13/2001;1;1;0;0,00
+592;Subject: Cloudmaker, Nancy, GARDEN GNOME?;LJS;Laia Joanna Salla;EMAIL;Email;07/17/2001;2;1;1;0,16
+593;"""play on""";;Martin Swinton;INT;Post;07/17/2001;1;1;0;0,00
+594;Café pop-up (Down and Out Café);;;INT;Webpage;07/17/2001;2;1;1;0,60
+595;Bathroom page (Down and Out Café);;;INT;Puzzle;07/17/2001;2;1;1;0,45
+596;Drowned Lands café for tweakers (Down and Out Café);;;INT;Webpage;07/17/2001;2;1;1;0,30
+597;Drowned Lands menu (Down and Out Café);;;INT;Webpage;07/17/2001;2;1;1;0,15
+598;Ruf Justice video (Down and Out Café);;;INT;Video;07/17/2001;1;1;0;0,00
+599;this1.htm (In memoriam);LJS;;INT;Webpage;07/17/2001;3;1;2;0,73
+600;Cut of the Void entering puzzle;;;INT;Puzzle;07/17/2001;3;2;1;0,44
+601;Go puzzle;;;INT;Puzzle;07/17/2001;2;1;1;0,00
+602;Cut of the Void webpage;;;INT;Webpage;07/17/2001;2;1;1;0,30
+603;Orikaeshigitae picture (Cut of the Void);;;INT;Puzzle;07/17/2001;2;1;1;0,15
+604;tanto.htm (Jeanine Salla page);JS;Sencha;INT;Webpage;07/17/2001;1;1;0;0,00
+605;http://www.spcb.org/p/;;Red King;INT;Webpage;07/17/2001;2;1;1;1,31
+606;http://www.spcb.org/p/r/o/p/;;Red King;INT;Webpage;07/17/2001;2;1;1;1,17
+607;http://www.spcb.org/p/r/o/p/a/g/a/t/e/;;Red King;INT;Webpage;07/17/2001;2;1;1;1,03
+608;http://www.spcb.org/p/r/o/p/a/g/a/t/i/n/g/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,89
+609;http://www.spcb.org/p/r/o/p/a/g/a/n/d/a/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,75
+610;http://www.spcb.org/a/n/d/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,60
+611;http://www.spcb.org/c/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,45
+612;http://www.spcb.org/c/h/a/t/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,30
+613;http://www.spcb.org/c/h/a/t/t/y/;;Red King;INT;Webpage;07/17/2001;2;1;1;0,15
+614;http://www.spcb.org/c/h/a/t/t/e/l/;;Red King;INT;Puzzle;07/17/2001;1;1;0;0,00
+615;Make a Beautiful Land popup;;;INT;Webpage;07/17/2001;5;3;2;0,16
+616;Make a Beautiful Land puzzle;;;INT;Puzzle;07/17/2001;2;2;0;0,00
+617;"""is silence""";;Martin Swinton;INT;Post;07/20/2001;1;1;0;0,00
+618;"[Cloudmaker - ] ""under no fond dune one found our eon drone""";;;INT;Webpage;07/20/2001;2;1;1;0,06
+619;Clay.html (Laia's page);;;INT;Webpage;07/20/2001;2;1;1;0,20
+620;"""Founder"" page (Make a Beautiful Land)";;;INT;Webpage;07/20/2001;1;1;0;0,00
+621;"""whI stik 2 sownd?"" (Unite and Resist popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,34
+622;"""Evry jelyhed part uv biliunz"" (7to1 popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,03
+623;"""I lisnd 2 wh@ the bOt wz"" (Kate Nei popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,05
+624;"""ned 2 stir the pot, stir the pot. Stormz."" (Catskill popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,06
+625;"""don't_2 prop a gAt. 1 jelyhed = 25x"" (Martin Swinton popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,01
+626;"""Cook them! COOK THEM FRUM SPAS!"" (Metropolitan Living Homes popup)";;Geri Khan;INT;Webpage;07/20/2001;11;6;5;0,17
+627;Poli Pulse webpage;;;INT;Webpage;07/20/2001;8;6;2;0,30
+628;About (Poli Pulse);;;INT;Webpage;07/20/2001;3;2;1;0,00
+630;Exit Poll Results (Poli Pulse);;;INT;Webpage;07/20/2001;3;1;2;0,00
+631;Subject: Surfacing;LJS;Puppetmasters;EMAIL;Email;07/23/2001;1;1;0;0,00
+581;"""Basta's lover is fair of face";;Eliza;;;;2;2;;0,00
+297;"""Sorry about the sudden sign-off earlier today";;Laia Joanna Salla;;;;2;1;;2,79

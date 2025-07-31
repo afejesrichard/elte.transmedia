@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Beast ARG Node/Edge Tables</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #fafafe; }
+    h1 { text-align: center; margin-top: 1.5em; }
+    .container { max-width: 1200px; margin: auto; padding: 1em; }
+    .dt-buttons { margin-bottom: 10px; }
+    table.dataTable { background: #fff; }
+    .switcher { margin-bottom: 2em; display: flex; justify-content: center; gap: 30px; }
+    button { cursor: pointer; padding: 7px 18px; font-size: 1em; }
+    button.active { background: #0074D9; color: #fff; border: none; border-radius: 3px; }
+    button:not(.active) { background: #eee; color: #222; border: 1px solid #bbb; }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>The Beast ARG Network Tables</h1>
+    <div class="switcher">
+      <button id="nodesBtn" class="active">Node Table</button>
+      <button id="edgesBtn">Edge Table</button>
+    </div>
+    <div id="table-area">
+      <table id="nodesTable" class="display" style="width:100%"></table>
+      <table id="edgesTable" class="display" style="width:100%; display:none"></table>
+    </div>
+  </div>
+<script>
+// Helper to load CSV to array of objects
+function csvToArray(str, delimiter = ',') {
+  const rows = str.split('\n').filter(Boolean);
+  const headers = rows[0].split(delimiter);
+  return rows.slice(1).map(row => {
+    const values = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g).map(v=>v.replace(/^"|"$/g,''));
+    return headers.reduce((obj, header, i) => (obj[header.trim()] = values[i] || "", obj), {});
+  });
+}
+
+function renderTable(csvUrl, tableId, tableTitle) {
+  $.get(csvUrl, function(csv) {
+    const data = csvToArray(csv);
+    if (data.length == 0) return;
+    const cols = Object.keys(data[0]).map(col => ({ title: col, data: col }));
+    $('#' + tableId).DataTable({
+      data: data,
+      columns: cols,
+      dom: 'Bfrtip',
+      buttons: ['copy', 'csv', 'excel', 'print'],
+      pageLength: 25,
+      order: [],
+      destroy: true,
+      scrollX: true,
+      responsive: true
+    });
+  });
+}
+
+$(function() {
+  // Show/hide logic
+  $('#nodesBtn').click(function() {
+    $(this).addClass('active'); $('#edgesBtn').removeClass('active');
+    $('#nodesTable').show(); $('#edgesTable').hide();
+  });
+  $('#edgesBtn').click(function() {
+    $(this).addClass('active'); $('#nodesBtn').removeClass('active');
+    $('#edgesTable').show(); $('#nodesTable').hide();
+  });
+
+  // Load and render both tables
+  renderTable('nodes.csv', 'nodesTable', 'Node Table');
+  renderTable('edges.csv', 'edgesTable', 'Edge Table');
+});
+</script>
+</body>
+</html>
