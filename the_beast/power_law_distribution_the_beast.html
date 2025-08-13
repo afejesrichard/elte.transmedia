@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Number of Nodes with Specific Degree Values — Interactive</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Plotly -->
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
   <style>
     body{font-family:"Segoe UI",Arial,sans-serif;margin:0;background:#f7f8fa;color:#222;}
@@ -12,18 +11,12 @@
     h1{margin:0 0 6px 0;font-size:1.8rem;}
     .sub{color:#555;font-size:0.98rem}
     .wrap{max-width:1100px;margin:20px auto;padding:0 14px 24px}
-    .panel{
-      background:#fff;border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.08);
-      padding:14px;margin-bottom:16px
-    }
+    .panel{background:#fff;border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.08);padding:14px;margin-bottom:16px}
     .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
     .ctrl{display:flex;flex-direction:column;gap:6px;min-width:140px}
     .ctrl label{font-size:.9rem;color:#333}
     .ctrl input{padding:7px 10px;border:1px solid #ccd;border-radius:8px;font-size:1rem}
-    .ctrl button,.btn{
-      padding:8px 12px;border:none;background:#0074D9;color:#fff;border-radius:8px;cursor:pointer;
-      box-shadow:0 2px 10px rgba(0,116,217,.2)
-    }
+    .ctrl button,.btn{padding:8px 12px;border:none;background:#0074D9;color:#fff;border-radius:8px;cursor:pointer;box-shadow:0 2px 10px rgba(0,116,217,.2)}
     .ctrl button:hover,.btn:hover{background:#004e93}
     #chart{height:560px;background:#fff;border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.08)}
     table{width:100%;border-collapse:collapse;font-size:.95rem}
@@ -39,7 +32,7 @@
 <body>
   <header>
     <h1>Number of Nodes with Specific Degree Values</h1>
-    <div class="sub">Derived from edge list; model overlay fits \(A\) given \(k_0\) and \(n\).</div>
+    <div class="sub">Derived from edge list; model overlay fits A given k₀ and n.</div>
   </header>
 
   <div class="wrap">
@@ -52,10 +45,9 @@
       <div class="controls">
         <div class="ctrl" style="min-width:280px">
           <label>Edges CSV path
-            <span class="badge">query: ?edges=the_beast_edge_table_2025.csv</span>
+            <span class="badge">or use <code>?edges=path/to.csv</code></span>
           </label>
-          <!-- If your page is at the repo root and CSV is under /the_beast/, use: the_beast/the_beast_edge_table_2025.csv -->
-          <input id="edgesPath" type="text" value="the_beast_edge_table_2025.csv" />
+          <input id="edgesPath" type="text" />
         </div>
 
         <div class="ctrl" style="min-width:240px">
@@ -90,24 +82,46 @@
           <tbody></tbody>
         </table>
       </div>
-      <div class="foot">Model: \(\hat{y}(k)=A\,(k+k_0)^{-n}\) with \(A\) fitted by least squares on \(\log\) scale.</div>
+      <div class="foot">Model: ŷ(k)=A·(k+k₀)<sup>−n</sup> with A fitted by least squares on log scale.</div>
     </div>
   </div>
 
 <script>
-/* ---------- utilities ---------- */
+/* ---------- environment helpers ---------- */
 if (location.protocol === 'file:') {
   document.getElementById('fileWarn').style.display = 'block';
 }
-
 const qs = new URLSearchParams(location.search);
-const defaultEdges = qs.get('edges') || 'the_beast_edge_table_2025.csv';
-document.getElementById('edgesPath').value = defaultEdges;
 
+/* Pick a sensible default path based on where this html lives + try fallbacks */
+function defaultEdgeCandidates(){
+  const q = qs.get('edges');
+  if (q) return [q];
+
+  const inBeast = /\/the_beast\//.test(location.pathname);
+  // Your repo uses the_beast_edges.csv (and you formerly tried ..._edge_table_2025.csv)
+  return inBeast
+    ? ['the_beast_edges.csv','the_beast_edge_table_2025.csv','the_beast_edges_2025.csv']
+    : ['the_beast/the_beast_edges.csv','the_beast/the_beast_edge_table_2025.csv','the_beast/the_beast_edges_2025.csv'];
+}
+
+async function fetchFirst(paths){
+  const tried = [];
+  for (const p of paths){
+    try{
+      const r = await fetch(p, {cache:'no-store'});
+      if (r.ok) { return {text: await r.text(), used:p}; }
+      tried.push(p + ` (HTTP ${r.status})`);
+    }catch(e){
+      tried.push(p + ' ('+e+')');
+    }
+  }
+  throw new Error('None of the candidate paths worked:\n' + tried.join('\n'));
+}
+
+/* ---------- CSV + degree ---------- */
 function csvParse(text){
-  // detect separator ; or ,
-  const sep = (text.indexOf(';')>-1 && text.indexOf(',')>-1) ? ';'
-           : (text.indexOf(';')>-1 ? ';' : ',');
+  const sep = (text.indexOf(';')>-1 && text.indexOf(',')>-1) ? ';' : (text.indexOf(';')>-1 ? ';' : ',');
   const rows = text.replace(/\r/g,'').split('\n').filter(r=>r.trim().length);
   const headers = rows[0].split(sep).map(h=>h.trim());
   const data = rows.slice(1).map(r=>{
@@ -118,9 +132,7 @@ function csvParse(text){
   });
   return {headers, data};
 }
-
-function addDeg(degMap, id){ if(!id) return; degMap.set(id, (degMap.get(id)||0)+1); }
-
+function addDeg(m,id){ if(!id) return; m.set(id,(m.get(id)||0)+1); }
 function parseEdgeRow(row){
   const keys = Object.keys(row);
   const sKey = keys.find(k=>/^(source|Source|from|From)$/i.test(k));
@@ -129,9 +141,7 @@ function parseEdgeRow(row){
 
   const nKey = keys.find(k=>/^name$/i.test(k));
   if (nKey){
-    const val = row[nKey];
-    if (!val) return null;
-    // try common separators: (Directed), -->, ->, --
+    const val = row[nKey]; if(!val) return null;
     const parts = val.split(/\(Directed\)|-->|->|--/).map(x=>x.trim()).filter(Boolean);
     if (parts.length===2) return [parts[0], parts[1]];
     const tok = val.split(/\s+/).filter(Boolean);
@@ -139,140 +149,127 @@ function parseEdgeRow(row){
   }
   return null;
 }
-
 function degreeFromEdges(rows){
   const deg = new Map();
   for(const r of rows){
     const pair = parseEdgeRow(r);
     if(!pair) continue;
-    const [u,v] = pair;
-    addDeg(deg, u);
-    addDeg(deg, v);
+    const [u,v]=pair; addDeg(deg,u); addDeg(deg,v);
   }
   const degreeCounts = new Map();
-  for(const d of deg.values()){
-    degreeCounts.set(d, (degreeCounts.get(d)||0)+1);
-  }
-  return Array.from(degreeCounts.entries())
-              .map(([k,c])=>({k:+k, count:+c}))
-              .sort((a,b)=>a.k-b.k);
+  for(const d of deg.values()){ degreeCounts.set(d,(degreeCounts.get(d)||0)+1); }
+  return Array.from(degreeCounts.entries()).map(([k,c])=>({k:+k,count:+c})).sort((a,b)=>a.k-b.k);
 }
 
-// Fit A for y = A * (x+k0)^(-n) by least squares on log scale
-function fitA(points, k0, n){
+/* --------- model + table + plot ---------- */
+function fitA(points,k0,n){
   const valid = points.filter(p => p.k + k0 > 0 && p.count > 0);
   if(valid.length===0) return 1;
-  const ys = valid.map(p => Math.log(p.count));
-  const xs = valid.map(p => -n * Math.log(p.k + k0));
-  const mean = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
-  return Math.exp(mean(ys.map((y,i)=> y - xs[i])));
+  const ys = valid.map(p=>Math.log(p.count));
+  const xs = valid.map(p=>-n*Math.log(p.k+k0));
+  const mean = a=>a.reduce((x,y)=>x+y,0)/a.length;
+  return Math.exp(mean(ys.map((y,i)=>y - xs[i])));
 }
-
-function modelSeries(kmin, kmax, k0, n, A){
-  const xs=[], ys=[];
+function modelSeries(kmin,kmax,k0,n,A){
+  const xs=[],ys=[];
   for(let k=kmin;k<=kmax;k++){ xs.push(k); ys.push(A*Math.pow(k+k0,-n)); }
-  return {x:xs, y:ys};
+  return {x:xs,y:ys};
 }
-
 function fillTable(points){
-  const tbody = document.querySelector("#tbl tbody");
-  tbody.innerHTML = "";
+  const tbody=document.querySelector("#tbl tbody"); tbody.innerHTML="";
   points.forEach(p=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td style="text-align:left">${p.k}</td><td>${p.count}</td>`;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td style="text-align:left">${p.k}</td><td>${p.count}</td>`;
     tbody.appendChild(tr);
   });
 }
-
-function draw(points, k0, n){
-  const kMin = points[0].k, kMax = points[points.length-1].k;
-  const Ahat = fitA(points, k0, n);
-  const mdl = modelSeries(kMin, kMax, k0, n, Ahat);
+let xType='linear', yType='linear';
+function draw(points,k0,n){
+  const kMin=points[0].k, kMax=points[points.length-1].k;
+  const A=fitA(points,k0,n);
+  const mdl=modelSeries(kMin,kMax,k0,n,A);
   fillTable(points);
-
-  const scatter = {
-    x: points.map(p=>p.k), y: points.map(p=>p.count),
-    mode:'markers', name:'Occurrence', marker:{size:8, color:'#0b4a63'},
-    hovertemplate:'Degree %{x}<br>#Nodes %{y}<extra></extra>'
-  };
-  const line = {
-    x: mdl.x, y: mdl.y, mode:'lines', name:'Model',
-    line:{color:'red', width:3},
-    hovertemplate:'k=%{x}<br>ŷ=%{y:.3f}<extra>Model</extra>'
-  };
-  Plotly.newPlot("chart",[scatter,line],{
-    title:{text:'Number of Nodes with Specific Degree Values', font:{size:20}},
-    xaxis:{title:'Degree of Nodes', type:xType},
-    yaxis:{title:'# of Nodes', type:yType},
+  Plotly.newPlot("chart",[
+    {x:points.map(p=>p.k), y:points.map(p=>p.count), mode:'markers', name:'Occurrence',
+     marker:{size:8,color:'#0b4a63'}, hovertemplate:'Degree %{x}<br>#Nodes %{y}<extra></extra>'},
+    {x:mdl.x, y:mdl.y, mode:'lines', name:'Model', line:{color:'red',width:3},
+     hovertemplate:'k=%{x}<br>ŷ=%{y:.3f}<extra>Model</extra>'}
+  ],{
+    title:{text:'Number of Nodes with Specific Degree Values',font:{size:20}},
+    xaxis:{title:'Degree of Nodes', type:xType}, yaxis:{title:'# of Nodes', type:yType},
     legend:{orientation:'h', x:0.5, xanchor:'center', y:1.05},
     margin:{l:60,r:20,t:60,b:60}
   },{responsive:true});
-  Plotly.relayout("chart",{annotations:[{
-    xref:'paper', yref:'paper', x:1, y:1.12, xanchor:'right',
-    text:`Fitted A = ${Ahat.toFixed(4)}  (k₀=${k0}, n=${n})`,
-    showarrow:false, font:{size:12, color:'#444'}
-  }]});
+  Plotly.relayout("chart",{annotations:[{xref:'paper',yref:'paper',x:1,y:1.12,xanchor:'right',
+    text:`Fitted A = ${A.toFixed(4)}  (k₀=${k0}, n=${n})`,showarrow:false,font:{size:12,color:'#444'}}]});
 }
 
-/* ---------- rendering + IO ---------- */
-let xType='linear', yType='linear';
+/* --------- load from path / file with fallbacks ---------- */
+function setDefaultPathUI(){
+  const guess = defaultEdgeCandidates()[0];
+  document.getElementById('edgesPath').value = guess;
+}
+setDefaultPathUI();
 
 async function loadAndRenderFromPath(){
-  const path = document.getElementById('edgesPath').value.trim();
-  const k0 = parseFloat(document.getElementById('k0').value);
-  const n  = parseFloat(document.getElementById('nexp').value);
-  let text;
+  const typed = document.getElementById('edgesPath').value.trim();
+  const k0=parseFloat(document.getElementById('k0').value);
+  const n =parseFloat(document.getElementById('nexp').value);
+
+  // Build candidate list: user provided, same dir/parent dir variants, plus defaults
+  const inBeast = /\/the_beast\//.test(location.pathname);
+  const extras = inBeast
+    ? ['the_beast_edges.csv','the_beast_edge_table_2025.csv','the_beast_edges_2025.csv','./the_beast_edges.csv']
+    : ['the_beast/the_beast_edges.csv','the_beast/the_beast_edge_table_2025.csv','the_beast/the_beast_edges_2025.csv'];
+  const candidates = Array.from(new Set([typed, ...extras]));
+
+  let text, used;
   try{
-    const res = await fetch(path, {cache:'no-store'});
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    text = await res.text();
+    const got = await fetchFirst(candidates);
+    text = got.text; used = got.used;
   }catch(e){
-    alert(`Failed to load edges CSV: ${path}\n${e}\n\nTips:\n• If this page is opened with file://, use the “Choose local CSV” picker or run a local server.\n• Check the relative path (example: the_beast/the_beast_edge_table_2025.csv).`);
+    alert('Failed to load edges CSV.\n'+e.message+'\n\nCheck the filename/location in your repo. ' +
+          'For your GitHub tree, put: ' + (inBeast ? 'the_beast_edges.csv' : 'the_beast/the_beast_edges.csv'));
     return;
   }
   const {data} = csvParse(text);
   const points = degreeFromEdges(data);
   if(points.length===0){ alert("No degree data found. Check edge CSV columns (source/target or name)."); return; }
-  draw(points, k0, n);
+  draw(points,k0,n);
+  if (used) console.log('Using CSV:', used);
 }
 
 function loadAndRenderFromFile(file){
-  const k0 = parseFloat(document.getElementById('k0').value);
-  const n  = parseFloat(document.getElementById('nexp').value);
-  const fr = new FileReader();
-  fr.onload = () => {
-    const {data} = csvParse(fr.result);
-    const points = degreeFromEdges(data);
+  const k0=parseFloat(document.getElementById('k0').value);
+  const n =parseFloat(document.getElementById('nexp').value);
+  const fr=new FileReader();
+  fr.onload=()=>{ const {data}=csvParse(fr.result);
+    const points=degreeFromEdges(data);
     if(points.length===0){ alert("No degree data found in selected CSV."); return; }
-    draw(points, k0, n);
+    draw(points,k0,n);
   };
   fr.readAsText(file);
 }
 
-/* buttons */
+/* UI */
 document.getElementById('reload').addEventListener('click', loadAndRenderFromPath);
 document.getElementById('useLocal').addEventListener('click', ()=>{
-  const f = document.getElementById('fileInput').files[0];
+  const f=document.getElementById('fileInput').files[0];
   if(!f){ alert("Please choose a CSV file first."); return; }
   loadAndRenderFromFile(f);
 });
-document.getElementById('toggleX').addEventListener('click', ()=>{
-  xType = (xType==='linear' ? 'log' : 'linear'); Plotly.relayout("chart", {'xaxis.type': xType});
-});
-document.getElementById('toggleY').addEventListener('click', ()=>{
-  yType = (yType==='linear' ? 'log' : 'linear'); Plotly.relayout("chart", {'yaxis.type': yType});
-});
+document.getElementById('toggleX').addEventListener('click', ()=>{ xType=(xType==='linear'?'log':'linear'); Plotly.relayout("chart",{'xaxis.type':xType}); });
+document.getElementById('toggleY').addEventListener('click', ()=>{ yType=(yType==='linear'?'log':'linear'); Plotly.relayout("chart",{'yaxis.type':yType}); });
 document.getElementById('download').addEventListener('click', ()=>{
-  const rows = [...document.querySelectorAll('#tbl tbody tr')].map(tr=>{
-    const tds = tr.querySelectorAll('td'); return {k:tds[0].innerText, count:tds[1].innerText};
+  const rows=[...document.querySelectorAll('#tbl tbody tr')].map(tr=>{
+    const t=tr.querySelectorAll('td'); return {k:t[0].innerText,count:t[1].innerText};
   });
-  const csv = "degree,count\n" + rows.map(r=>`${r.k},${r.count}`).join("\n") + "\n";
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'degree_distribution.csv'; a.click();
+  const csv="degree,count\n"+rows.map(r=>`${r.k},${r.count}`).join("\n")+"\n";
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='degree_distribution.csv'; a.click();
 });
 
-/* auto-load (path) */
+/* auto load */
 loadAndRenderFromPath();
 </script>
 </body>
