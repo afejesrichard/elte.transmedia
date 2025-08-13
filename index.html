@@ -25,47 +25,22 @@
       transition: box-shadow 0.18s, transform 0.15s;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       min-height: 180px;
     }
-    .card:hover {
-      box-shadow: 0 4px 28px #6663;
-      transform: translateY(-3px) scale(1.01);
-    }
-    .card-title {
-      font-weight: bold;
-      font-size: 1.17em;
-      margin-bottom: 0.65em;
-      color: #0074D9;
-    }
-    .card-desc {
-      color: #252525;
-      font-size: 1em;
-      flex: 1;
-      margin-bottom: 1em;
-    }
+    .card:hover { box-shadow: 0 4px 28px #6663; transform: translateY(-3px) scale(1.01); }
+    .card-title { font-weight: bold; font-size: 1.17em; margin-bottom: 0.65em; color: #0074D9; text-align: left; }
+    .card-desc { color: #252525; font-size: 1em; margin-bottom: 1em; }
+    .card small { display: block; margin-top: 0.5em; color: #555; }
     .card-link {
-      display: inline-block;
-      background: #0074D9;
-      color: #fff;
-      border-radius: 5px;
-      padding: 0.5em 1.4em;
-      text-decoration: none;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      box-shadow: 0 2px 8px #0074d930;
-      transition: background 0.15s, box-shadow 0.15s;
-      margin-top: 0.5em;
-      text-align: center;
+      align-self: flex-start;
+      background: #0074D9; color: #fff; border-radius: 5px;
+      padding: 0.5em 1.4em; text-decoration: none; font-weight: 500;
+      letter-spacing: 0.06em; box-shadow: 0 2px 8px #0074d930; transition: background 0.15s, box-shadow 0.15s;
     }
-    .card-link:hover {
-      background: #004e93;
-      box-shadow: 0 2px 16px #0074d980;
-    }
+    .card-link:hover { background: #004e93; box-shadow: 0 2px 16px #0074d980; }
     @media (max-width: 700px) {
       h1 { font-size: 1.25em; }
       .cards { grid-template-columns: 1fr; }
-      .card { min-height: 130px; }
     }
   </style>
 </head>
@@ -80,67 +55,93 @@
     Welcome to the digital appendix for the doctoral dissertation <i>Narratologies of Transmedia Networks</i>.<br>
     Browse interactive charts, tables, and the full transmedia network map using the links below.
   </p>
+
   <div class="cards">
+    <!-- Figure 1 -->
     <div class="card">
-      <h2>Figure 1: Percentages of Narrative Instance Affiliation</h2>
+      <div class="card-title">Figure 1: Percentages of Narrative Instance Affiliation</div>
       <div class="card-desc">
         Interactive pie chart of narrative instance affiliations (per year and total). See who dominates, and access the underlying data.
-        <small><b>Calculation method:</b> (Count of entries for each affiliation) &divide; (Total entries) × 100&nbsp;%</small>
+        <small><b>Calculation method:</b> (Count of entries for each affiliation) ÷ (Total entries) × 100&nbsp;%</small>
       </div>
       <a href="chart1.html" class="card-link">Open Figure 1</a>
     </div>
+
+    <!-- Figure 2 -->
     <div class="card">
-      <h2>Figure 2: Fluctuation of Dominating Voices (Absolute)</h2>
+      <div class="card-title">Figure 2: Fluctuation of Dominating Voices (Absolute)</div>
       <div class="card-desc">
         Year-by-year line chart showing the rise and fall of different narrative voices, with a data table and filtering by year.
         <small><b>Calculation method:</b> Yearly count for each affiliation, displayed as absolute number of entries.</small>
       </div>
       <a href="chart2.html" class="card-link">Open Figure 2</a>
     </div>
+
+    <!-- Figure 3 -->
     <div class="card">
-      <h2>Figure 3: Fluctuation of Dominating Voices (Percentages)</h2>
+      <div class="card-title">Figure 3: Fluctuation of Dominating Voices (Percentages)</div>
       <div class="card-desc">
         The same voices, but now shown as a percentage of total narrative events per year. Compare proportional shifts across time.
-        <small><b>Calculation method:</b> (Count of entries for each affiliation in a year) &divide; (Total entries in that year) × 100&nbsp;%</small>
+        <small><b>Calculation method:</b> (Count of entries for each affiliation in a year) ÷ (Total entries in that year) × 100&nbsp;%</small>
       </div>
       <a href="chart3.html" class="card-link">Open Figure 3</a>
     </div>
+
+    <!-- Figure 4 -->
     <div class="card">
-      <h2>Figure 4: Channel Usage Over Time (Sites & Platforms)</h2>
+      <div class="card-title">Figure 4: Channel Usage Over Time (Sites &amp; Platforms)</div>
       <div class="card-desc">
         Line chart of channel/platform usage (e.g. YouTube, Tumblr, SA), with year-by-year filtering and an underlying data table.
         <small><b>Calculation method:</b> Yearly count for each platform/channel, displayed as absolute number of entries.</small>
       </div>
       <a href="chart4.html" class="card-link">Open Figure 4</a>
     </div>
+
+    <!-- Figure 5 -->
     <div class="card">
-      <h2>Figure 5: Channel Usage Percentages</h2>
+      <div class="card-title">Figure 5: Channel Usage Percentages</div>
       <div class="card-desc">
         Like Figure 4, but showing the platform share per year as a percentage of all events.
-        <small><b>Calculation method:</b> (Count of entries for each platform/channel in a year) &divide; (Total entries in that year) × 100&nbsp;%</small>
+        <small><b>Calculation method:</b> (Count of entries for each platform/channel in a year) ÷ (Total entries in that year) × 100&nbsp;%</small>
       </div>
       <a href="chart5.html" class="card-link">Open Figure 5</a>
     </div>
+
+    <!-- Network Map -->
     <div class="card">
-      <h2>Interactive Transmedia Network Map</h2>
+      <div class="card-title">Interactive Transmedia Network Map</div>
       <div class="card-desc">
-        Explore the full ARG network as an interactive, filterable map. Click any node for details. Switch colors by group or type.<br>
+        Explore the full ARG network as an interactive, filterable map. Click any node for details. Switch colors by group or type.
         <small><b>Calculation method:</b> Nodes and edges displayed using preset spatial layout. Node size: betweenness centrality. Color: group/type.</small>
       </div>
-      <a href="the_beast/the_beast_map.html" class="card-link">Open Network Map</a>
+      <a href="the_beast_map.html" class="card-link">Open Network Map</a>
     </div>
+    
+    <!-- NEW: Power-law Degree Distribution -->
     <div class="card">
-      <h2>EverymanHYBRID Node Table</h2>
+      <div class="card-title">Degree Distribution &amp; Power‑Law Fit (The Beast)</div>
       <div class="card-desc">
-        Complete searchable table of EverymanHYBRID nodes.<br>
+        Interactive scatter of node degree (k) vs. frequency with a fitted “corrected” power‑law model; compare empirical distribution to the model line.
+        <small><b>Calculation method:</b> Build histogram of node degrees; plot occurrences N(k). Fit model <i>N(k) ≈ C·(k + k<sub>0</sub>)<sup>−n</sup></i> with parameters (k<sub>0</sub>=0.3; n=1.2), and overlay the expected values.</small>
+      </div>
+      <a href="power_law_distribution_the_beast.html" class="card-link">Open Chart</a>
+    </div>
+    
+    <!-- EMH Table -->
+    <div class="card">
+      <div class="card-title">EverymanHYBRID Node Table</div>
+      <div class="card-desc">
+        Complete searchable table of EverymanHYBRID nodes.
         <small><b>Calculation method:</b> Direct JSON data display; sortable and filterable.</small>
       </div>
       <a href="emh_node-edge_table.html" class="card-link">Open Data Tables</a>
     </div>
+
+    <!-- The Beast Tables -->
     <div class="card">
-      <h2>The Beast ARG Node/Edge Tables</h2>
+      <div class="card-title">The Beast ARG Node/Edge Tables</div>
       <div class="card-desc">
-        A searchable and sortable interactive table of The Beast network’s nodes and edges, with the same visual style as the rest of the appendix.<br>
+        A searchable and sortable interactive table of The Beast network’s nodes and edges, with the same visual style as the rest of the appendix.
         <small><b>Calculation method:</b> Tables display all entries from CSV; sortable and filterable. No extrapolation—direct data display.</small>
       </div>
       <a href="the_beast/the_beast_node-edge_table.html" class="card-link">Open The Beast Table</a>
